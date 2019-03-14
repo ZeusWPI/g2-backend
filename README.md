@@ -16,13 +16,11 @@ You will also need to install sassc.
 To start a web server for the application, run:
 
 
-    ``` bash
+    ```
     cp dev-config_template.edn dev-config.edn
     lein run
     
     ```
-
-n 
 
 ## License
 
