@@ -8,9 +8,13 @@
 (defn home-page [request]
   (layout/render request "home.html"))
 
+(defn test-page [request]
+  (layout/render request "test.html"))
+
 (defroutes home-routes
   (GET "/" request (home-page request))
   (GET "/docs" []
        (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            (response/header "Content-Type" "text/plain; charset=utf-8"))))
+  (GET "/test" request (test-page request))
 
