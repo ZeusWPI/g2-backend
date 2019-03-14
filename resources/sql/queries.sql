@@ -19,3 +19,7 @@ WHERE id = :id
 -- :doc deletes a user record given the id
 DELETE FROM users
 WHERE id = :id
+
+-- :name get-example
+-- :doc retrieves the example table
+SELECT * FROM example
