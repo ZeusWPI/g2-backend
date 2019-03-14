@@ -7,6 +7,7 @@ FIXME
 ## Prerequisites
 
 You will need [Leiningen][1] 2.0 or above installed.
+You will also need to install sassc.
 
 [1]: https://github.com/technomancy/leiningen
 
@@ -14,7 +15,14 @@ You will need [Leiningen][1] 2.0 or above installed.
 
 To start a web server for the application, run:
 
-    lein run 
+
+    ``` bash
+    cp dev-config_template.edn dev-config.edn
+    lein run
+    
+    ```
+
+n 
 
 ## License
 
