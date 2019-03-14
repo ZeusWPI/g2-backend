@@ -16,11 +16,11 @@ You will also need to install sassc.
 To start a web server for the application, run:
 
 
-    ```
-    cp dev-config_template.edn dev-config.edn
-    lein run
-    
-    ```
+```
+cp dev-config_template.edn dev-config.edn
+lein run    
+```
+
 
 ## License
 
