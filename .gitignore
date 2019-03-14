@@ -31,3 +31,6 @@ profiles.clj
 /.env
 .nrepl-port
 /log
+
+resources/public/css
+*.db
