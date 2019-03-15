@@ -1,6 +1,13 @@
 # g2
 
+The goal of this project is to create a application that can serve as a gateway for people to contribute on projects of an organization.
+Further down the road we want to enable contributions more by adding a level of gamification.
+
+A simple software specification can be found is the [wiki](https://github.com/ZeusWPI/g2/wiki/SRS).
+
 generated using Luminus version "3.10.40" with the options [sqlite, cljs, auth]
+
+
 
 ## Prerequisites
 
