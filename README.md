@@ -1,5 +1,5 @@
 # G2
-
+[![chat mattermost](https://img.shields.io/badge/chat-mattermost-blue.svg)](https://mattermost.zeus.gent/zeus/channels/g2)
 The goal of this project is to create a application that can serve as a gateway for people to contribute on projects of an organization.
 Further down the road we want to enable contributions more by adding a level of gamification.
 
