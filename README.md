@@ -7,7 +7,7 @@ Further down the road we want to enable contributions more by adding a level of 
 ## Getting started
 ### Prerequisites
 
-You will need [Leiningen][1] 2.0 or above installed.
+You will need [Leiningen][1] 2.0 or above installed.\
 You will also need to install sassc.
 
 ### Installing
