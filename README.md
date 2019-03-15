@@ -57,7 +57,7 @@ Compiling the application is as simple as
     lein uberjar
     
 You can the run it as you would run any other jar. 
-Environment variables set in the dev-config.edn files will also have to be set in production. You can do this by providing them as environment variables or by setting them in the production conf file (/env/prod/resources/config.edn)
+Environment variables set in the dev-config.edn file will also have to be set in production. You can do this by providing them as environment variables or by setting them in the production conf file (/env/prod/resources/config.edn)
 
     java -jar g2.jar
 
