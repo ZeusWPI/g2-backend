@@ -69,7 +69,7 @@ TODO
 
 ## Contributing
 
-The Issues tab contains a list of known bugs, wanted features or new ideas, check them out if you are looking to contribute in the project. If you still don't know how to start or what to do, don't hesistate to contact the team.
+The Issues tab contains a list of known bugs, wanted features or new ideas, check them out if you are looking to contribute in the project. If you still don't know how to start or what to do, don't hesitate to contact the team.
 
 ## Versioning
 
