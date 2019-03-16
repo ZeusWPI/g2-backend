@@ -7,8 +7,7 @@ Further down the road we want to enable contributions more by adding a level of 
 ## Getting started
 ### Prerequisites
 
-You will need [Leiningen][1] 2.0 or above installed.
-
+You will need [Leiningen][1] 2.0 or above installed.\
 Leiningen is a development tool that mainly manages the dependencies and build configuration of the project.
 
 You will also need to install sassc.
