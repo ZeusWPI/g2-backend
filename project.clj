@@ -32,10 +32,14 @@
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
-                 [selmer "1.12.6"]]
+                 [selmer "1.12.6"]
+                 [clj-http "3.9.1"]
+                 [org.apache.logging.log4j/log4j-api "2.11.0"]
+                 [org.apache.logging.log4j/log4j-core "2.11.0"]
+                 [org.apache.logging.log4j/log4j-1.2-api "2.11.0"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
@@ -50,11 +54,11 @@
    [{:src "resources/scss/screen.scss"
      :output-to "resources/public/css/screen.css"
      :style "nested"
-     :import-path "resources/scss"}] 
-  
+     :import-path "resources/scss"}]
+
    :auto
-   {"sassc" {:file-pattern #"\.(scss|sass)$" :paths ["resources/scss"]}} 
-  
+   {"sassc" {:file-pattern #"\.(scss|sass)$" :paths ["resources/scss"]}}
+
   :hooks [leiningen.sassc]
   :clean-targets ^{:protect false}
   [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
@@ -64,7 +68,7 @@
    :nrepl-port 7002
    :css-dirs ["resources/public/css"]
    :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
-  
+
 
   :profiles
   {:uberjar {:omit-source true
@@ -82,8 +86,8 @@
                  :infer-externs true
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}}}}}
-             
-             
+
+
              :aot :all
              :uberjar-name "g2.jar"
              :source-paths ["env/prod/clj"]
@@ -118,9 +122,9 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true}}}}
-                  
-                  
-                  
+
+
+
                   :doo {:build "test"}
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
@@ -138,7 +142,14 @@
                       :main "g2.doo-runner"
                       :optimizations :whitespace
                       :pretty-print true}}}}
-                  
+
                   }
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}}
+	:repl-options {
+                 ;; If nREPL takes too long to load it may timeout,
+                 ;; increase this to wait longer before timing out.
+                 ;; Default to 30000 (30 seconds)
+                 :timeout 120000
+                 }
+  )
