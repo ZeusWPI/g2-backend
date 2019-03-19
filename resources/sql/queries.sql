@@ -19,3 +19,13 @@ WHERE id = :id
 -- :doc deletes a user record given the id
 DELETE FROM users
 WHERE id = :id
+
+-- :name create-project! :! :n
+-- :doc creates a new project
+INSERT INTO projects
+(id, name)
+VALUES (:id, :name)
+
+-- :name get-projects :?
+-- :doc retrieves all projects
+SELECT * FROM projects
