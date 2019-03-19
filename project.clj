@@ -141,4 +141,10 @@
                   
                   }
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}}
+  :repl-options {
+                 ;; If nREPL takes too long to load it may timeout,
+                 ;; increase this to wait longer before timing out.
+                 ;; Defaults to 30000 (30 seconds)
+                 :timeout 120000
+                 })
