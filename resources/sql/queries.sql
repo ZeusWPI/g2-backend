@@ -26,6 +26,6 @@ INSERT INTO projects
 (id, name)
 VALUES (:id, :name)
 
--- :name get-projects :?
+-- :name get-projects :? :*
 -- :doc retrieves all projects
 SELECT * FROM projects
