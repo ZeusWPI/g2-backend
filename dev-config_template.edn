@@ -9,9 +9,12 @@
 
  :database-url "jdbc:sqlite:g2_dev.db"
 
- ;; Github oauth2
- :authorize-uri ""
- :access-token-uri ""
- :oauth-consumer-key ""
- :oauth-consumer-secret ""
+ ;; Github oauth params
+ :authorize-uri "https://github.com/login/oauth/authorize"
+ :access-token-uri "https://github.com/login/oauth/access_token"
+ :oauth-consumer-key "8a03dc587747c1b38c09"
+ :oauth-consumer-secret "7d90249f0e4cc6884ace454253938c587737254d"
+
+ ;; Github organization
+ :github-organization "ZeusWPI"
  }

@@ -7,21 +7,39 @@
   </head>
   <body>
       <div id="navbar">
-          <a href="/oauth/github">oauth github</a>
+          <nav>
+              <a class="nav-link" href="/repositories">Repositories</a>
+              <a class="nav-link" href="/repositories/sync">Repositories - sync</a>
+          </nav>
       </div>
       <div>
-          <b>Organizations</b>
-          <ul>
-              {% for org in organisations %}
-              <li>{{org}}</li>
+          <section>
+          <h3>Repository providers</h3>
+          <a href="/oauth/github">Authorize github organization</a>
+          <table>
+              <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Secret</th>
+              </tr>
+              {% for provider in repo-providers %}
+              <tr>
+                  <td>{{provider.id}}</td>
+                  <td>{{provider.name}}</td>
+                  <td>{{provider.access_token|subs:0:6}}...</td>
+              </tr>
               {% endfor %}
-          </ul>
-        <b>Projects</b>
+
+          </table>
+          </section>
+          <section>
+        <h3>Projects</h3>
         <ul>
             {% for project in projects %}
             <li>{{project}}</li>
             {% endfor %}
         </ul>
+          </section>
     </div>
     <div id="app">
     </div>

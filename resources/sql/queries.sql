@@ -19,3 +19,30 @@ WHERE id = :id
 -- :doc deletes a user record given the id
 DELETE FROM users
 WHERE id = :id
+
+-- :name create-repo-provider! :! :n
+-- :doc creates a new link to a repository provider
+INSERT INTO repository_providers
+(name, access_token)
+VALUES (:name, :access_token)
+
+-- :name update-repo-provider-access-token! :! :n
+UPDATE repository_providers
+SET access_token = :access_token
+WHERE name = :name
+
+-- :name get-repo-provider :? :1
+-- :doc retrieves a link to a repo provider
+SELECT * FROM repository_providers
+WHERE name = :name
+
+-- :name get-all-repo-providers :? :*
+SELECT * FROM repository_providers
+
+-- :name create-github-repo :! :1
+INSERT INTO github_repositories
+(id, name, description)
+VALUES (:id, :name, :description)
+
+-- :name get-github-repos :? :*
+SELECT * FROM github_repositories
