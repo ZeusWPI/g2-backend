@@ -1,0 +1,13 @@
+DROP TABLE project;
+--;;
+DROP TABLE repo;
+--;;
+DROP TABLE branches;
+--;;
+DROP TABLE commit_branch;
+--;;
+DROP TABLE issues;
+--;;
+DROP TABLE pull_request;
+--;;
+DROP TABLE commits;
