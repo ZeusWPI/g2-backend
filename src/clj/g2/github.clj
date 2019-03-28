@@ -22,10 +22,14 @@
   ([access_token]
    (log/info "Syncing github repositories...")
    (let [response-body
-         (:body (http/get (str base-url "/orgs" "/" (env :github-organization) "/repos") {:as :json}))]
+         (:body (http/get (str base-url "/orgs" "/" (env :github-organization) "/repos?per_page=100") {:as :json}))]
      (doseq [full-repo response-body]
+       (let [get-repo (db/get)]) ;; TODO CREATE NEW WHEN NON EXIST, OTHERWISE, UPDATE PROPERTIES
        (db/create-github-repo
         (select-keys full-repo [:id :name :description]))))))
+
+(defn create-repo-hooks [repo-id]
+  )
 
 ; admin:org -> All actions against organization webhooks require the authenticated user to be an admin of the organization being managed.
 

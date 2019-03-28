@@ -4,10 +4,11 @@
             [g2.github :as gh]
             [g2.db.core :refer [*db*] :as db]
             [g2.oauth :as oauth]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET DELETE]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.pprint :refer [pprint]]))
 
 (defn home-page [request]
   (let [repo-providers (db/get-all-repo-providers)]
@@ -43,6 +44,7 @@
   (GET "/" request (home-page request))
   (GET "/repositories" request (repo-resource request))
   (GET "/repositories/sync" _ (do (gh/sync-repositories) (response/found "/")))
+  (DELETE "/hooks/:id" [id :as req] (log/info "DELETE HOOK: " (pprint req)) (response/found "/"))
   (GET "/docs" []
     (-> (response/ok (-> "docs/docs.md" io/resource slurp))
         (response/header "Content-Type" "text/plain; charset=utf-8")))
