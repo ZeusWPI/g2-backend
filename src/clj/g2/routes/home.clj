@@ -16,5 +16,5 @@
            (GET "/docs" []
              (-> (response/ok (-> "docs/docs.md" io/resource slurp))
                  (response/header "Content-Type" "text/plain; charset=utf-8")))
-           (GET "/project" request ((project request))))
+           (GET "/project" request (project request)))
 

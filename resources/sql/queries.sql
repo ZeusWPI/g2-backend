@@ -1,3 +1,3 @@
 -- :name get-projects :? :*
 -- :doc return all projects
-SELECT * from project;
+SELECT * from project
