@@ -20,6 +20,10 @@ WHERE id = :id
 DELETE FROM users
 WHERE id = :id
 
+/*
+  Repository Providers
+*/
+
 -- :name create-repo-provider! :! :n
 -- :doc creates a new link to a repository provider
 INSERT INTO repository_providers
@@ -39,10 +43,19 @@ WHERE name = :name
 -- :name get-all-repo-providers :? :*
 SELECT * FROM repository_providers
 
--- :name create-github-repo :! :1
+/*
+  Repositories
+*/
+
+-- :name create-github-repo! :! :1
 INSERT INTO github_repositories
 (id, name, description)
 VALUES (:id, :name, :description)
 
 -- :name get-github-repos :? :*
 SELECT * FROM github_repositories
+
+-- :name update-github-repo! :! :n
+UPDATE github_repositories
+SET name = :name, description = :description
+WHERE id = :id
