@@ -2,6 +2,7 @@
   (:require [g2.layout :as layout]
             [g2.git-api :as git]
             [g2.github :as gh]
+            [g2.zeus :as zeus]
             [g2.db.core :refer [*db*] :as db]
             [g2.oauth :as oauth]
             [compojure.core :refer [defroutes GET DELETE]]
@@ -22,9 +23,7 @@
   (response/found (oauth/authorize-uri (gh/oauth2-params))))
 
 (defn login-github-callback [req-token {:keys [params session]}]
-  "Gets the access token from github.
-   If this is a connect, fetch the user and add the github token,
-   otherwise create the user first"
+  "Gets the access token from github, connects it as the repo provider"
   (if (:denied params)
     (-> (response/found "/")
         (assoc :flash (:denied true)))
@@ -40,6 +39,43 @@
         (gh/sync-repositories access_token)
         (response/found "/")))))
 
+(defn set-user! [user session redirect-url]
+  (log/info "Set user in session: " user)
+  (let [new-session (assoc session :user user)]
+    (-> (response/found redirect-url)
+        (assoc :session new-session))))
+
+(defn login-zeus []
+  (response/found (oauth/authorize-uri (zeus/oauth2-params))))
+
+(defn login-zeus-callback [req-token {:keys [params session]}]
+  "Retrieves an access token from the zeus adams server for this user.
+   If this is a connect, fetch the user and add the github token,
+  otherwise create the user first"
+  (if (:denied params)
+    (-> (response/found "/")
+        (assoc :flash (:denied true)))
+    (let [{:keys [access_token refresh_token]}
+          (oauth/get-authentication-response nil req-token (zeus/oauth2-params))
+          xxx (do (println "ACCESS TOKEN: " access_token) 1)
+          remote-zeus-user (zeus/get-user-info access_token)
+          local-user (db/get-user-on-zeusid {:id_zeus (:id remote-zeus-user)})]
+      (if local-user
+        (set-user! local-user session "/")
+        (try
+          (let [new-user {:name (:username remote-zeus-user)
+                          :id_zeus (:id remote-zeus-user)}
+                generated-key (-> new-user
+                                  (db/create-user!))]
+            (log/info "Created new user: " generated-key)
+            (set-user! (assoc new-user :id (:generated_key generated-key)) session "/"))
+          (catch Exception e
+            (do
+              (log/warn "fetched user" remote-zeus-user "already exists, but was not found")
+              (log/warn (:cause (Throwable->map e)))
+              (-> (response/found "/")
+                  (assoc :flash {:error "An error occurred, please try again."})))))))))
+
 (defroutes home-routes
   (GET "/" request (home-page request))
   (GET "/repositories" request (repo-resource request))
@@ -49,4 +85,6 @@
     (-> (response/ok (-> "docs/docs.md" io/resource slurp))
         (response/header "Content-Type" "text/plain; charset=utf-8")))
   (GET "/oauth/github" [] (login-github))
-  (GET "/oauth/github-callback" [& req_token :as req] (login-github-callback req_token req)))
+  (GET "/oauth/github-callback" [& req_token :as req] (login-github-callback req_token req))
+  (GET "/oauth/zeus" [] (login-zeus))
+  (GET "/oauth/oauth-callback" [& req_token :as req] (login-zeus-callback req_token req)))

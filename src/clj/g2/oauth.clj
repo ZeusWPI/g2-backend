@@ -53,7 +53,7 @@
 ;        (change-log-level! LogManager/ROOT_LOGGER_NAME Level/DEBUG)
         (let [access-token (httpclient/post (:access-token-uri oauth2-params)
                                             {:form-params {:code          code
-                                                           ;:grant_type    "authorization_code" ;needed for zeus auth
+                                                           :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
                                                            :client_id     (:client-id oauth2-params)
                                                            :client_secret (:client-secret oauth2-params)
                                                            :redirect_uri  (:redirect-uri oauth2-params)}

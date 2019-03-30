@@ -6,11 +6,11 @@
             [clojure.tools.logging :as log]))
 
 (defn oauth2-params []
-  {:client-id        (env :oauth-consumer-key)
-   :client-secret    (env :oauth-consumer-secret)
-   :authorize-uri    (env :authorize-uri)
+  {:client-id        (env :github-oauth-consumer-key)
+   :client-secret    (env :github-oauth-consumer-secret)
+   :authorize-uri    (env :github-authorize-uri)
    :redirect-uri     (str (env :app-host) "/oauth/github-callback")
-   :access-token-uri (env :access-token-uri)
+   :access-token-uri (env :github-access-token-uri)
    :scope "admin:org admin:org_hook"})
 
 (def base-url "https://api.github.com")
