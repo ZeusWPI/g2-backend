@@ -1,17 +1,10 @@
-(ns g2.github
+(ns g2.git.github
   (:require [g2.config :refer [env]]
             [g2.db.core :as db]
             [clj-http.client :as http]
             [clojure.pprint :refer [pprint]]
             [clojure.tools.logging :as log]))
 
-(defn oauth2-params []
-  {:client-id        (env :github-oauth-consumer-key)
-   :client-secret    (env :github-oauth-consumer-secret)
-   :authorize-uri    (env :github-authorize-uri)
-   :redirect-uri     (str (env :app-host) "/oauth/github-callback")
-   :access-token-uri (env :github-access-token-uri)
-   :scope "admin:org admin:org_hook"})
 
 (def base-url "https://api.github.com")
 

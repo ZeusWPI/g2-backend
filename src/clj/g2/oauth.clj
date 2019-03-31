@@ -4,6 +4,7 @@
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
             [g2.layout :refer [error-page]]
+            [clojure.pprint :refer [pprint]]
             [luminus.http-server :as http]))
 
   ;(:import (org.apache.logging.log4j Level
@@ -29,18 +30,18 @@
 (defn authorize-uri
   "Redirect the user to the grant/authorization page"
   [oauth2-params]
-  (log/info "Oauth params: " oauth2-params)
+  ;(log/info "Oauth params: " oauth2-params)
   (let [state "abc" ;cstf token
         query-map (cond-> {:response_type "code"
                            :client_id     (:client-id oauth2-params)
                            :redirect_uri  (:redirect-uri oauth2-params)}
                     (:scope oauth2-params) (assoc :scope (:scope oauth2-params))
                     state (assoc :state state))
+        xx (do (log/info "Authorize uri map: " query-map) 1)
         query-str (httpclient/generate-query-string query-map)
         authorize-uri (str (:authorize-uri oauth2-params)
                            "?"
                            query-str)]
-    (log/info query-str authorize-uri)
     authorize-uri))
 
 (defn get-authentication-response
@@ -49,19 +50,19 @@
   (if (or true (= csrf-token state))
     (try
       (do
-        (log/info "Requesting access token with code " code)
+        (log/debug "Requesting access token with code " code)
 ;        (change-log-level! LogManager/ROOT_LOGGER_NAME Level/DEBUG)
         (let [access-token (httpclient/post (:access-token-uri oauth2-params)
                                             {:form-params {:code          code
                                                            :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
                                                            :client_id     (:client-id oauth2-params)
                                                            :client_secret (:client-secret oauth2-params)
-                                                           :redirect_uri  (:redirect-uri oauth2-params)}
+                                                           #_:redirect_uri  #_(:redirect-uri oauth2-params)}
                                              ;:basic-auth  [(:client-id oauth2-params) (:client-secret oauth2-params)]
                                              :as          :json
                                              :accept      :json
                                              :insecure? true})]
-          ;(println "Access token response:" access-token)
+          (log/debug "Received access token: "  (:body access-token))
           (:body access-token)))
       (catch Exception e (log/error "Something terrible happened..." e)))
     nil))
