@@ -57,7 +57,7 @@
                                                            :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
                                                            :client_id     (:client-id oauth2-params)
                                                            :client_secret (:client-secret oauth2-params)
-                                                           #_:redirect_uri  #_(:redirect-uri oauth2-params)}
+                                                           :redirect_uri  (:redirect-uri oauth2-params)}
                                              ;:basic-auth  [(:client-id oauth2-params) (:client-secret oauth2-params)]
                                              :as          :json
                                              :accept      :json

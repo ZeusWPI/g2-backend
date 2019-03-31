@@ -39,7 +39,6 @@
         (assoc :flash (:denied true)))
     (let [{:keys [access_token refresh_token]}
           (oauth/get-authentication-response nil req-token (oauth2-params))
-          xxx (do (println "ACCESS TOKEN: " access_token) 1)
           remote-zeus-user (get-user-info access_token)
           local-user (db/get-user-on-zeusid {:zeus-id (:id remote-zeus-user)})]
       (log/info "Remote user: " remote-zeus-user)

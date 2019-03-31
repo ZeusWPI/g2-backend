@@ -12,8 +12,7 @@
   {:client-id        (env :github-oauth-consumer-key)
    :client-secret    (env :github-oauth-consumer-secret)
    :authorize-uri    (env :github-authorize-uri)
-   :redirect-uri     {:auth (str (env :app-host) "/oauth/github-callback/auth")
-                      :provider (str (env :app-host) "/oauth/github-callback/provider")}
+   :redirect-uri     (str (env :app-host) "/oauth/github-callback")
    :access-token-uri (env :github-access-token-uri)
    :scope "admin:org admin:org_hook"})
 
@@ -22,7 +21,7 @@
   (log/info "Auth-goal: " auth-goal)
   (let [oauth2-params (oauth2-params)]
     (if (#{:auth :provider} auth-goal)
-      (->> (assoc oauth2-params :redirect-uri (get-in oauth2-params [:redirect-uri auth-goal]))
+      (->> (assoc oauth2-params :redirect-uri (str (:redirect-uri oauth2-params) "/" (name auth-goal)))
            (oauth/authorize-uri)
            (response/found))
       (layout/error-page {:title "Non-supported auth goal"}))))
