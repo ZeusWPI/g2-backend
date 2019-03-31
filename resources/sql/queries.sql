@@ -1,8 +1,8 @@
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users
-(name, id_zeus)
-VALUES (:name, :id_zeus)
+(name, zeusID, access_token)
+VALUES (:name, :zeus-id, :access-token)
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record
@@ -17,7 +17,7 @@ WHERE id = :id
 
 -- :name get-user-on-zeusid :? :1
 SELECT * FROM users
-WHERE id_zeus = :id_zeus
+WHERE zeusID = :zeus-id
 
 -- :name delete-user! :! :n
 -- :doc deletes a user record given the id

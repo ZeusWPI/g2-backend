@@ -30,17 +30,17 @@
   "Redirect the user to the grant/authorization page"
   [oauth2-params]
   (log/info "Oauth params: " oauth2-params)
-  (let [state "abc"
-        query-string
-        (httpclient/generate-query-string {:response_type "code"
-                                           :client_id     (:client-id oauth2-params)
-                                           :redirect_uri  (:redirect-uri oauth2-params)
-                                           :scope         (:scope oauth2-params)
-                                           :state         state}) ; csrf token
+  (let [state "abc" ;cstf token
+        query-map (cond-> {:response_type "code"
+                           :client_id     (:client-id oauth2-params)
+                           :redirect_uri  (:redirect-uri oauth2-params)}
+                    (:scope oauth2-params) (assoc :scope (:scope oauth2-params))
+                    state (assoc :state state))
+        query-str (httpclient/generate-query-string query-map)
         authorize-uri (str (:authorize-uri oauth2-params)
                            "?"
-                           query-string)]
-    (println state query-string authorize-uri)
+                           query-str)]
+    (log/info query-str authorize-uri)
     authorize-uri))
 
 (defn get-authentication-response

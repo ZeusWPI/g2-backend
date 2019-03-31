@@ -13,7 +13,8 @@
 
 (defn home-page [request]
   (let [repo-providers (db/get-all-repo-providers)]
-    (layout/render request "home.html" {:repo-providers repo-providers})))
+    (layout/render request "home.html" {:repo-providers repo-providers
+                                        :user (-> (get-in request [:session :user]))})))
 
 (defn repo-resource [request]
   (response/ok {:repos (git/get-repositories)}))
@@ -59,12 +60,15 @@
           (oauth/get-authentication-response nil req-token (zeus/oauth2-params))
           xxx (do (println "ACCESS TOKEN: " access_token) 1)
           remote-zeus-user (zeus/get-user-info access_token)
-          local-user (db/get-user-on-zeusid {:id_zeus (:id remote-zeus-user)})]
+          local-user (db/get-user-on-zeusid {:zeus-id (:id remote-zeus-user)})]
+      (log/info "Remote user: " remote-zeus-user)
+      (log/info "Local user: " local-user)
       (if local-user
         (set-user! local-user session "/")
         (try
           (let [new-user {:name (:username remote-zeus-user)
-                          :id_zeus (:id remote-zeus-user)}
+                          :zeus-id (:id remote-zeus-user)
+                          :access-token access_token}
                 generated-key (-> new-user
                                   (db/create-user!))]
             (log/info "Created new user: " generated-key)
@@ -85,6 +89,9 @@
     (-> (response/ok (-> "docs/docs.md" io/resource slurp))
         (response/header "Content-Type" "text/plain; charset=utf-8")))
   (GET "/oauth/github" [] (login-github))
-  (GET "/oauth/github-callback" [& req_token :as req] (login-github-callback req_token req))
+  (GET "/oauth/github-callback" [& req-token :as req] (login-github-callback req-token req))
   (GET "/oauth/zeus" [] (login-zeus))
-  (GET "/oauth/oauth-callback" [& req_token :as req] (login-zeus-callback req_token req)))
+  (GET "/oauth/oauth-callback" [& req-token :as req]
+    ;(log/info "Callback with req: " (pprint req))
+    ;(log/info "Callback with req-token: " (pprint req-token))
+    (login-zeus-callback req-token req)))
