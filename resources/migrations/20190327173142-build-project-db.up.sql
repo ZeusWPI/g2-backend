@@ -18,12 +18,10 @@ CREATE TABLE commit_branch
  foreign key(branch_id) references branches,
  foreign key(commit_id) references commits);
 --;;
-CREATE TABLE project
+CREATE TABLE projects
 (project_id integer primary key autoincrement,
  name varchar not null,
- description varchar not null,
- parent_id integer,
- foreign key(parent_id) references project(project_id));
+ description varchar not null);
 --;;
 CREATE TABLE issues
 (issue_id integer primary key autoincrement,
@@ -36,7 +34,7 @@ CREATE TABLE issues
  foreign key(repo_id) references repo,
  foreign key(project_id) references project);
 --;;
-CREATE TABLE pull_request
+CREATE TABLE pull_requests
 (request_id integer primary key autoincrement,
  author varchar not null,
  branch_id integer not null,

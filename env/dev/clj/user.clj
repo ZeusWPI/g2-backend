@@ -5,7 +5,7 @@
             [mount.core :as mount]
             [g2.figwheel :refer [start-fw stop-fw cljs]]
             [g2.core :refer [start-app]]
-            [g2.db.core]
+            [g2.db.core :refer [*db*] :as db]
             [conman.core :as conman]
             [luminus-migrations.core :as migrations]))
 
@@ -39,4 +39,5 @@
 (defn create-migration [name]
   (migrations/create name (select-keys env [:database-url])))
 
-
+(defn populate []
+      (g2.db.core/*db*/create-project {:name test :description potato}))
