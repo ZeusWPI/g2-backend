@@ -37,9 +37,9 @@
                            :redirect_uri  (:redirect-uri oauth2-params)}
                     (:scope oauth2-params) (assoc :scope (:scope oauth2-params))
                     state (assoc :state state))
-        xx (do (log/info "Authorize uri map: " query-map) 1)
+        _ (do (log/info "Authorize uri map: " query-map) 1)
         query-str (httpclient/generate-query-string query-map)
-        authorize-uri (str (:authorize-uri oauth2-params)
+        authorize-redirect-uri (str (:authorize-redirect-uri oauth2-params)
                            "?"
                            query-str)]
     authorize-uri))
