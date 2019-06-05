@@ -6,26 +6,47 @@
       <title>Welcome to g2</title>
   </head>
   <body>
-    <div id="navbar"></div>
-    <div id="app">
-      <div class="container-fluid">
-        <div class="card-deck">
-          <div class="card-block">
-            <h4>Welcome to g2</h4>
-            <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
-            <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
-            <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
-            <ul>
-              <li>Open DevTools
-              <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1 > General > Console)
-              <li>Check-in "Enable custom formatters"
-              <li>Close DevTools
-              <li>Open DevTools
-            </ul>
-            <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for further details.</p>
-          </div>
-        </div>
+      <div id="navbar">
+          <nav>
+              <a class="nav-link" href="/repositories">Repositories</a>
+              <a class="nav-link" href="/hooks">Hooks</a>
+              <a class="nav-link" href="/repositories/sync">Repositories - sync</a>
+          </nav>
       </div>
+      <div>
+          <h2>Welcome {{user.name}}</h2>
+          <a href="/oauth/zeus">Login with zeus</a>
+          <section>
+          <h3>Repository providers</h3>
+          <a href="/oauth/github?auth-goal=auth">Login with github (todo)</a><br/>
+          <a href="/oauth/github?auth-goal=provider">Login with github - provider</a><br/>
+          <a href="/oauth/github?auth-goal=not-supported">Login with github - not supported</a>
+          <table>
+              <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Secret</th>
+              </tr>
+              {% for provider in repo-providers %}
+              <tr>
+                  <td>{{provider.id}}</td>
+                  <td>{{provider.name}}</td>
+                  <td>{{provider.access_token|subs:0:6}}...</td>
+              </tr>
+              {% endfor %}
+
+          </table>
+          </section>
+          <section>
+        <h3>Projects</h3>
+        <ul>
+            {% for project in projects %}
+            <li>{{project}}</li>
+            {% endfor %}
+        </ul>
+          </section>
+    </div>
+    <div id="app">
     </div>
 
     <!-- scripts and styles -->

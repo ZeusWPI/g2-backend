@@ -48,6 +48,14 @@ During development we have an even better tool. Figwheel will hot load the code 
     
     lein figwheel
 
+#### Using git hooks
+
+Running the application on localhost makes it impossible for github hooks to find it. You have a few applications that can help you with this like ... but you can also do this yourself using simple ssh port forwarding. You need a server with a public ip adres and ssh access.
+
+Using following command all requests to your servers ip on port 9123 will be tunneled to your computer on port 3000. In this way you can register hooks on my.server.ip:9123.
+
+    ssh -R 9123:localhost:3000 my.server.ip
+
 ## Running the tests
 
 TODO
