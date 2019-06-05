@@ -1,3 +1,13 @@
+/*
+  We try to hold onto the ANSI standard. Any deviations from this standard should be documented above the query.
+
+Global deviations
+-----------------
+
+Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite autoincrements 'primary key integers'. MySQL does the same using 'SERIAL primary key'
+*/
+
+
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users

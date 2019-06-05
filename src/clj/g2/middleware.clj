@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [g2.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.webjars :refer [wrap-webjars]]
             [g2.middleware.formats :as formats]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [g2.config :refer [env]]
@@ -16,8 +15,8 @@
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.backends.session :refer [session-backend]])
-  (:import 
-           ))
+  (:import))
+
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -63,7 +62,6 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
-      wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
