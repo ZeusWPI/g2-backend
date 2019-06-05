@@ -1,7 +1,7 @@
 (defproject g2 "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "G2"
+  :url "https://github.com/zeuswpi/g2"
 
   :dependencies [[buddy "2.0.0"]
                  [cheshire "5.8.1"]
@@ -24,12 +24,7 @@
                  [org.clojure/clojurescript "1.10.520" :scope "provided"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
-                 [org.webjars.bower/tether "1.4.4"]
-                 [org.webjars/bootstrap "4.3.1"]
-                 [org.webjars/font-awesome "5.7.2"]
-                 [org.webjars/webjars-locator "0.36"]
                  [org.xerial/sqlite-jdbc "3.25.2"]
-                 [ring-webjars "0.2.0"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.6"]
@@ -37,6 +32,7 @@
 ;                 [org.apache.logging.log4j/log4j-api "2.11.0"]
 ;                 [org.apache.logging.log4j/log4j-core "2.11.0"]
 ;                 [org.apache.logging.log4j/log4j-1.2-api "2.11.0"]
+                 [metosin/reitit "0.3.7"]
                  ]
 
   :min-lein-version "2.0.0"
@@ -49,18 +45,8 @@
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-immutant "2.1.0"]
-            [lein-sassc "0.10.4"]
             [lein-auto "0.1.2"]]
-   :sassc
-   [{:src "resources/scss/screen.scss"
-     :output-to "resources/public/css/screen.css"
-     :style "nested"
-     :import-path "resources/scss"}]
 
-   :auto
-   {"sassc" {:file-pattern #"\.(scss|sass)$" :paths ["resources/scss"]}}
-
-  :hooks [leiningen.sassc]
   :clean-targets ^{:protect false}
   [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :figwheel
@@ -97,7 +83,7 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
+   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "-Xverify:none"]
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.4.0"]
                                  [doo "0.1.11"]
@@ -123,16 +109,13 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true}}}}
-
-
-
                   :doo {:build "test"}
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
-   :project/test {:jvm-opts ["-Dconf=test-config.edn"]
+   :project/test {:jvm-opts ["-Dconf=test-config.edn" "-Xverify:none"]
                   :resource-paths ["env/test/resources"]
                   :cljsbuild
                   {:builds
@@ -142,9 +125,7 @@
                      {:output-to "target/test.js"
                       :main "g2.doo-runner"
                       :optimizations :whitespace
-                      :pretty-print true}}}}
-
-                  }
+                      :pretty-print true}}}}}
    :profiles/dev {}
    :profiles/test {}}
 	:repl-options {

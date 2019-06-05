@@ -20,10 +20,7 @@
   (response/ok {:repos (db/get-github-repos)}))
 
 (defroutes home-routes
-  (GET "/" request (home-page request))
-  (GET "/repositories" request (repo-resource request))
-  (GET "/repositories/sync" _ (do (git/sync-repositories) (response/found "/")))
-  (DELETE "/hooks/:id" [id :as req] (log/info "DELETE HOOK: " (pprint req)) (response/found "/"))
+  (DELETE "/hooks/:id" [id :as req])
   (GET "/docs" []
     (-> (response/ok (-> "docs/docs.md" io/resource slurp))
         (response/header "Content-Type" "text/plain; charset=utf-8")))
@@ -31,3 +28,20 @@
   (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req))
   (GET "/oauth/zeus" [] (zeus-auth/login-zeus))
   (GET "/oauth/oauth-callback" [& params :as req] (zeus-auth/login-zeus-callback params req)))
+
+(defn home []
+  [["/" {:get {:handler home-page}}]
+   ["/repositories"
+    ["" {:get {:handler repo-resource}}]
+    ["/sync" {:post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]]
+   ["/repo-providers"
+    {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
+   ["/hooks"
+    ["/:id"
+     {:delete {:summary "delete a git hook"
+               :parameters {:path {:id int?}}
+               :handler (fn [req]
+                          (log/info "DELETE HOOK: " (pprint req))
+                          (response/ok))}}]] ;TODO test this
+   ;TODO move routes from home-routes to here
+   ])
