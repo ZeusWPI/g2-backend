@@ -6,6 +6,7 @@
             [g2.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.webjars :refer [wrap-webjars]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [g2.middleware.formats :as formats]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [g2.config :refer [env]]
@@ -65,6 +66,8 @@
       wrap-auth
       wrap-webjars
       wrap-flash
+      (wrap-cors :access-control-allow-origin ["*"]
+                 :access-control-allow-methods [:get :put :post :delete])
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
