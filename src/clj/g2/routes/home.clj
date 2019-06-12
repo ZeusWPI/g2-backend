@@ -17,7 +17,10 @@
                                         :user (-> (get-in request [:session :user]))})))
 
 (defn repo-resource [request]
-  (response/ok {:repos (db/get-github-repos)}))
+  (response/ok {:repos (map (fn [repo]
+                              (assoc repo :image (str "https://zeus.gent/assets/images/Logos_"
+                                                    (:name repo) ".svg")))
+                            (db/get-github-repos))}))
 
 (defroutes home-routes
   (GET "/" request (home-page request))
