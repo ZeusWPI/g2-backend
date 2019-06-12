@@ -66,7 +66,7 @@
       wrap-auth
       wrap-webjars
       wrap-flash
-      (wrap-cors :access-control-allow-origin ["*"]
+      (wrap-cors :access-control-allow-origin [#"*"]
                  :access-control-allow-methods [:get :put :post :delete])
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
