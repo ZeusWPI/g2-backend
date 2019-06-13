@@ -28,6 +28,28 @@
 (defn repo-get [id]
   (response/ok (db/get-repo {:id id})))
 
+(defn projects-get [request]
+  (response/ok (db/get-projects)))
+
+(defn project-get [id]
+  (response/ok (db/get-project {:id id})))
+
+(defn project-create [name description]
+  (do
+  (log/info "CREATE PROJECT: " name " " description)
+  (db/create-project! {:name name, :description description}))
+  (response/ok))
+
+(defn project-delete [id]
+  (do
+  (db/delete-project! {:id id})
+  (response/ok)))
+
+(defn link-repo-to-project [id pid]
+  (do
+  (db/link-repo-to-project! {:project_id pid, :repo_id id})
+  (response/ok)))
+
 (defroutes home-routes-old
   (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
   (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req)))
@@ -38,9 +60,20 @@
    ["/repository"
     ["" {:get {:handler repo-resource}}]
     ["/sync" {:post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]
+    ["/:id" 
+      ["/" {:get {:parameters {:path {:id int?}}
+                 :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
+      ["/link/:pid" {:put {:parameters {:path {:pid int?, :id int?}}
+                           :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]]]
+   ["/project"
+    ["" {:get {:handler projects-get}
+         :post {:parameters {:body {:name string?, :description string?}}
+                :handler (fn [{{{:keys [name description]} :body} :parameters}] (project-create name description))}}]
     ["/:id" {:get {:parameters {:path {:id int?}}
-                   :handler (fn [req] (let [id (get-in req [:path-params :id])]
-                                        (repo-get id)))}}]]
+                   :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
+             :delete {:parameters {:path {:id int?}}
+                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
+    ]
    ["/repo-providers"
     {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
    ["/hooks"
