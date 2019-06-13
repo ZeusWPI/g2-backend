@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <meta charset="UTF-8"/>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Welcome to g2</title>
-  </head>
-  <body>
-      <div id="navbar">
-          <nav>
-              <a class="nav-link" href="/repository">Repositories</a>
-              <a class="nav-link" href="/hooks">Hooks</a>
-              <a class="nav-link" href="/repository/sync">Repositories - sync</a>
-          </nav>
-      </div>
-      <div>
-          <h2>Welcome {{user.name}}</h2>
-          <a href="/oauth/zeus">Login with zeus</a>
-          <section>
-          <h3>Repository providers</h3>
-          <a href="/oauth/github?auth-goal=auth">Login with github (todo)</a><br/>
-          <a href="/oauth/github?auth-goal=provider">Login with github - provider</a><br/>
-          <a href="/oauth/github?auth-goal=not-supported">Login with github - not supported</a>
-          <table>
-              <tr>
-                  <th>Id</th>
-                  <th>Name</th>
-                  <th>Secret</th>
-              </tr>
-              {% for provider in repo-providers %}
-              <tr>
-                  <td>{{provider.id}}</td>
-                  <td>{{provider.name}}</td>
-                  <td>{{provider.access_token|subs:0:6}}...</td>
-              </tr>
-              {% endfor %}
 
-          </table>
-          </section>
-          <section>
-        <h3>Projects</h3>
-        <ul>
-            {% for project in projects %}
-            <li>{{project}}</li>
-            {% endfor %}
-        </ul>
-          </section>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to g2</title>
+</head>
+
+<body>
+    <p>Find the swagger api <a href="/api-docs/">here</a></p>
+    <ul>
+        <li> <a href="/repository">Repositories</a></li>
+        <li> <a href="/hooks">Hooks</a></li>
+        <li> <a href="/repository/sync">Repositories - sync</a></li>
+    </ul>
+    <div>
+        <h2>Welcome {{user.name}}</h2>
+        <a href="/oauth/zeus">Login with zeus</a>
+        <section>
+            <h3>Repository providers</h3>
+            <a href="/oauth/github?auth-goal=auth">Login with github (todo)</a><br />
+            <a href="/oauth/github?auth-goal=provider">Login with github - provider</a><br />
+            <a href="/oauth/github?auth-goal=not-supported">Login with github - not supported</a>
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Secret</th>
+                </tr>
+                {% for provider in repo-providers %}
+                <tr>
+                    <td>{{provider.id}}</td>
+                    <td>{{provider.name}}</td>
+                    <td>{{provider.access_token|subs:0:6}}...</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </section>
+        <section>
+            <h3>Projects</h3>
+            <ul>
+                {% for project in projects %}
+                <li>{{project}}</li>
+                {% endfor %}
+            </ul>
+        </section>
     </div>
     <div id="app">
     </div>
@@ -56,5 +57,6 @@
         var csrfToken = "{{csrf-token}}";
     </script>
     {% script "/js/app.js" %}
-  </body>
+</body>
+
 </html>
