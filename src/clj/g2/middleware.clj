@@ -19,16 +19,6 @@
   (:import))
 
 
-(defn wrap-internal-error [handler]
-  (fn [req]
-    (try
-      (handler req)
-      (catch Throwable t
-        (log/error t (.getMessage t))
-        (error-page {:status 500
-                     :title "Something very bad has happened!"
-                     :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
-
 (defn wrap-csrf [handler]
   (wrap-anti-forgery
     handler
@@ -70,5 +60,4 @@
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
-            (dissoc :session)))
-      wrap-internal-error))
+            (dissoc :session)))))

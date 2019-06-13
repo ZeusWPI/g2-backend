@@ -8,9 +8,9 @@
   <body>
       <div id="navbar">
           <nav>
-              <a class="nav-link" href="/repositories">Repositories</a>
+              <a class="nav-link" href="/repository">Repositories</a>
               <a class="nav-link" href="/hooks">Hooks</a>
-              <a class="nav-link" href="/repositories/sync">Repositories - sync</a>
+              <a class="nav-link" href="/repository/sync">Repositories - sync</a>
           </nav>
       </div>
       <div>
@@ -50,14 +50,7 @@
     </div>
 
     <!-- scripts and styles -->
-    {% style "/assets/bootstrap/css/bootstrap.min.css" %}
-    {% style "/assets/font-awesome/css/all.css" %}
     {% style "/css/screen.css" %}
-
-    {% script "/assets/jquery/jquery.min.js" %}
-    {% script "/assets/font-awesome/js/all.js" %}
-    {% script "/assets/tether/dist/js/tether.min.js" %}
-    {% script "/assets/bootstrap/js/bootstrap.min.js" %}
 
     <script type="text/javascript">
         var csrfToken = "{{csrf-token}}";
