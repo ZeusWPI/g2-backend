@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [g2.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.webjars :refer [wrap-webjars]]
             [ring.middleware.cors :refer [wrap-cors]]
             [g2.middleware.formats :as formats]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
