@@ -6,7 +6,6 @@
             [clojure.tools.logging :as log]
             [clojure.set :as set]))
 
-
 (def base-url "https://api.github.com")
 
 (defn sync-repositories
@@ -16,7 +15,10 @@
   ([access_token]
    (log/info "Syncing github repositories...")
    (let [response-body (:body (http/get (str base-url "/orgs" "/" (env :github-organization) "/repos?per_page=100") {:as :json}))
-         remote_repo_map (reduce (fn [acc repo] (assoc acc (:id repo) (set/rename-keys (select-keys repo [:id :name :description :html_url]) {:html_url :url}))) {} response-body)
+         remote_repo_map (reduce (fn [acc repo]
+                                   (assoc acc (:id repo)
+                                          (set/rename-keys (select-keys repo [:id :name :description :html_url])
+                                                           {:html_url :url}))) {} response-body)
          remote_ids (set (map :id response-body))
          ; Local repos, id's and map
          local-repos (db/get-repos) ;TODO flter on github

@@ -1,6 +1,7 @@
 (ns g2.oauth
   (:require [g2.config :refer [env]]
             [clj-http.client :as httpclient]
+            [clj-http.util :as httputil]
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
             [g2.layout :refer [error-page]]
@@ -31,41 +32,42 @@
   "Redirect the user to the grant/authorization page"
   [oauth2-params]
   ;(log/info "Oauth params: " oauth2-params)
-  (let [state "abc" ;cstf token
+  (let [state nil #_"abc" ;cstf token
         query-map (cond-> {:response_type "code"
                            :client_id     (:client-id oauth2-params)
                            :redirect_uri  (:redirect-uri oauth2-params)}
                     (:scope oauth2-params) (assoc :scope (:scope oauth2-params))
                     state (assoc :state state))
-        _ (do (log/info "Authorize uri map: " query-map) 1)
         query-str (httpclient/generate-query-string query-map)
-        authorize-redirect-uri (str (:authorize-redirect-uri oauth2-params)
-                           "?"
-                           query-str)]
-    authorize-uri))
+        send_user_to (str (:authorize-uri oauth2-params)
+                          "?"
+                          query-str)]
+    send_user_to))
 
 (defn get-authentication-response
   "Request an access token with the obtained unique code from the grant page"
   [csrf-token {:keys [state code]} oauth2-params]
-  (if (or true (= csrf-token state))
+  (if (or true (= csrf-token state)) ; TODO add checking of csrf state
     (try
       (do
         (log/debug "Requesting access token with code " code)
 ;        (change-log-level! LogManager/ROOT_LOGGER_NAME Level/DEBUG)
-        (let [access-token (httpclient/post (:access-token-uri oauth2-params)
-                                            {:form-params {:code          code
-                                                           :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
-                                                           :client_id     (:client-id oauth2-params)
-                                                           :client_secret (:client-secret oauth2-params)
-                                                           :redirect_uri  (:redirect-uri oauth2-params)}
-                                             ;:basic-auth  [(:client-id oauth2-params) (:client-secret oauth2-params)]
-                                             :as          :json
-                                             :accept      :json
-                                             :insecure? true})]
-          (log/debug "Received access token: "  (:body access-token))
-          (:body access-token)))
-      (catch Exception e (log/error "Something terrible happened..." e)))
-    nil))
+        (let [resp (httpclient/post (:access-token-uri oauth2-params)
+                                    {:form-params {:code          code
+                                                   :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
+                                                   :client_id     (:client-id oauth2-params)
+                                                   :client_secret (:client-secret oauth2-params)
+                                                   :redirect_uri  (:redirect-uri oauth2-params)}
+                                     :as          :json
+                                     :throw-exceptions false
+                                     :accept      :json
+                                     :insecure? true})]
+          (condp = (:status resp)
+            200 (:body resp)
+            401 (-> {:status 401 :body "Invalid authentication credentials"})
+            {:status 500 :body "Something went pear-shape when trying to authenticate"}))))
+    (log/info "Invalid csrf token whilst authenticating") ))
+
 
 ;; These refresh functions are not tested or used yet
 

@@ -27,22 +27,24 @@
 ;;; Login handlers
 
 
-(defn login-zeus []
-  (response/found (oauth/authorize-uri (oauth2-params))))
+(defn login-zeus [req]
+  (response/found
+   (oauth/authorize-uri (oauth2-params))))
 
-(defn login-zeus-callback [req-token {:keys [params session]}]
+(defn login-zeus-callback
   "Retrieves an access token from the zeus adams server for this user.
    If this is a connect, fetch the user and add the github token,
   otherwise create the user first"
-  (if (:denied params)
-    (-> (response/found "/")
+  [{:keys [params session]}]
+  (if (:error params)
+    (-> (response/unauthorized "User canceled the authentication")
         (assoc :flash (:denied true)))
     (let [{:keys [access_token refresh_token]}
-          (oauth/get-authentication-response nil req-token (oauth2-params))
+          (oauth/get-authentication-response nil params (oauth2-params))
           remote-zeus-user (get-user-info access_token)
           local-user (db/get-user-on-zeusid {:zeus-id (:id remote-zeus-user)})]
-      (log/info "Remote user: " remote-zeus-user)
-      (log/info "Local user: " local-user)
+      (log/debug "Remote user: " remote-zeus-user)
+      (log/debug "Local user: " local-user)
       (if local-user
         (login/set-user! local-user session "/")
         (try
@@ -51,7 +53,7 @@
                           :access-token access_token}
                 generated-key (-> new-user
                                   (db/create-user!))]
-            (log/info "Created new user: " generated-key)
+            (log/debug "Created new user: " generated-key)
             (login/set-user! (assoc new-user :id (:generated_key generated-key)) session "/"))
           (catch Exception e
             (do
