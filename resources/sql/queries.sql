@@ -77,3 +77,32 @@ WHERE repo_id = :id
 UPDATE repos
 SET name = :name, description = :description, url = :url
 WHERE git_id = :git_id
+
+/*
+  Projects
+*/
+
+-- :name get-project :? :1
+SELECT * FROM projects
+WHERE project_id = :id
+
+-- :name get-projects :? :*
+SELECT * FROM projects
+
+-- :name create-project! :! :1
+INSERT INTO projects
+(name, description)
+VALUES (:name, :description)
+
+-- :name delete-project! :! :1
+DELETE FROM projects
+WHERE project_id = :id
+
+/*
+  Projects and Repositories
+*/
+
+-- :name link-repo-to-project! :! :1
+UPDATE repos
+SET project_id = :project_id
+WHERE repo_id = :repo_id
