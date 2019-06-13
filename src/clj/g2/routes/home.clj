@@ -30,9 +30,7 @@
 
 (defroutes home-routes-old
   (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
-  (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req))
-  (GET "/oauth/zeus" [] (zeus-auth/login-zeus))
-  (GET "/oauth/oauth-callback" [& params :as req] (zeus-auth/login-zeus-callback params req)))
+  (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req)))
 
 (defn home-routes []
   [["/" {:get {:handler home-page}}]
