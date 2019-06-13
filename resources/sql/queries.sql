@@ -11,8 +11,8 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users
-(name, zeusID, access_token)
-VALUES (:name, :zeus-id, :access-token)
+(name, zeus_id, access_token)
+VALUES (:name, :zeus_id, :access_token)
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record
@@ -27,7 +27,7 @@ WHERE id = :id
 
 -- :name get-user-on-zeusid :? :1
 SELECT * FROM users
-WHERE zeusID = :zeus-id
+WHERE zeus_id = :zeus_id
 
 -- :name delete-user! :! :n
 -- :doc deletes a user record given the id
