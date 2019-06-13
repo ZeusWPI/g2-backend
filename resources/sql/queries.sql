@@ -61,7 +61,7 @@ SELECT * FROM repos
 
 -- :name get-repo :? :1
 SELECT * FROM repos
-WHERE id = :id
+WHERE repo_id = :id
 
 -- :name update-repo! :! :n
 UPDATE repos

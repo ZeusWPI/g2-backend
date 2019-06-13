@@ -4,7 +4,7 @@ CREATE TABLE projects
  description varchar not null);
 --;;
 CREATE TABLE repos
-(id integer primary key autoincrement,
+(repo_id integer primary key autoincrement,
  git_id integer not null,
  name varchar not null,
  description varchar,
@@ -16,7 +16,7 @@ CREATE TABLE branches
 (branch_id integer primary key autoincrement,
  name varchar not null,
  repo_id integer not null,
- foreign key(repo_id) references repo);
+ foreign key(repo_id) references repos);
 --;;
 CREATE TABLE issues
 (issue_id integer primary key autoincrement,
@@ -26,5 +26,5 @@ CREATE TABLE issues
  time varchar not null,
  repo_id integer not null,
  project_id integer not null,
- foreign key(repo_id) references repo,
- foreign key(project_id) references project);
+ foreign key(repo_id) references repos,
+ foreign key(project_id) references projects);
