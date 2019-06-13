@@ -17,15 +17,20 @@
                                         :user (-> (get-in request [:session :user]))})))
 
 (defn repo-resource [request]
+<<<<<<< HEAD
   (response/ok {:repos (map (fn [repo]
                               (assoc repo :image (str "https://zeus.gent/assets/images/Logos_"
                                                     (:name repo) ".svg")))
-                            (db/get-github-repos))}))
+                            (db/get-repos))}))
+
+(defn repo-get [id]
+  (response/ok (db/get-repo {:id id})))
 
 (defroutes home-routes
   (GET "/" request (home-page request))
   (GET "/repositories" request (repo-resource request))
   (GET "/repositories/sync" _ (do (git/sync-repositories) (response/found "/")))
+  (GET "/repository/:id" [id :as request] (repo-get id))
   (DELETE "/hooks/:id" [id :as req] (log/info "DELETE HOOK: " (pprint req)) (response/found "/"))
   (GET "/docs" []
     (-> (response/ok (-> "docs/docs.md" io/resource slurp))

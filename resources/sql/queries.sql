@@ -51,15 +51,19 @@ SELECT * FROM repository_providers
   Repositories
 */
 
--- :name create-github-repo! :! :1
-INSERT INTO github_repositories
-(id, name, description)
-VALUES (:id, :name, :description)
+-- :name create-repo! :! :1
+INSERT INTO repos
+(git_id, name, description, url)
+VALUES (:id, :name, :description, :url)
 
--- :name get-github-repos :? :*
-SELECT * FROM github_repositories
+-- :name get-repos :? :*
+SELECT * FROM repos
 
--- :name update-github-repo! :! :n
-UPDATE github_repositories
-SET name = :name, description = :description
-WHERE id = :id
+-- :name get-repo :? :1
+SELECT * FROM repos
+WHERE repo_id = :id
+
+-- :name update-repo! :! :n
+UPDATE repos
+SET name = :name, description = :description, url = :url
+WHERE git_id = :git_id
