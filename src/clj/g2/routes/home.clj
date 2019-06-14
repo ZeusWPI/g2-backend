@@ -31,23 +31,28 @@
   (response/ok (db/get-projects)))
 
 (defn project-get [id]
-  (response/ok (db/get-project {:id id})))
+  (log/debug "Get project" id)
+  (let [project (db/get-project {:id id})]
+    (if-not (nil? project)
+      (response/ok project)
+      (response/not-found))))
 
 (defn project-create [name description]
   (do
-    (log/info "CREATE PROJECT: " name " " description)
+    (log/debug "Create project: " name " " description)
     (let [insert_id (db/create-project! {:name name, :description description})]
       (response/ok {:new_project_id (get insert_id (keyword "last_insert_rowid()"))}))))
 
 (defn project-delete [id]
   (do
     (db/delete-project! {:id id})
-    (response/ok)))
+    (log/debug "Delete project" id)
+    (response/ok [])))
 
 (defn link-repo-to-project [id pid]
   (do
     (db/link-repo-to-project! {:project_id pid, :repo_id id})
-    (response/ok)))
+    (response/no-content)))
 
 (defroutes home-routes-old
   (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
