@@ -58,7 +58,10 @@ Using following command all requests to your servers ip on port 9123 will be tun
 
 ## Running the tests
 
-TODO
+To run tests run the next command. They will autodetect changes and rerun themselves automatically.
+
+	lein test-refresh
+
 
 ## Deployment
 

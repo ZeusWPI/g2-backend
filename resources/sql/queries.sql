@@ -61,17 +61,17 @@ SELECT * FROM repository_providers
   Repositories
 */
 
--- :name create-repo! :! :1
+-- :name create-repo! :insert :raw
 INSERT INTO repos
 (git_id, name, description, url)
-VALUES (:id, :name, :description, :url)
+VALUES (:git_id, :name, :description, :url)
 
 -- :name get-repos :? :*
 SELECT * FROM repos
 
 -- :name get-repo :? :1
 SELECT * FROM repos
-WHERE repo_id = :id
+WHERE repo_id = :repo_id
 
 -- :name update-repo! :! :n
 UPDATE repos
@@ -89,7 +89,7 @@ WHERE project_id = :id
 -- :name get-projects :? :*
 SELECT * FROM projects
 
--- :name create-project! :! :1
+-- :name create-project! :insert :raw
 INSERT INTO projects
 (name, description)
 VALUES (:name, :description)

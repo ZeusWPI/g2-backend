@@ -35,15 +35,32 @@
 (deftest test-repositories
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (is (= 1 (db/create-repo!
-              {:id 1234
-               :name "g2"
-               :description "The best project"
-               :url "https://github.com/zeuswpi/g2"})))
-    (is (= {:repo_id 1
-            :git_id 1234
-            :name "g2"
-            :description "The best project"
-            :url "https://github.com/zeuswpi/g2"
-            :project_id nil}
-           (db/get-repo t-conn {:id 1})))))
+    (let [insert_id (db/create-repo!
+                     t-conn
+                     {:git_id 1234
+                      :name "g2"
+                      :description "The best project"
+                      :url "https://github.com/zeuswpi/g2"})
+          id (get insert_id (keyword "last_insert_rowid()"))
+          result (db/get-repo t-conn {:repo_id id})]
+      (is (= {:repo_id id
+              :git_id 1234
+              :name "g2"
+              :description "The best project"
+              :url "https://github.com/zeuswpi/g2"
+              :project_id nil}
+             result)))))
+
+(deftest test-projects
+  (jdbc/with-db-transaction [t-conn *db*]
+    (jdbc/db-set-rollback-only! t-conn)
+    (let [insert_id (db/create-project!
+                     t-conn
+                     {:name "test name"
+                      :description "test description"})
+          id (get insert_id (keyword "last_insert_rowid()"))
+          result (db/get-project t-conn {:id id})]
+      (is (= {:project_id id
+              :name "test name"
+              :description "test description"}
+             result)))))

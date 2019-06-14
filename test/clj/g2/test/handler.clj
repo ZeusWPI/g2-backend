@@ -18,19 +18,22 @@
 
 (deftest test-app
   #_(testing "main route"
-    (let [response (app (request :get "/"))]
-      (is (= 200 (:status response)))))
+      (let [response (app (request :get "/"))]
+        (is (= 200 (:status response)))))
 
   #_(testing "not-found route"
-    (let [response (app (request :get "/invalid"))]
-      (is (= 404 (:status response)))))
+      (let [response (app (request :get "/invalid"))]
+        (is (= 404 (:status response)))))
   (testing "services"
 
     (testing "success"
       (let [response (app (-> (request :post "/project")
-                              (json-body {:name "project-name", :description "project-description"})))]
+                              (json-body {:name "project-name", :description "project-description"})))
+            generated_id (:new_project_id (m/decode-response-body response))
+            fetched_project (app (-> (request :get (str "/project/" generated_id))))
+            fetched_project_body (m/decode-response-body fetched_project)]
         (is (= 200 (:status response)))
-        #_(is (= {:total 16} (m/decode-response-body response)))))
+        (is (= {:project_id generated_id :name "project-name", :description "project-description"} fetched_project_body))))
 
     (testing "parameter coercion error"
       (let [response (app (-> (request :post "/project")
@@ -38,14 +41,14 @@
         (is (= 400 (:status response)))))
 
     #_(testing "response coercion error"
-      (let [response (app (-> (request :post "/api/math/plus")
-                              (json-body {:x -10, :y 6})))]
-        (is (= 500 (:status response)))))
+        (let [response (app (-> (request :post "/api/math/plus")
+                                (json-body {:x -10, :y 6})))]
+          (is (= 500 (:status response)))))
 
     #_(testing "content negotiation"
-      (let [response (app (-> (request :post "/api/math/plus")
-                              (body (pr-str {:x 10, :y 6}))
-                              (content-type "application/edn")
-                              (header "accept" "application/transit+json")))]
-        (is (= 200 (:status response)))
-        (is (= {:total 16} (m/decode-response-body response)))))))
+        (let [response (app (-> (request :post "/api/math/plus")
+                                (body (pr-str {:x 10, :y 6}))
+                                (content-type "application/edn")
+                                (header "accept" "application/transit+json")))]
+          (is (= 200 (:status response)))
+          (is (= {:total 16} (m/decode-response-body response)))))))
