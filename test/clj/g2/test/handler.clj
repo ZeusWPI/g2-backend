@@ -4,7 +4,8 @@
             [g2.handler :refer :all]
             [g2.middleware.formats :as formats]
             [muuntaja.core :as m]
-            [mount.core :as mount]))
+            [mount.core :as mount]
+            [clojure.tools.logging :as log]))
 
 (defn parse-json [body]
   (m/decode formats/instance "application/json" body))
@@ -17,23 +18,30 @@
     (f)))
 
 (deftest test-app
-  #_(testing "main route"
+  (testing "main route"
       (let [response (app (request :get "/"))]
         (is (= 200 (:status response)))))
 
-  #_(testing "not-found route"
+  (testing "not-found route"
       (let [response (app (request :get "/invalid"))]
         (is (= 404 (:status response)))))
+
   (testing "services"
 
-    (testing "success"
-      (let [response (app (-> (request :post "/project")
-                              (json-body {:name "project-name", :description "project-description"})))
-            generated_id (:new_project_id (m/decode-response-body response))
-            fetched_project (app (-> (request :get (str "/project/" generated_id))))
-            fetched_project_body (m/decode-response-body fetched_project)]
-        (is (= 200 (:status response)))
-        (is (= {:project_id generated_id :name "project-name", :description "project-description"} fetched_project_body))))
+    (testing "project"
+      (let [resp-post (app (-> (request :post "/project")
+                               (json-body {:name "project-name", :description "project-description"})))
+            generated_id (:new_project_id (m/decode-response-body resp-post))
+            ; Retrieve the created project
+            resp-get (app (-> (request :get (str "/project/" generated_id))))
+            body-get (m/decode-response-body resp-get)
+            ; Delete the project
+            resp-delete (app (-> (request :delete (str "/project/" generated_id))))
+            ; Get the project after it's deleted
+            resp-get-after-delete (app (-> (request :get (str "/project/" generated_id))))]
+        (is (= 200 (:status resp-get)))
+        (is (= {:project_id generated_id :name "project-name", :description "project-description"} body-get))
+        (is (= 404 (:status resp-get-after-delete)))))
 
     (testing "parameter coercion error"
       (let [response (app (-> (request :post "/project")
