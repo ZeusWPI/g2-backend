@@ -103,8 +103,8 @@
       (app-routes)]
      {:conflicts nil})
     (ring/routes
-     (ring/create-resource-handler
+     #_(ring/create-resource-handler
       {:path "/"})
-     wrap-content-type
+     #_wrap-content-type
      (ring/create-default-handler)))))
 
