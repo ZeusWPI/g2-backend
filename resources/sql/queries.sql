@@ -84,7 +84,7 @@ WHERE git_id = :git_id
 
 -- :name get-project :? :1
 SELECT * FROM projects
-WHERE project_id = :id
+WHERE project_id = :project_id
 
 -- :name get-projects :? :*
 SELECT * FROM projects

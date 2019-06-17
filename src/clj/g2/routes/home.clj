@@ -24,15 +24,20 @@
                                                       (:name repo) ".svg")))
                             (db/get-repos))}))
 
-(defn repo-get [id]
-  (response/ok (db/get-repo {:repo_id id})))
+(defn repo-get
+  "Fetch 1 repo"
+  [repo_id]
+  (let [repo (db/get-repo {:repo_id repo_id})]
+    (if-not (nil? repo)
+      (response/ok repo)
+      (response/not-found {:msg "Repository not found"}))))
 
 (defn projects-get [request]
   (response/ok (db/get-projects)))
 
-(defn project-get [id]
-  (log/debug "Get project" id)
-  (let [project (db/get-project {:id id})]
+(defn project-get [project_id]
+  (log/debug "Get project" project_id)
+  (let [project (db/get-project {:project_id project_id})]
     (if-not (nil? project)
       (response/ok project)
       (response/not-found))))
@@ -47,7 +52,7 @@
   (do
     (db/delete-project! {:id id})
     (log/debug "Delete project" id)
-    (response/ok [])))
+    (response/no-content)))
 
 (defn link-repo-to-project [id pid]
   (do
