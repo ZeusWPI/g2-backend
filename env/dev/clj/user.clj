@@ -11,13 +11,22 @@
 
 (alter-var-root #'s/*explain-out* (constantly expound/printer))
 
-(defn start []
+(add-tap (bound-fn* clojure.pprint/pprint))
+
+(defn start
+  "Starts application.
+  You'll usually want to run this on startup."
+  []
   (mount/start-without #'g2.core/repl-server))
 
-(defn stop []
+(defn stop
+  "Stops application."
+  []
   (mount/stop-except #'g2.core/repl-server))
 
-(defn restart []
+(defn restart
+  "Restarts application."
+  []
   (stop)
   (start))
 

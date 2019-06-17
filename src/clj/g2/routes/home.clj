@@ -11,8 +11,7 @@
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]
             [reitit.swagger :as swagger]
-            [reitit.swagger-ui :as swagger-ui]
-            ))
+            [reitit.swagger-ui :as swagger-ui]))
 
 (defn home-page [request]
   (let [repo-providers (db/get-all-repo-providers)]
@@ -25,30 +24,40 @@
                                                       (:name repo) ".svg")))
                             (db/get-repos))}))
 
-(defn repo-get [id]
-  (response/ok (db/get-repo {:id id})))
+(defn repo-get
+  "Fetch 1 repo"
+  [repo_id]
+  (let [repo (db/get-repo {:repo_id repo_id})]
+    (if-not (nil? repo)
+      (response/ok repo)
+      (response/not-found {:msg "Repository not found"}))))
 
 (defn projects-get [request]
   (response/ok (db/get-projects)))
 
-(defn project-get [id]
-  (response/ok (db/get-project {:id id})))
+(defn project-get [project_id]
+  (log/debug "Get project" project_id)
+  (let [project (db/get-project {:project_id project_id})]
+    (if-not (nil? project)
+      (response/ok project)
+      (response/not-found))))
 
 (defn project-create [name description]
   (do
-  (log/info "CREATE PROJECT: " name " " description)
-  (db/create-project! {:name name, :description description}))
-  (response/ok))
+    (log/debug "Create project: " name " " description)
+    (let [insert_id (db/create-project! {:name name, :description description})]
+      (response/ok {:new_project_id (get insert_id (keyword "last_insert_rowid()"))}))))
 
 (defn project-delete [id]
   (do
-  (db/delete-project! {:id id})
-  (response/ok)))
+    (db/delete-project! {:id id})
+    (log/debug "Delete project" id)
+    (response/no-content)))
 
 (defn link-repo-to-project [id pid]
   (do
-  (db/link-repo-to-project! {:project_id pid, :repo_id id})
-  (response/ok)))
+    (db/link-repo-to-project! {:project_id pid, :repo_id id})
+    (response/no-content)))
 
 (defroutes home-routes-old
   (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
@@ -60,11 +69,11 @@
    ["/repository"
     ["" {:get {:handler repo-resource}}]
     ["/sync" {:post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]
-    ["/:id" 
-      ["/" {:get {:parameters {:path {:id int?}}
-                 :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
-      ["/link/:pid" {:put {:parameters {:path {:pid int?, :id int?}}
-                           :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]]]
+    ["/:id"
+     ["" {:get {:parameters {:path {:id int?}}
+                :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
+     ["/link/:pid" {:put {:parameters {:path {:pid int?, :id int?}}
+                          :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]]]
    ["/project"
     ["" {:get {:handler projects-get}
          :post {:parameters {:body {:name string?, :description string?}}
@@ -72,8 +81,7 @@
     ["/:id" {:get {:parameters {:path {:id int?}}
                    :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
              :delete {:parameters {:path {:id int?}}
-                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
-    ]
+                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]]
    ["/repo-providers"
     {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
    ["/hooks"
@@ -89,5 +97,5 @@
                                                      (github-auth/login-github-callback req))}}]
     ["/zeus" {:get {:handler zeus-auth/login-zeus}}]
     ["/oauth-callback" {:get {#_:parameters #_{:query {:code string?
-                                                   :error string?}}
+                                                       :error string?}}
                               :handler zeus-auth/login-zeus-callback}}]]])

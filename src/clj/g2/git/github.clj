@@ -35,7 +35,7 @@
      (log/debug (format "Creating %d new repos" (count new_ids)))
      (doseq [git_id new_ids]
        (let [remote_repo (get remote_repo_map git_id)]
-         (db/create-repo! (assoc remote_repo :git_id (:id remote_repo)))))
+         (db/create-repo! (set/rename-keys remote_repo {:id :git_id}))))
      ;Update local repositories with remote data
      (log/debug (format "Updating %d of %d repos" (count update_ids) (count common_ids)))
      (doseq [git_id update_ids]
