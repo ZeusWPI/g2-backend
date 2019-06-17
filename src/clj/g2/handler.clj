@@ -105,6 +105,6 @@
     (ring/routes
      #_(ring/create-resource-handler
       {:path "/"})
-     #_wrap-content-type
+     wrap-content-type
      (ring/create-default-handler)))))
 
