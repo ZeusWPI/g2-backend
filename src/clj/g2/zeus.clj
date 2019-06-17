@@ -42,15 +42,15 @@
     (let [{:keys [access_token refresh_token]}
           (oauth/get-authentication-response nil params (oauth2-params))
           remote-zeus-user (get-user-info access_token)
-          local-user (db/get-user-on-zeusid {:zeus-id (:id remote-zeus-user)})]
+          local-user (db/get-user-on-zeusid {:zeus_id (:id remote-zeus-user)})]
       (log/debug "Remote user: " remote-zeus-user)
       (log/debug "Local user: " local-user)
       (if local-user
         (login/set-user! local-user session "/")
         (try
           (let [new-user {:name (:username remote-zeus-user)
-                          :zeus-id (:id remote-zeus-user)
-                          :access-token access_token}
+                          :zeus_id (:id remote-zeus-user)
+                          :access_token access_token}
                 generated-key (-> new-user
                                   (db/create-user!))]
             (log/debug "Created new user: " generated-key)

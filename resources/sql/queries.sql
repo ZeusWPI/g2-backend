@@ -11,8 +11,8 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users
-(name, zeusID, access_token)
-VALUES (:name, :zeus-id, :access-token)
+(name, zeus_id, access_token)
+VALUES (:name, :zeus_id, :access_token)
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record
@@ -27,7 +27,7 @@ WHERE id = :id
 
 -- :name get-user-on-zeusid :? :1
 SELECT * FROM users
-WHERE zeusID = :zeus-id
+WHERE zeus_id = :zeus_id
 
 -- :name delete-user! :! :n
 -- :doc deletes a user record given the id
@@ -61,19 +61,48 @@ SELECT * FROM repository_providers
   Repositories
 */
 
--- :name create-repo! :! :1
+-- :name create-repo! :insert :raw
 INSERT INTO repos
 (git_id, name, description, url)
-VALUES (:id, :name, :description, :url)
+VALUES (:git_id, :name, :description, :url)
 
 -- :name get-repos :? :*
 SELECT * FROM repos
 
 -- :name get-repo :? :1
 SELECT * FROM repos
-WHERE repo_id = :id
+WHERE repo_id = :repo_id
 
 -- :name update-repo! :! :n
 UPDATE repos
 SET name = :name, description = :description, url = :url
 WHERE git_id = :git_id
+
+/*
+  Projects
+*/
+
+-- :name get-project :? :1
+SELECT * FROM projects
+WHERE project_id = :id
+
+-- :name get-projects :? :*
+SELECT * FROM projects
+
+-- :name create-project! :insert :raw
+INSERT INTO projects
+(name, description)
+VALUES (:name, :description)
+
+-- :name delete-project! :! :1
+DELETE FROM projects
+WHERE project_id = :id
+
+/*
+  Projects and Repositories
+*/
+
+-- :name link-repo-to-project! :! :1
+UPDATE repos
+SET project_id = :project_id
+WHERE repo_id = :repo_id
