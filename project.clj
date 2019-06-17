@@ -25,6 +25,8 @@
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.xerial/sqlite-jdbc "3.25.2"]
+                 [mysql/mysql-connector-java "8.0.12"]
+                 [com.google.protobuf/protobuf-java "3.6.1"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.6"]

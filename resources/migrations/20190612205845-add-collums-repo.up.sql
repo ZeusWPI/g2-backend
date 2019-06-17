@@ -1,10 +1,10 @@
 CREATE TABLE projects
-(project_id integer primary key autoincrement,
+(project_id integer primary key,
  name varchar not null,
  description varchar not null);
 --;;
 CREATE TABLE repos
-(repo_id integer primary key autoincrement,
+(repo_id integer primary key,
  git_id integer not null,
  name varchar not null,
  description varchar,
@@ -13,13 +13,13 @@ CREATE TABLE repos
  foreign key(project_id) references projects);
 --;;
 CREATE TABLE branches
-(branch_id integer primary key autoincrement,
+(branch_id integer primary key,
  name varchar not null,
  repo_id integer not null,
  foreign key(repo_id) references repos);
 --;;
 CREATE TABLE issues
-(issue_id integer primary key autoincrement,
+(issue_id integer primary key,
  url varchar not null,
  title varchar not null,
  author varchar not null,
