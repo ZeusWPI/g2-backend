@@ -18,19 +18,21 @@
 (deftest test-users
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (is (= 1 (db/create-user!
-              t-conn
-              {:name "Foo"
-               :zeus_id 10
-               :access_token "abcd"})))
-    (is (= {:id 1
-            :name "Foo"
-            :zeus_id 10
-            :email nil
-            :admin nil
-            :last_login nil
-            :access_token "abcd"}
-           (db/get-user t-conn {:id 1})))))
+    (let [insert_id (db/create-user!
+                     t-conn
+                     {:name "Foo"
+                      :zeus_id 10
+                      :access_token "abcd"})
+          id (:generated_key insert_id)
+          result (db/get-user t-conn {:id id})]
+      (is (= {:id id
+              :name "Foo"
+              :zeus_id 10
+              :email nil
+              :admin nil
+              :last_login nil
+              :access_token "abcd"}
+             result)))))
 
 (deftest test-repositories
   (jdbc/with-db-transaction [t-conn *db*]
@@ -41,7 +43,7 @@
                       :name "g2"
                       :description "The best project"
                       :url "https://github.com/zeuswpi/g2"})
-          id (get insert_id (keyword "last_insert_rowid()"))
+          id (:generated_key insert_id)
           result (db/get-repo t-conn {:repo_id id})]
       (is (= {:repo_id id
               :git_id 1234
@@ -58,9 +60,9 @@
                      t-conn
                      {:name "test name"
                       :description "test description"})
-          id (get insert_id (keyword "last_insert_rowid()"))
-          result (db/get-project t-conn {:id id})]
-      (is (= {:project_id id
+          project_id (:generated_key insert_id)
+          result (db/get-project t-conn {:project_id project_id})]
+      (is (= {:project_id project_id
               :name "test name"
               :description "test description"}
              result)))))

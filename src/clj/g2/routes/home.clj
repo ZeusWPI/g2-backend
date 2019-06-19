@@ -46,7 +46,7 @@
   (do
     (log/debug "Create project: " name " " description)
     (let [insert_id (db/create-project! {:name name, :description description})]
-      (response/ok {:new_project_id (get insert_id (keyword "last_insert_rowid()"))}))))
+      (response/ok {:new_project_id (:generated_key insert_id)}))))
 
 (defn project-delete [id]
   (do

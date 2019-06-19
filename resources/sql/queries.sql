@@ -8,7 +8,7 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 */
 
 
--- :name create-user! :! :n
+-- :name create-user! :insert :raw
 -- :doc creates a new user record
 INSERT INTO users
 (name, zeus_id, access_token)
