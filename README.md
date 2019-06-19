@@ -20,21 +20,49 @@ Next copy the dev-config and rename:
 ```
 cp dev-config_template.edn dev-config.edn
 ```
-At this moment sqlite is used as database. This requires no further setup. 
-Later we will use mysql which will require extra database configuration at that time.
+
 
 [1]: https://github.com/technomancy/leiningen
 
 ### Running
 
+Start by running the migrations on the database. Make sure the correct url is set in your config. Migrations can be added overtime, don't forget to execute them!
+
+    lein run migrate
+
 To start a web server for the application, run:
 
     lein run 
+    
+You can also start a repl environment which allows for more dynamic and involved programming. Following commands puts the webserver in the same state as the previous commands one but it leaves you in a repl.
+
+    lein repl
+    >> (start)
+    >> (migrate)
+
+#### Back-end
+
+If you change files and want to see your changes it will go faster in a repl. When using `lein run`, you need to stop the process and restart it. In the repl you can reload a namespace and the server will automatically reload the file into its process. 
+
+    >> (use g2.filename :reload)
+    
+This reload is not perfect, old namespaces are necessarily removed which can result in a conflict when you change a file with another one but give them the same name.
+
+TODO Add clojure.tools.refresh explanation.
+
+
+    
+If you change SQL queries, restart the database using
+
+    >> (restart-db)
 
 
 #### Front-end
 
-The project also includes [clojurescript]((https://clojurescript.org/)). A language with the clojure syntax that compiles to javascript for clienside usage in the browser
+The project also includes [clojurescript]((https://clojurescript.org/)). A language with the clojure syntax that compiles to javascript for clienside usage in the browser.
+
+We are currently not really serving a frontend but there is a route on `/` for debug purposes. If you want to run clojurescript on there, follow the next instructions.
+
 
 To start the clojurescript compiler and set it to automaticaly recompile on source code changes run
 
@@ -60,7 +88,15 @@ Using following command all requests to your servers ip on port 9123 will be tun
 
 To run tests run the next command. They will autodetect changes and rerun themselves automatically.
 
+First copy the file test-config_example.edn to test-config.edn. Adapt all needed configs for your machine.
+
+Now run the automated tests
+
 	lein test-refresh
+    
+You can also run the tests once using
+
+    lein test
 
 
 ## Deployment
