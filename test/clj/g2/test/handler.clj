@@ -39,8 +39,10 @@
             resp-delete (app (-> (request :delete (str "/project/" generated_id))))
             ; Get the project after it's deleted
             resp-get-after-delete (app (-> (request :get (str "/project/" generated_id))))]
+        (is (= 200 (:status resp-post)))
         (is (= 200 (:status resp-get)))
         (is (= {:project_id generated_id :name "project-name", :description "project-description"} body-get))
+        (is (= 204 (:status resp-delete)))
         (is (= 404 (:status resp-get-after-delete)))))
 
     (testing "parameter coercion error"
