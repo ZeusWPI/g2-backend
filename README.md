@@ -51,10 +51,10 @@ While actively developing the application you will change files and therefore na
 * Now browse to `localhost:3000` to see the webserver. 
   At this moment you will land onto a page with some testing links. This is going to be removed later on when the [frontend](https://github.com/zeuswpi/g2-frontend) has more functionality.
   
-  We use swagger to serve a nice visual and handy frontend with out api. This enables the developer to quickly discover all the needed andpoints and get their specification in the process.
+  We use swagger to serve a nice visual and handy frontend with out api. This enables the developer to quickly discover all the needed endpoints and get their specification in the process.
   Surf to `localhost:3000/api-docs/` to find the documentation.
  
-* If you want to see some data quicly, try out the `/repository/sync` path. It synchronises the repositories of the organization configured in the `dev-config` file with the g2 backend. You can then request a list of these repo's on `/repository`
+If you want to see some data quicly, try out the `/repository/sync` path. It synchronises the repositories of the organization configured in the `dev-config` file with the g2 backend. You can then request a list of these repo's on `/repository`
   
 #### Loading code changes
 
