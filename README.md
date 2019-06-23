@@ -121,4 +121,3 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 ## Acknowledgments
 * Readme structure inspired on https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-* The amazing Luminus template with a solid 
