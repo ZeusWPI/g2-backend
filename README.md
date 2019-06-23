@@ -16,16 +16,16 @@ The database used by the backend will be primarily mariadb.
 
 ### Installing
 
-* Clone the repository
-* Copy the template configuration files for development and testing:
-```
-cp dev-config_template.edn dev-config.edn
-cp test-config_template.edn test-config.edn
-```
-* Check these configs for variables that are different in your setup. They should normally work out of the box.
+1. Clone the repository
+2. Copy the template configuration files for development and testing:
 
-* Create a new local database and create or modify a database user so it has access to the database. (You can use the dev database for the tests to, but it will possibly be filled with testing data.)
-* Update the database-url parameter in the `dev-config.edn` and `test-config.edn` file with your newly created db and user.
+       cp dev-config_template.edn dev-config.edn
+       cp test-config_template.edn test-config.edn
+       
+3. Check these configs for variables that are different in your setup. They should normally work out of the box.
+
+4. Create a new local database and create or modify a database user so it has access to the database. (You can use the dev database for the tests to, but it will possibly be filled with testing data.)
+5. Update the database-url parameter in the `dev-config.edn` and `test-config.edn` file with your newly created db and user.
 
 [1]: https://github.com/technomancy/leiningen
 
@@ -38,17 +38,17 @@ To start a web server for the application, first run the migrations, then start 
 
 While actively developing the application you will change files and therefore namespaces. When using the above method you will need to restart the webserver everytime you want to see the new changes. This is quite a slow process and therefor not recommended. Instead use the following workflow.
 
-* Start a [repl](https://clojure.org/guides/repl/introduction) using
+1. Start a [repl](https://clojure.org/guides/repl/introduction) using
 
-      lein repl
+       lein repl
   Here you can execute arbitrary clojure code. The [file with the user namespace](https://github.com/ZeusWPI/g2/blob/master/env/dev/clj/user.clj) will be automaticaly loaded into the repl and it's functions will be available in the repl.
     
-* Now start the server and then run the migrations.
+2. Now start the server and then run the migrations.
 
-      (start)
-      (migrate)
+       (start)
+       (migrate)
       
-* Now browse to `localhost:3000` to see the webserver. 
+3. Now browse to `localhost:3000` to see the webserver. 
   At this moment you will land onto a page with some testing links. This is going to be removed later on when the [frontend](https://github.com/zeuswpi/g2-frontend) has more functionality.
   
   We use swagger to serve a nice visual and handy frontend with out api. This enables the developer to quickly discover all the needed endpoints and get their specification in the process.
