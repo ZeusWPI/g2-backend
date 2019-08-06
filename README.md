@@ -49,11 +49,11 @@ You can also start a repl environment which allows for more dynamic and involved
 
 If you change files and want to see your changes it will go faster in a repl. When using `lein run`, you need to stop the process and restart it. In the repl you can reload a namespace and the server will automatically reload the file into its process. 
 
-    >> (use g2.filename :reload)
+    >> (use 'g2.filename :reload)
     
 This reload is not perfect, old namespaces are necessarily removed which can result in a conflict when you change a file with another one but give them the same name.
 
-TODO Add clojure.tools.refresh explanation.
+**TODO** Add `clojure.tools.refresh` explanation.
 
 
     
@@ -91,7 +91,7 @@ The webserver will detect the change and will quickly restart.
 
 #### Using git hooks
 
-WORK IN PROGRESS
+**WORK IN PROGRESS**
 
 Running the application on localhost makes it impossible for github hooks to find it. You have a few applications that can help you with this like ... but you can also do this yourself using simple ssh port forwarding. You need a server with a public ip adres and ssh access.
 
@@ -99,11 +99,13 @@ Using following command all requests to your servers ip on port 9123 will be tun
 
     ssh -R 9123:localhost:3000 my.server.ip
 
+More information about ssh-tunneling can be found [here](https://www.ssh.com/ssh/tunneling/example)
+
 ## Running the tests
 
 To run tests run the next command. This will autodetect changes in the backend files and they will rerun themselves automatically.
 
-First copy the file test-config_example.edn to test-config.edn. Adapt all needed configs for your machine.
+First copy the file `test-config_example.edn` to ``test-config.edn`. Adapt all needed configs for your machine.
 
 Now run the automated tests
 
@@ -121,15 +123,15 @@ Compiling the application is as simple as
     lein uberjar
     
 You can the run it as you would run any other jar. 
-Environment variables set in the dev-config.edn file will also have to be set in production. You can do this by providing them as environment variables or by setting them in the production conf file (/env/prod/resources/config.edn)
+Environment variables set in the dev-config.edn file will also have to be set in production. You can do this by providing them as environment variables or by setting them in the production conf file (`/env/prod/resources/config.edn`)
 
     java -jar g2.jar
 
 ## Built with
 
-* Clojure
-* Leiningen
-* Luminus (and their whole stack)
+* [Clojure](https://clojure.org/)
+* [Leiningen](https://leiningen.org/)
+* [Luminus - a Clojure web framework](http://www.luminusweb.net/) (and their whole stack)
 
 ## Contributing
 
@@ -146,7 +148,7 @@ If you have any questions you can reach us on mattermost on the project channel 
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
 
 ## Acknowledgments
 * Readme structure inspired on https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
