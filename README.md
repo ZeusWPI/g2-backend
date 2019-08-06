@@ -35,9 +35,8 @@ Start by running the migrations on the database. Make sure the correct url is se
 
     lein run migrate
 
-To start a web server for the application, run:
+To start the web server for the application, run:
 
-    lein run migrate
     lein run 
     
 You can also start a repl environment which allows for more dynamic and involved programming. Following commands puts the webserver in the same state as the previous commands one but it leaves you in a repl.
