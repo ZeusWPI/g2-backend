@@ -10,6 +10,7 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]
+            [clojure.string :as string]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]))
 
@@ -32,8 +33,18 @@
       (response/ok repo)
       (response/not-found {:msg "Repository not found"}))))
 
+(defn parse-repo-ids [repo_ids_string]
+  (log/debug repo_ids_string)
+  (log/debug "type: " (type repo_ids_string))
+  (map #(Integer/parseInt %)
+       (string/split repo_ids_string #",")))
+
 (defn projects-get [request]
-  (response/ok (db/get-projects)))
+  (let [projects (db/get-projects)]
+    (log/debug "projects: " projects)
+    (let [n (map (fn [project] (log/debug "project: " project) (assoc project :repo_ids (parse-repo-ids (:repo_ids project)))) projects)]
+      (log/debug "n-projects: " n)
+      (response/ok n))))
 
 (defn project-get [project_id]
   (log/debug "Get project" project_id)
