@@ -1,6 +1,7 @@
 (ns g2.handler
   (:require [g2.middleware :as middleware]
             [g2.middleware.formats :as formats]
+            [g2.middleware.exception :as exception]
             [g2.layout :refer [error-page]]
             [g2.routes.home :refer [home-routes]]
             [g2.env :refer [defaults]]
@@ -13,7 +14,7 @@
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as spec-coercion]
             [reitit.ring.middleware.muuntaja :as muuntaja]
-            [reitit.ring.middleware.exception :as exception]
+            ;[reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.parameters :as parameters]
             [reitit.ring.middleware.dev]
@@ -105,6 +106,6 @@
     (ring/routes
      #_(ring/create-resource-handler
       {:path "/"})
-     wrap-content-type
+     #_wrap-content-type
      (ring/create-default-handler)))))
 

@@ -1,8 +1,8 @@
 CREATE TABLE users
-(id INTEGER PRIMARY KEY,
+(id INTEGER not null auto_increment PRIMARY KEY,
 zeus_id INTEGER UNIQUE,
 name VARCHAR(255),
  email VARCHAR(255),
  admin BOOLEAN,
- last_login TIMESTAMP,
+ last_login TIMESTAMP NULL,
  access_token VARCHAR(255));
