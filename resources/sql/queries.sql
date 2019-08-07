@@ -83,11 +83,15 @@ WHERE git_id = :git_id
 */
 
 -- :name get-project :? :1
-SELECT * FROM projects
-WHERE project_id = :project_id
+SELECT project_id, projects.name as name, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids 
+from projects INNER JOIN repos using(project_id) 
+where project_id = :project_id
+GROUP By project_id, name;
 
 -- :name get-projects :? :*
-SELECT * FROM projects
+SELECT project_id, projects.name as name, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids 
+FROM projects INNER JOIN repos using(project_id)
+GROUP BY project_id, projects.name;
 
 -- :name create-project! :insert :raw
 INSERT INTO projects
