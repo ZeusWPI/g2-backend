@@ -70,6 +70,11 @@
     (db/link-repo-to-project! {:project_id pid, :repo_id id})
     (response/no-content)))
 
+(defn repo-issues [repo_id]
+  (do
+    (let [result (db/get-repo-issues {:repo_id repo_id})]
+      (response/ok result))))
+
 (defroutes home-routes-old
   (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
   (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req)))
@@ -84,7 +89,9 @@
      ["" {:get {:parameters {:path {:id int?}}
                 :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
      ["/link/:pid" {:put {:parameters {:path {:pid int?, :id int?}}
-                          :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]]]
+                          :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]
+     ["/issues" {:get {:parameters {:path {:id int?}}
+                       :handler (fn [req] (let [repo_id (get-in req [:path-params :id])] (repo-issues repo_id)))}}]]
    ["/project"
     ["" {:get {:handler projects-get}
          :post {:parameters {:body {:name string?, :description string?}}
@@ -92,7 +99,7 @@
     ["/:id" {:get {:parameters {:path {:id int?}}
                    :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
              :delete {:parameters {:path {:id int?}}
-                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]]
+                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
    ["/repo-providers"
     {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
    ["/hooks"
@@ -109,4 +116,4 @@
     ["/zeus" {:get {:handler zeus-auth/login-zeus}}]
     ["/oauth-callback" {:get {#_:parameters #_{:query {:code string?
                                                        :error string?}}
-                              :handler zeus-auth/login-zeus-callback}}]]])
+                              :handler zeus-auth/login-zeus-callback}}]]]]])

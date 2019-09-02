@@ -103,6 +103,15 @@ DELETE FROM projects
 WHERE project_id = :id
 
 /*
+  Issues
+*/
+
+-- :name get-repo-issues :? :*
+SELECT *
+FROM issues
+WHERE repo_id = :repo_id
+
+/*
   Projects and Repositories
 */
 
