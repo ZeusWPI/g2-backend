@@ -1,0 +1,37 @@
+version: "3"
+services:
+  backend:
+    build:
+     context: . # Use the dockerfile in this repo
+     dockerfile: Dockerfile
+    networks:
+      - base
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC
+    command: >
+      sh -c "lein run migrate &&
+             lein run"
+  db:
+    image: mariadb:latest
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - base
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql_root_password
+      MYSQL_DATABASE: g2_dev
+      MYSQL_USER: g2_user
+      MYSQL_PASSWORD: local-pass
+    restart: always
+
+
+
+networks:
+  base:
+
+volumes:
+  database:
