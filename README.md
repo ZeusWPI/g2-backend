@@ -6,7 +6,17 @@ The goal of this project is to create a application that can serve as a gateway 
 
 Further down the road we want to add a level of gamification to the application, inspired by [Gamification](https://zeus.ugent.be/game)
 
-## Getting started
+## Simply running it
+
+### Prerequisites
+
+- Docker-compose
+
+### Running
+
+    docker-compose up
+
+## Getting started with development
 ### Prerequisites
 
 **[Leiningen][1]** 2.0 or above.\
