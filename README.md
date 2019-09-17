@@ -2,8 +2,6 @@
 [![chat mattermost](https://img.shields.io/badge/chat-mattermost-blue.svg)](https://mattermost.zeus.gent/zeus/channels/g2)
 
 
-Changed line
-
 The goal of this project is to create a application that can serve as a gateway for people to contribute on projects of an organization. We want to improve the visibility of subparts of projects to make it more accessible to contribute.
 
 Further down the road we want to add a level of gamification to the application, inspired by [Gamification](https://zeus.ugent.be/game)
