@@ -10,9 +10,14 @@ Further down the road we want to add a level of gamification to the application,
 
 ### Prerequisites
 
+- Docker
 - Docker-compose
 
 ### Running
+
+Start the docker service
+
+Run the backend
 
     docker-compose up
 
