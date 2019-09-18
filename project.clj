@@ -24,7 +24,6 @@
                  [org.clojure/clojurescript "1.10.520" :scope "provided"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
-                 [org.xerial/sqlite-jdbc "3.25.2"]
                  [mysql/mysql-connector-java "8.0.12"]
                  [com.google.protobuf/protobuf-java "3.6.1"]
                  [ring/ring-core "1.7.1"]
@@ -39,9 +38,9 @@
 
   :min-lein-version "2.0.0"
 
-  :source-paths ["src/clj" "src/cljs" "src/cljc"]
+  :source-paths ["src/clj"]
   :test-paths ["test/clj"]
-  :resource-paths ["resources" "target/cljsbuild"]
+  :resource-paths ["resources"]
   :target-path "target/%s/"
   :main ^:skip-aot g2.core
 
@@ -50,8 +49,6 @@
             [lein-auto "0.1.2"]
             [lein-cloverage "1.1.1"]]
 
-  :clean-targets ^{:protect false}
-  [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :figwheel
   {:http-server-root "public"
    :server-logfile "log/figwheel-logfile.log"
@@ -62,21 +59,6 @@
 
   :profiles
   {:uberjar {:omit-source true
-             :prep-tasks ["compile" ["cljsbuild" "once" "min"]]
-             :cljsbuild
-             {:builds
-              {:min
-               {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
-                :compiler
-                {:output-dir "target/cljsbuild/public/js"
-                 :output-to "target/cljsbuild/public/js/app.js"
-                 :source-map "target/cljsbuild/public/js/app.js.map"
-                 :optimizations :advanced
-                 :pretty-print false
-                 :infer-externs true
-                 :closure-warnings
-                 {:externs-validation :off :non-standard-jsdoc :off}}}}}
-
 
              :aot :all
              :uberjar-name "g2.jar"
@@ -99,19 +81,6 @@
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.23.0"]
                                  [lein-doo "0.1.11"]
                                  [lein-figwheel "0.5.18"]]
-                  :cljsbuild
-                  {:builds
-                   {:app
-                    {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                     :figwheel {:on-jsload "g2.core/mount-components"}
-                     :compiler
-                     {:main "g2.app"
-                      :asset-path "/js/out"
-                      :output-to "target/cljsbuild/public/js/app.js"
-                      :output-dir "target/cljsbuild/public/js/out"
-                      :source-map true
-                      :optimizations :none
-                      :pretty-print true}}}}
                   :doo {:build "test"}
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
