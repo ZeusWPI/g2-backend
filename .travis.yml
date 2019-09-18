@@ -1,0 +1,16 @@
+dist: xenial
+
+language: clojure
+
+script: lein test
+
+jdk:
+  - openjdk8
+addons:
+  mariadb: '10.0'
+branches:
+  only:
+    - master
+# notifications:
+#   slack:
+#     secure:
