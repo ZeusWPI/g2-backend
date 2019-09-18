@@ -3,9 +3,9 @@ dist: xenial
 language: clojure
 
 before_install:
-  - mysql -e 'CREATE DATABASE g2_test;'
-  - mysql -e 'CREATE USER \'g2_user\'@\'localhost\' IDENTIFIED BY \'local-pass\';'
-  - mysql -e 'FLUSH PRIVILEGES;'
+  - mariadb -e 'CREATE DATABASE g2_test;'
+  - mariadb -e 'CREATE USER \'g2_user\'@\'localhost\' IDENTIFIED BY \'local-pass\';'
+  - mariadb -e 'FLUSH PRIVILEGES;'
   - cp test-config_template.edn test-config.edn
 
 script: lein test
