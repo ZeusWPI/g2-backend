@@ -55,7 +55,6 @@
    :css-dirs         ["resources/public/css"]
    :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
 
-
   :profiles
   {:uberjar       {:omit-source    true
 
@@ -89,18 +88,17 @@
    :project/test  {:jvm-opts       ["-Dconf=test-config.edn" "-Xverify:none"]
                    :resource-paths ["env/test/resources"]
                    :cljsbuild
-                                   {:builds
-                                    {:test
-                                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
-                                      :compiler
-                                                    {:output-to     "target/test.js"
-                                                     :main          "g2.doo-runner"
-                                                     :optimizations :whitespace
-                                                     :pretty-print  true}}}}}
+                   {:builds
+                    {:test
+                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                      :compiler
+                      {:output-to     "target/test.js"
+                       :main          "g2.doo-runner"
+                       :optimizations :whitespace
+                       :pretty-print  true}}}}}
    :profiles/dev  {}
    :profiles/test {}}
-  :repl-options {
-                 ;; If nREPL takes too long to load it may timeout,
+  :repl-options {;; If nREPL takes too long to load it may timeout,
                  ;; increase this to wait longer before timing out.
                  ;; Default to 30000 (30 seconds)
                  :timeout 120000})

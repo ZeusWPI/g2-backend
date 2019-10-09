@@ -61,8 +61,12 @@ You can also start a repl environment which allows for more dynamic and involved
     lein repl
     >> (start)
     >> (migrate)
+    
+To start the repl with the test profile run
 
-#### Back-end
+    lein with-profile test repl
+
+#### Reloading changed files
 
 If you change files and want to see your changes it will go faster in a repl. When using `lein run`, you need to stop the process and restart it. In the repl you can reload a namespace and the server will automatically reload the file into its process. 
 
