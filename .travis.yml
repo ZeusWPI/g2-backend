@@ -1,0 +1,27 @@
+dist: xenial
+sudo: required
+
+language: clojure
+
+before_install:
+    # Wait for mysql service to respond
+  - which mysql && until mysql -u root -e "show status" &>/dev/null; do sleep 1; done
+  - mysql -e 'CREATE DATABASE g2_test;'
+  - mysql -e 'CREATE USER "g2_user"@"localhost" IDENTIFIED BY "local-pass";'
+  - mysql -e 'GRANT ALL PRIVILEGES ON g2_test.* TO "g2_user"@"localhost";'
+  - mysql -e 'FLUSH PRIVILEGES;'
+  - cp test-config_template.edn test-config.edn
+
+script: lein test
+
+jdk:
+  - openjdk8
+services:
+  - mysql
+branches:
+  only:
+    - master
+    - ci
+# notifications:
+#   slack:
+#     secure:
