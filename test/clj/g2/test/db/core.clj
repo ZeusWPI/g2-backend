@@ -64,5 +64,6 @@
           result (db/get-project t-conn {:project_id project_id})]
       (is (= {:project_id project_id
               :name "test name"
-              :description "test description"}
+              :description "test description"
+              :repo_ids nil}
              result)))))

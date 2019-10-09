@@ -131,7 +131,17 @@ Now run the automated tests
 If you want to run them only once run
 
 	lein test
+	
+If you want to run a specific test in a file, do:
 
+    lein test :only namespace_name/testname
+
+or in the repl
+```clojure
+    (load "g2/test/handler")
+    (in-ns 'namespace_name.testname)
+    (test-vars [#'namespace_name/testname])
+```
 
 ## Deployment
 
