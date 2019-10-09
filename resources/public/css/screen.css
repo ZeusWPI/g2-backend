@@ -1,10 +1,26 @@
+body {
+    margin: 5em;
+    background-color: #b5b5b5;
+}
+
+section {
+    background-color: #e0e0e0;
+    padding: 1.2em;
+    margin-bottom: 1em;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header {
+    padding: .8em;
+    margin-bottom: 2em;
+    background-color: #eaeaea;
+    box-shadow: 0px 6px 9px rgba(0, 0, 0, 0.2);
+}
+
 html, body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   height: 100%;
-  padding-top: 40px; }
-
-section {
-  margin: 1em; }
+}
 
 table {
   color: #333;
