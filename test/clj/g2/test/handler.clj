@@ -4,6 +4,7 @@
             [g2.handler :refer :all]
             [g2.middleware.formats :as formats]
             [muuntaja.core :as m]
+            [clojure.pprint :refer [pprint]]
             [mount.core :as mount]
             [clojure.tools.logging :as log]))
 
@@ -41,7 +42,10 @@
             resp-get-after-delete (app (-> (request :get (str "/project/" generated_id))))]
         (is (= 200 (:status resp-post)))
         (is (= 200 (:status resp-get)))
-        (is (= {:project_id generated_id :name "project-name", :description "project-description"} body-get))
+        (is (= {:project_id generated_id
+                :name "project-name",
+                :description "project-description"
+                :repo_ids nil} body-get))
         (is (= 204 (:status resp-delete)))
         (is (= 404 (:status resp-get-after-delete)))))
 

@@ -1,6 +1,7 @@
-CREATE TABLE repository_providers (
-       ID INTEGER PRIMARY KEY,
-       name VARCHAR(255),
-       access_token VARCHAR(255) NOT NULL,
-       CONSTRAINT UC_Provider UNIQUE (name)
+CREATE TABLE repository_providers
+(
+    ID           integer      not null auto_increment primary key,
+    name         VARCHAR(255),
+    access_token VARCHAR(255) not null,
+    CONSTRAINT UC_Provider UNIQUE (name)
 );

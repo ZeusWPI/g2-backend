@@ -3,5 +3,5 @@
 ;; This file is listed in .gitignore and will be excluded from version control by Git.
 
 {:port 3000
- :database-url "mysql://localhost:3306/g2_test?user=g2_user&password=local-pass"
+ :database-url "mysql://localhost:3306/g2_test?user=g2_user&password=local-pass&serverTimezone=UTC"
  }

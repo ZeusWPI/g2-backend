@@ -61,8 +61,12 @@ You can also start a repl environment which allows for more dynamic and involved
     lein repl
     >> (start)
     >> (migrate)
+    
+To start the repl with the test profile run
 
-#### Back-end
+    lein with-profile test repl
+
+#### Reloading changed files
 
 If you change files and want to see your changes it will go faster in a repl. When using `lein run`, you need to stop the process and restart it. In the repl you can reload a namespace and the server will automatically reload the file into its process. 
 
@@ -131,7 +135,17 @@ Now run the automated tests
 If you want to run them only once run
 
 	lein test
+	
+If you want to run a specific test in a file, do:
 
+    lein test :only namespace_name/testname
+
+or in the repl
+```clojure
+    (load "g2/test/handler")
+    (in-ns 'namespace_name.testname)
+    (test-vars [#'namespace_name/testname])
+```
 
 ## Deployment
 
