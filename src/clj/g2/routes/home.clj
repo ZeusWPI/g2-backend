@@ -36,8 +36,10 @@
 (defn parse-repo-ids [repo_ids_string]
   (log/debug repo_ids_string)
   (log/debug "type: " (type repo_ids_string))
-  (map #(Integer/parseInt %)
-       (string/split repo_ids_string #",")))
+  (if (nil? repo_ids_string)
+    nil
+    (map #(Integer/parseInt %)
+        (string/split repo_ids_string #","))))
 
 (defn projects-get [request]
   (let [projects (db/get-projects)]

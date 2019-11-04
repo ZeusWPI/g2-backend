@@ -40,12 +40,15 @@
   (migrations/migrate ["reset"] (select-keys env [:database-url])))
 
 (defn migrate []
+  "apply pending migrations"
   (migrations/migrate ["migrate"] (select-keys env [:database-url])))
 
 (defn rollback []
+  "rollback the last migration applied"
   (migrations/migrate ["rollback"] (select-keys env [:database-url])))
 
 (defn create-migration [name]
+  "Rollback all migrations that have been run, and then apply all migrations."
   (migrations/create name (select-keys env [:database-url])))
 
 
