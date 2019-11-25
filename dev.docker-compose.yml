@@ -5,7 +5,7 @@ services:
      context: . # Use the dockerfile in this repo
      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3333:3000"
     environment:
       DATABASE_URL: mysql://localhost:3306/g2_dev?user=g2_dev_user&password="0%19IG<EKR.*>%~ey<OoKOB_#"&serverTimezone=UTC
     command: >
