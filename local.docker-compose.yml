@@ -12,9 +12,7 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC
-    command: >
-      sh -c "lein run migrate &&
-             lein run"
+
   db:
     image: mariadb:latest
     volumes:
@@ -27,8 +25,6 @@ services:
       MYSQL_USER: g2_user
       MYSQL_PASSWORD: local-pass
     restart: always
-
-
 
 networks:
   base:

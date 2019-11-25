@@ -52,6 +52,7 @@
   {:http-server-root "public"
    :server-logfile   "log/figwheel-logfile.log"
    :nrepl-port       7002
+   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]
    :css-dirs         ["resources/public/css"]}
 
   :profiles
@@ -70,6 +71,7 @@
                                     [cider/piggieback "0.4.0"]
                                     [doo "0.1.11"]
                                     [expound "0.7.2"]
+                                    [figwheel-sidecar "0.5.18"]
                                     [pjstadig/humane-test-output "0.9.0"]
                                     [prone "1.6.1"]
                                     [ring/ring-devel "1.7.1"]
@@ -84,7 +86,15 @@
                                     (pjstadig.humane-test-output/activate!)]}
    :project/test  {:jvm-opts       ["-Dconf=test-config.edn" "-Xverify:none"]
                    :resource-paths ["env/test/resources"]
-                   }
+                   :cljsbuild
+                   {:builds
+                    {:test
+                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                      :compiler
+                      {:output-to     "target/test.js"
+                       :main          "g2.doo-runner"
+                       :optimizations :whitespace
+                       :pretty-print  true}}}}}
    :profiles/dev  {}
    :profiles/test {}}
   :repl-options {;; If nREPL takes too long to load it may timeout,
