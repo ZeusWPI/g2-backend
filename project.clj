@@ -101,6 +101,6 @@
   :repl-options {;; If nREPL takes too long to load it may timeout,
                  ;; increase this to wait longer before timing out.
                  ;; Default to 30000 (30 seconds)
-                 :timeout 120000})
+                 :timeout 200000})
 
 
