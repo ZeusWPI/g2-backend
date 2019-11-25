@@ -3,9 +3,9 @@
             [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
             [mount.core :as mount]
-            [g2.figwheel :refer [start-fw stop-fw cljs]]
             [g2.core :refer [start-app]]
             [g2.db.core]
+            [clojure.tools.logging :as log]
             [conman.core :as conman]
             [luminus-migrations.core :as migrations]))
 
@@ -17,7 +17,7 @@
   "Starts application.
   You'll usually want to run this on startup."
   []
-  (println "Starting the server, please wait, this can take some time...")
+  (log/info "Starting the server, please wait, this can take some time...")
   (mount/start-without #'g2.core/repl-server))
 
 (defn stop

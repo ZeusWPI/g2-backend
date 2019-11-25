@@ -1,4 +1,4 @@
-FROM clojure:lein-alpine
+FROM clojure:openjdk-14-lein-2.9.1-slim-buster
 
 # download the dependencies and compile the project ahead of time. This will significantly reduce startup time when you run your image
 RUN mkdir -p /g2
