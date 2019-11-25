@@ -19,4 +19,3 @@ EXPOSE 3000
 
 COPY docker-entrypoint.sh /docker/
 RUN chmod +x /g2/docker-entrypoint.sh
-ENTRYPOINT ["/g2/docker-entrypoint.sh"]
