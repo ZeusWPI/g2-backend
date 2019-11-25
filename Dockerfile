@@ -17,5 +17,5 @@ EXPOSE 3000
 # For some reasing CMD doesn't work here so it's specified in the docker-compose file. If used here together with docker-compose it enters the repl as specified in the clojure image and exists immediatly after the repl is started.
 # CMD lein run migrate && lein run
 
-COPY docker-entrypoint.sh /docker/
+COPY docker-entrypoint.sh /g2/
 RUN chmod +x /g2/docker-entrypoint.sh
