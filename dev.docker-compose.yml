@@ -8,4 +8,3 @@ services:
       - "3333:3000"
     environment:
       DATABASE_URL: mysql://host.docker.internal:3306/g2_dev?user=g2_dev_user&password=mstFVVS4ASEDMZlx0TWsWABmo&serverTimezone=UTC
-    entrypoint: ["/g2/docker-entrypoint.sh"]

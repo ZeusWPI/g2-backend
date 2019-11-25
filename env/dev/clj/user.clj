@@ -17,6 +17,7 @@
   "Starts application.
   You'll usually want to run this on startup."
   []
+  (println "Starting the server, please wait, this can take some time...")
   (mount/start-without #'g2.core/repl-server))
 
 (defn stop
