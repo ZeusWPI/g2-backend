@@ -52,8 +52,7 @@
   {:http-server-root "public"
    :server-logfile   "log/figwheel-logfile.log"
    :nrepl-port       7002
-   :css-dirs         ["resources/public/css"]
-   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
+   :css-dirs         ["resources/public/css"]}
 
   :profiles
   {:uberjar       {:omit-source    true
@@ -71,14 +70,12 @@
                                     [cider/piggieback "0.4.0"]
                                     [doo "0.1.11"]
                                     [expound "0.7.2"]
-                                    [figwheel-sidecar "0.5.18"]
                                     [pjstadig/humane-test-output "0.9.0"]
                                     [prone "1.6.1"]
                                     [ring/ring-devel "1.7.1"]
                                     [ring/ring-mock "0.3.2"]]
                    :plugins        [[com.jakemccrary/lein-test-refresh "0.23.0"]
-                                    [lein-doo "0.1.11"]
-                                    [lein-figwheel "0.5.18"]]
+                                    [lein-doo "0.1.11"]]
                    :doo            {:build "test"}
                    :source-paths   ["env/dev/clj"]
                    :resource-paths ["env/dev/resources"]
@@ -87,20 +84,12 @@
                                     (pjstadig.humane-test-output/activate!)]}
    :project/test  {:jvm-opts       ["-Dconf=test-config.edn" "-Xverify:none"]
                    :resource-paths ["env/test/resources"]
-                   :cljsbuild
-                   {:builds
-                    {:test
-                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
-                      :compiler
-                      {:output-to     "target/test.js"
-                       :main          "g2.doo-runner"
-                       :optimizations :whitespace
-                       :pretty-print  true}}}}}
+                   }
    :profiles/dev  {}
    :profiles/test {}}
   :repl-options {;; If nREPL takes too long to load it may timeout,
                  ;; increase this to wait longer before timing out.
                  ;; Default to 30000 (30 seconds)
-                 :timeout 200000})
+                 :timeout 300000})
 
 

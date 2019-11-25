@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Fix for the host.docker.internal bug
 # https://github.com/docker/for-linux/issues/264
