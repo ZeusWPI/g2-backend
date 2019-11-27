@@ -1,6 +1,7 @@
 version: "3"
 services:
   backend:
+    name: g2-backend
     build:
      context: . # Use the dockerfile in this repo
      dockerfile: Dockerfile
