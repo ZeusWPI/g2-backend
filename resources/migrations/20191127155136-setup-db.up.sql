@@ -13,7 +13,7 @@ CREATE TABLE projects
 	project_id  integer auto_increment primary key,
 	name        varchar(255) not null,
 	description varchar(512) not null,
-	image_url   varchar(512) not null
+	image_url   varchar(512)
 );
 --;;
 
@@ -21,7 +21,6 @@ CREATE TABLE repos
 (
 	repo_id     integer primary key,
 	project_id  integer not null,
-	git_id      integer not null,
 	name        varchar(255) not null,
 	description varchar(512) not null,
 	url         varchar(512) not null,
