@@ -18,6 +18,8 @@ EXPOSE 3000
 # CMD lein run migrate && lein run
 
 COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
+
+WORKDIR /g2
 RUN add-docker-host-to-hosts-file.sh
 
 RUN lein uberjar
