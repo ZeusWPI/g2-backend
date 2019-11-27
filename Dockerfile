@@ -5,6 +5,7 @@ RUN mkdir -p /g2
 WORKDIR /g2
 COPY project.clj /g2/
 RUN lein deps
+RUN apt-get install net-tools
 
 # Now copy the rest of the project over
 COPY src /g2/src
@@ -17,13 +18,13 @@ EXPOSE 3000
 # For some reasing CMD doesn't work here so it's specified in the docker-compose file. If used here together with docker-compose it enters the repl as specified in the clojure image and exists immediatly after the repl is started.
 
 
-COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
-
 WORKDIR /g2
-RUN chmod +x add-docker-host-to-hosts-file.sh
-RUN ./add-docker-host-to-hosts-file.sh
 
 RUN lein uberjar
+
+COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
+RUN chmod +x add-docker-host-to-hosts-file.sh
+RUN ./add-docker-host-to-hosts-file.sh
 
 RUN java -jar target/uberjar/g2.jar run migrate
 CMD java -jar target/uberjar/g2.jar run
