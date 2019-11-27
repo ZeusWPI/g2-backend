@@ -57,8 +57,8 @@ SELECT * FROM repository_providers
 
 -- :name create-repo! :insert :raw
 INSERT INTO repos
-(git_id, name, description, url)
-VALUES (:git_id, :name, :description, :url)
+(repo_id, name, description, url)
+VALUES (:repo_id, :name, :description, :url)
 
 -- :name get-repos :? :*
 SELECT * FROM repos
@@ -70,20 +70,20 @@ WHERE repo_id = :repo_id
 -- :name update-repo! :! :n
 UPDATE repos
 SET name = :name, description = :description, url = :url
-WHERE git_id = :git_id
+WHERE repo_id = :repo_id
 
 /*
   Projects
 */
 
 -- :name get-project :? :1
-SELECT project_id, p.name as name, p.description, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
+SELECT project_id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
 from projects p LEFT JOIN repos using(project_id)
 where project_id = :project_id
-GROUP By project_id, name;
+GROUP BY project_id, name;
 
 -- :name get-projects :? :*
-SELECT project_id, p.name as name, p.description, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
+SELECT project_id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
 FROM projects p LEFT JOIN repos using(project_id)
 GROUP BY project_id, p.name;
 
@@ -96,6 +96,10 @@ VALUES (:name, :description);
 DELETE FROM projects
 WHERE project_id = :id;
 
+-- :name update-project-image! :! :1
+UPDATE projects
+SET image_url = :image_url
+WHERE project_id = :id;
 /*
   Projects and Repositories
 */
@@ -103,4 +107,4 @@ WHERE project_id = :id;
 -- :name link-repo-to-project! :! :1
 UPDATE repos
 SET project_id = :project_id
-WHERE repo_id = :repo_id
+WHERE repo_id = :repo_id;
