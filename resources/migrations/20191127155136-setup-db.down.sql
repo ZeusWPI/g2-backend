@@ -17,3 +17,5 @@ DROP TABLE repos;
 DROP TABLE tags;
 --;;
 DROP TABLE projects;
+--;;
+DROP TABLE repository_providers;

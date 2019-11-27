@@ -51,7 +51,8 @@ CREATE TABLE branches
 );
 --;;
 
-CREATE TABLE tags (
+CREATE TABLE tags
+(
 	tag_id      integer auto_increment primary key,
 	name        varchar(255) not null,
 	description varchar(255) not null,
@@ -94,10 +95,19 @@ CREATE TABLE zeus_user
 );
 --;;
 
-CREATE TABLE github_user (
+CREATE TABLE github_user 
+(
 	github_id  integer auto_increment primary key,
 	html_url   varchar(512) not null,
 	avatar_url varchar(512) not null,
 	user_id    integer not null ,
   foreign key (user_id) references users(user_id)
 );
+--;;
+
+CREATE TABLE repository_providers
+(
+  provider_id integer auto_increment primary key,
+  name        varchar(255) unique,
+  access_token  varchar(255) not null
+)
