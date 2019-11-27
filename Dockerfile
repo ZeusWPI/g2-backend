@@ -21,8 +21,7 @@ RUN lein uberjar
 
 COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
 RUN chmod +x add-docker-host-to-hosts-file.sh
-RUN ./add-docker-host-to-hosts-file.sh
 
-RUN ./add-docker-host-to-hosts-file.sh && java -jar target/uberjar/g2.jar run migrate
-CMD ./add-docker-host-to-hosts-file.sh && java -jar target/uberjar/g2.jar run
+RUN add-docker-host-to-hosts-file.sh && java -jar target/uberjar/g2.jar run migrate
+CMD add-docker-host-to-hosts-file.sh && java -jar target/uberjar/g2.jar run
 
