@@ -13,7 +13,6 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC
-    command: "lein run migrate && lein run"
   db:
     container_name: g2-backend_db
     image: mariadb:latest
