@@ -15,11 +15,12 @@ COPY dev-config_template.edn /g2/dev-config.edn
 EXPOSE 3000
 
 # For some reasing CMD doesn't work here so it's specified in the docker-compose file. If used here together with docker-compose it enters the repl as specified in the clojure image and exists immediatly after the repl is started.
-# CMD lein run migrate && lein run
+
 
 COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
 
 WORKDIR /g2
+RUN chmod +x add-docker-host-to-hosts-file.sh
 RUN ./add-docker-host-to-hosts-file.sh
 
 RUN lein uberjar
