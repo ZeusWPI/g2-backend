@@ -20,7 +20,7 @@ EXPOSE 3000
 COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
 
 WORKDIR /g2
-RUN add-docker-host-to-hosts-file.sh
+RUN ./add-docker-host-to-hosts-file.sh
 
 RUN lein uberjar
 
