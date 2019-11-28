@@ -3,4 +3,6 @@
 ./add-docker-host-to-hosts-file.sh
 
 # migrate and run the application
-make run-jar-with-dev
+java -Dconf=dev-config.edn -jar target/uberjar/g2.jar migrate && \
+java -Dconf=dev-config.edn -jar target/uberjar/g2.jar
+
