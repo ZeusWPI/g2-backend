@@ -26,4 +26,6 @@ RUN chmod +x add-docker-host-to-hosts-file.sh
 COPY staging-entrypoint.sh /g2/staging-entrypoint.sh
 RUN chmod +x staging-entrypoint.sh
 
+COPY Makefile /g2/Makefile
+
 CMD ./staging-entrypoint.sh
