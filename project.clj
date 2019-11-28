@@ -55,7 +55,7 @@
    :dev           [:project/dev]
    :test          [:project/dev :project/test]
 
-   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn" "-Xverify:none"]
+   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn"]
                    :dependencies   [[expound "0.7.2"] ; Clearer error messages
                                     [pjstadig/humane-test-output "0.9.0"] ; Test output is pretty printed. && Equality assertions are also diffed.
                                     [ring/ring-mock "0.3.2"] ; Library to create mock Ring requests for unit tests
@@ -67,7 +67,7 @@
                    :repl-options   {:init-ns user}
                    :injections     [(require 'pjstadig.humane-test-output)
                                     (pjstadig.humane-test-output/activate!)]}
-   :project/test  {:jvm-opts       ["-Dconf=test-config.edn" "-Xverify:none"]
+   :project/test  {:jvm-opts       ["-Dconf=test-config.edn"]
                    :resource-paths ["env/test/resources"]}}
 
   :repl-options {;; If nREPL takes too long to load it may timeout,
