@@ -1,13 +1,11 @@
 version: "3"
 services:
   backend:
+    name: g2-backend
     build:
      context: . # Use the dockerfile in this repo
      dockerfile: Dockerfile
     ports:
       - "3333:3000"
     environment:
-      DATABASE_URL: mysql://172.17.0.1:3306/g2_dev?user=g2_dev_user&password=mstFVVS4ASEDMZlx0TWsWABmo&serverTimezone=UTC
-    command: >
-      sh -c "lein run migrate &&
-             lein run"
+      DATABASE_URL: mysql://host.docker.internal:3306/g2_dev?user=g2_dev_user&password=mstFVVS4ASEDMZlx0TWsWABmo&serverTimezone=UTC

@@ -11,7 +11,7 @@ CREATE TABLE repos
     git_id      integer      not null,
     name        varchar(255) not null,
     description varchar(512),
-    url         varchar(255) unique,
+    url         varchar(191),
     project_id  integer,
     foreign key (project_id) references projects (project_id)
 );
