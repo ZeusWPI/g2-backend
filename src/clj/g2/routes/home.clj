@@ -81,7 +81,7 @@
    ["/user" {:get {:handler (fn [req] (log/info "session: " (:session req)) (response/ok (get-in req [:session :user])))}}]
    ["/repository"
     ["" {:get {:handler repo-resource}}]
-    ["/sync" {:post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]
+    ["/sync" {:post {:handler (fn [_] (git/sync-repositories))}}]
     ["/:id"
      ["" {:get {:parameters {:path {:id int?}}
                 :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]

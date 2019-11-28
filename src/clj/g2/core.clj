@@ -55,11 +55,15 @@
       (System/exit 1))
     (some #{"init"} args)
     (do
+      (log/info "Initing the database")
       (migrations/init (select-keys env [:database-url :init-script]))
       (System/exit 0))
     (migrations/migration? args)
     (do
+      (log/info "Migrating the database")
       (migrations/migrate args (select-keys env [:database-url]))
       (System/exit 0))
     :else
-    (start-app args)))
+    (do
+      (log/info "Starting the application")
+      (start-app args))))

@@ -26,6 +26,7 @@
                  [ring/ring-defaults "0.3.2"]
                  [ring-cors "0.1.13"]
                  [selmer "1.12.6"] ; html template renderer
+                 [slingshot "0.12.2"]
                  [clj-http "3.9.1"] ; http request tool
                  ;                 [org.apache.logging.log4j/log4j-api "2.11.0"]
                  ;                 [org.apache.logging.log4j/log4j-core "2.11.0"]

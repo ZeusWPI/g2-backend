@@ -26,4 +26,4 @@ RUN chmod +x add-docker-host-to-hosts-file.sh
 COPY compile-jar-run.sh /g2/compile-jar-run.sh
 RUN chmod +x compile-jar-run.sh
 
-# CMD ./compile-jar-run.sh
+CMD ./compile-jar-run.sh
