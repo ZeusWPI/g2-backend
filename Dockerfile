@@ -23,7 +23,7 @@ EXPOSE 3000
 COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
 RUN chmod +x add-docker-host-to-hosts-file.sh
 
-COPY compile-jar-run.sh /g2/compile-jar-run.sh
-RUN chmod +x compile-jar-run.sh
+COPY staging-entrypoint.sh /g2/staging-entrypoint.sh
+RUN chmod +x staging-entrypoint.sh
 
-CMD ./compile-jar-run.sh
+CMD ./staging-entrypoint.sh
