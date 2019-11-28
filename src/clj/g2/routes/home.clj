@@ -39,7 +39,7 @@
   (if (nil? repo_ids_string)
     nil
     (map #(Integer/parseInt %)
-        (string/split repo_ids_string #","))))
+         (string/split repo_ids_string #","))))
 
 (defn projects-get [request]
   (let [projects (db/get-projects)]
@@ -60,6 +60,16 @@
     (log/debug "Create project: " name " " description)
     (let [insert_id (db/create-project! {:name name, :description description})]
       (response/ok {:new_project_id (:generated_key insert_id)}))))
+
+(defn project-edit [project_id new-values]
+  (as-> (db/get-project {:project_id project_id}) v
+    (if (nil? v)
+      (response/not-found)
+      (do
+        (-> v
+            (merge new-values)
+            (db/update-project!))
+        (response/no-content)))))
 
 (defn project-delete [id]
   (do
@@ -95,9 +105,12 @@
     ["/:id" {:get {:parameters {:path {:id int?}}
                    :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
              :delete {:parameters {:path {:id int?}}
-                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]]
-   ["/repo-providers"
-    {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
+                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}
+             :put {:parameters {:path {:id int?}
+                                :body {}}
+                   :handler (fn [req] (project-edit (get-in req [:path-params :id]) (:body-params req)))}}]
+    ["/repo-providers"
+     {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]]
    ["/hooks"
     ["/:id"
      {:delete {:summary "delete a git hook"
@@ -106,9 +119,12 @@
                           (log/info "DELETE HOOK: " (pprint req))
                           (response/ok))}}]] ;TODO test this
    ["/oauth"
-    ["/github" {:get {:handler (fn [auth-goal] (github-auth/login-github (keyword auth-goal)))}}]
+    ["/github" {:get {:parameters {:query {:auth-goal string?}}
+                      :handler (fn [req] (let [auth-goal (get-in req [:query-params "auth-goal"])]
+                                           (github-auth/login-github (keyword auth-goal))))}}]
     ["/github-callback/:auth-goal" {:get {:handler (fn [req]
-                                                     (github-auth/login-github-callback req))}}]
+                                                     (let [auth-goal (get-in req [:path-params :auth-goal])]
+                                                       (github-auth/login-github-callback req auth-goal)))}}]
     ["/zeus" {:get {:handler zeus-auth/login-zeus}}]
     ["/oauth-callback" {:get {#_:parameters #_{:query {:code string?
                                                        :error string?}}

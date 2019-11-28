@@ -26,14 +26,14 @@
            (response/found))
       (layout/error-page {:title "Non-supported auth goal"}))))
 
-(defn login-github-callback [{:keys [params session]}]
+(defn login-github-callback [{:keys [params session]} auth-goal]
   "Gets the access token from github, connects it as the repo provider"
   (if (:denied params)
     (-> (response/found "/")
         (assoc :flash (:denied true)))
-    (let [{:keys [access_token refresh_token] :as response}
+    (let [code (:code params)
+          {:keys [access_token refresh_token] :as response}
           (oauth/get-authentication-response nil params (oauth2-params))]
-      (log/info params)
       (cond
         (:error response)
         (layout/error-page {:status 500
