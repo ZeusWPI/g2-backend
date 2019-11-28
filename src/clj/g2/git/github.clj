@@ -25,13 +25,13 @@
    (let [response-body (:body (http/get (str base-url "/orgs" "/" (env :github-organization) "/repos?per_page=100") {:as :json}))
          filtered_body (map #(select-keys %1 [:id :name :description :html_url]) response-body)
          converted_body (map #(set/rename-keys %1 {:html_url :url
-                                                   :id :repo_id}) filtered_body)
+                                                   :id :git_id}) filtered_body)
          remote_repo_map (reduce (fn [acc repo] (assoc acc (:git_id repo) repo)) {} converted_body)
-         remote_ids (set (map :repo_id converted_body))
+         remote_ids (set (map :git_id converted_body))
          ; Local repos, id's and map
          local-repos (db/get-repos) ;TODO filter on github
          local_repo_map (reduce (fn [acc repo] (assoc acc (:git_id repo) repo)) {} local-repos)
-         local_ids (set (map :repo_id local-repos))
+         local_ids (set (map :git_id local-repos))
          ; Calculated id sets
          new_ids (clojure.set/difference remote_ids local_ids)
          common_ids (clojure.set/intersection remote_ids local_ids)

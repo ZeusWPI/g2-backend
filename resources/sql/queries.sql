@@ -57,8 +57,8 @@ SELECT * FROM repository_providers
 
 -- :name create-repo! :insert :raw
 INSERT INTO repos
-(repo_id, name, description, url)
-VALUES (:repo_id, :name, :description, :url)
+(git_id, name, description, url)
+VALUES (:git_id, :name, :description, :url)
 
 -- :name get-repos :? :*
 SELECT * FROM repos
