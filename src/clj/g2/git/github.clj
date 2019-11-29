@@ -27,7 +27,18 @@
                               db/update-repo!)))
 
 (defn fetch-and-sync-with-local
-  "property mapping: The keys selected from original maps and how they will be renamed"
+  "This function can now be used for any synchronization
+  operation with an api and our database. You only specify the endpoint, the
+  needed properties and the relevant sql queries.
+
+  ASSUMPTIONS
+    * The shared primary key is a string in our database
+    * The specified api endpoint return a simple list with the entities we want to synchronize
+
+  Function params:
+    * property mapping: The keys selected from original maps and how they will be renamed
+    * shared-identifier: The name of the property that will be used to check which entities we already have in our database and which we don't. This is after property renaming for the remote entities.
+  "
   [url-path property-mapping shared-identifier local-query-get local-query-create local-query-update]
   (log/debug "==============")
   (log/info "Syncing with endpoint" url-path)
