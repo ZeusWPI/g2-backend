@@ -31,6 +31,8 @@
   operation with an api and our database. You only specify the endpoint, the
   needed properties and the relevant sql queries.
 
+  Removal is atm not supported. This will probably be implemented with gravestones.
+
   ASSUMPTIONS
     * The shared primary key is a string in our database
     * The specified api endpoint return a simple list with the entities we want to synchronize
