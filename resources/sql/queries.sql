@@ -70,7 +70,7 @@ WHERE repo_id = :repo_id
 -- :name update-repo! :! :n
 UPDATE repos
 SET name = :name, description = :description, url = :url
-WHERE repo_id = :repo_id
+WHERE git_id = :git_id
 
 /*
   Projects
