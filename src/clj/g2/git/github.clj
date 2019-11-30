@@ -34,14 +34,11 @@
                                 :url :url
                                 :name :name
                                 :color :color
-                                :description :description
-                                }
+                                :description :description}
                                :git_id
                                db/get-labels
                                #(db/create-label! (assoc % :repo_id repo-id))
-                               db/update-label!
-                               )
-    ))
+                               db/update-label!)))
 
 (defn fetch-and-sync-with-local
   "This function can now be used for any synchronization
