@@ -20,59 +20,6 @@
                     [p (get m p)])))
         paths))
 
-(defn apply-keyword-compression
-  "Applies the keyword compression utility onto every key that is a list"
-  [m]
-  (reduce-kv (fn [acc k v] (assoc acc (if (vector? k) (compress-keyword-vec k) k) v)) {} m))
-
-(def base-url "https://api.github.com")
-
-(defn sync-repositories
-  "Fetch all repositories of the organization.
-  Merge existing information with new updates.
-  Add new information
-  "
-  ([]
-   (sync-repositories (db/get-repo-provider {:name "github"})))
-  ([access_token]
-   (fetch-and-sync-with-local (str "/orgs" "/" (env :github-organization) "/repos?per_page=100")
-                              {:id :git_id
-                               :name :name
-                               :description :description
-                               :html_url :url}
-                              :git_id ; local and remote shared unique identifier
-                              db/get-repos ;; TODO filter to only fetch github repos
-                              db/create-repo!
-                              db/update-repo!)))
-
-(defn sync-labels
-  [repo-id]
-  (let [name (:name (db/get-repo {:repo_id repo-id}))]
-    (fetch-and-sync-with-local (str "/repos/" (env :github-organization) "/" name "/labels")
-                               {:id :git_id
-                                :name :name
-                                :description :description
-                                :url :url
-                                :color :color}
-                               :git_id
-                               db/get-labels
-                               #(db/create-label! (assoc % :repo_id repo-id))
-                               db/update-label!)))
-
-(defn sync-issues
-  [repo-id]
-  (fetch-and-sync-with-local (str "/repos/" (env :github-organization) "/"
-                                  (:name (db/get-repo {:repo_id repo-id})) "/issues")
-                             {:id :git_id
-                              :html_url :url
-                              :title :title
-                              :created_at :time
-                              [:user :id] :author}
-                             :git_id
-                             db/get-issues
-                             #(db/create-issue! (assoc % :repo_id repo-id))
-                             db/update-issue!))
-
 (def date-properties
   "All properties that are in this set will be automatically converted to a zoned-date-time"
   [:created_at])
@@ -82,6 +29,13 @@
           (if (contains? m prop)
             (update m prop #(local-date-time (zoned-date-time %)))
             m))))
+
+(defn apply-keyword-compression
+  "Applies the keyword compression utility onto every key that is a list"
+  [m]
+  (reduce-kv (fn [acc k v] (assoc acc (if (vector? k) (compress-keyword-vec k) k) v)) {} m))
+
+(def base-url "https://api.github.com")
 
 (defn fetch-and-sync-with-local
   "This function can now be used for any synchronization
@@ -98,10 +52,10 @@
     * property mapping: The keys selected from original maps and how they will be renamed
     * shared-identifier: The name of the property that will be used to check which entities we already have in our database and which we don't. This is after property renaming for the remote entities.
   "
-  [url-path property-mapping shared-identifier local-query-get local-query-create local-query-update]
+  [url property-mapping shared-identifier local-query-get local-query-create local-query-update]
   (log/debug "==============")
-  (log/info "Syncing with endpoint" url-path)
-  (let [remote-data (->> (http/get (str base-url url-path) {:as :json})
+  (log/info "Syncing with endpoint" url)
+  (let [remote-data (->> (http/get url {:as :json})
                          (:body)
                          (map #(-> %1
                                    (select-keys* (keys property-mapping))
@@ -120,20 +74,67 @@
         update-ids (filter (fn [id] #_(println (clojure.data/diff (remote-entity-map id) (local-entity-map id)) "\n") (not= (remote-entity-map id) (local-entity-map id))) common-ids)
         remove-ids (clojure.set/difference local-ids remote-ids) ; TODO handle entities that are removed on github
         ]
-                                        ; Create new entities that are not in our db
+    ; Create new entities that are not in our db
     (log/debug (format "Creating %d new objects" (count new-ids)))
     (doseq [id new-ids]
       (let [remote-entity (get remote-entity-map id)]
         (local-query-create remote-entity)))
-                                        ;Update local entities with their remote data
+    ;Update local entities with their remote data
     (log/debug (format "Updating %d of %d objects" (count update-ids) (count common-ids)))
     (doseq [id update-ids]
       (let [remote-entity (get remote-entity-map id)]
         (local-query-update remote-entity)))
-                                        ; TODO Handle entities that are removed on the remote
-                                        ;(doseq [id remove-ids]
-                                        ;  )
+    ; TODO Handle entities that are removed on the remote
+    ;(doseq [id remove-ids]
+    ;  )
     ))
+
+(defn sync-repositories
+  "Fetch all repositories of the organization.
+  Merge existing information with new updates.
+  Add new information
+  "
+  ([]
+   (sync-repositories (db/get-repo-provider {:name "github"})))
+  ([access_token]
+   (fetch-and-sync-with-local (str base-url "/orgs" "/" (env :github-organization) "/repos?per_page=100")
+                              {:id :git_id
+                               :name :name
+                               :description :description
+                               :html_url :url}
+                              :git_id ; local and remote shared unique identifier
+                              db/get-repos ;; TODO filter to only fetch github repos
+                              db/create-repo!
+                              db/update-repo!)))
+
+(defn sync-labels
+  [repo-id]
+  (let [name (:name (db/get-repo {:repo_id repo-id}))]
+    (fetch-and-sync-with-local (str base-url "/repos/" (env :github-organization) "/" name "/labels")
+                               {:id :git_id
+                                :name :name
+                                :description :description
+                                :url :url
+                                :color :color}
+                               :git_id
+                               db/get-labels
+                               #(db/create-label! (assoc % :repo_id repo-id))
+                               db/update-label!)))
+
+(defn sync-issues
+  [repo-id]
+  (fetch-and-sync-with-local (str base-url "/repos/" (env :github-organization) "/"
+                                  (:name (db/get-repo {:repo_id repo-id})) "/issues")
+                             {:id :git_id
+                              :html_url :url
+                              :title :title
+                              :created_at :time
+                              [:user :id] :author}
+                             :git_id
+                             db/get-issues
+                             #(db/create-issue! (assoc % :repo_id repo-id))
+                             db/update-issue!))
+
 
 (defn create-repo-hooks [repo-id])
 

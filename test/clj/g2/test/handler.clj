@@ -6,7 +6,8 @@
             [muuntaja.core :as m]
             [clojure.pprint :refer [pprint]]
             [mount.core :as mount]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            ))
 
 (defn parse-json [body]
   (m/decode formats/instance "application/json" body))
