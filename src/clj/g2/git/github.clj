@@ -31,10 +31,10 @@
   (let [name (:name (db/get-repo {:repo_id repo-id}))]
     (fetch-and-sync-with-local (str "/repos/" (env :github-organization) "/" name "/labels")
                                {:id :git_id
-                                :url :url
                                 :name :name
-                                :color :color
-                                :description :description}
+                                :description :description
+                                :url :url
+                                :color :color}
                                :git_id
                                db/get-labels
                                #(db/create-label! (assoc % :repo_id repo-id))
