@@ -5,10 +5,15 @@
             [clojure.pprint :refer [pprint]]
             [clojure.tools.logging :as log]
             [clojure.set :as set]
+            [clojure.spec.alpha :as s]
             [java-time :refer [local-date-time zoned-date-time]]))
 
+(s/def ::seq-of-keywords (s/* keyword?))
+
 ;; Some utils
-(defn compress-keyword-vec [keywords]
+(defn compress-keyword-vec
+  [keywords]
+  {:pre [s/valid? ::seq-of-keywords keywords]}
   (apply keyword (map name keywords)))
 
 (defn select-keys*
@@ -33,6 +38,7 @@
 (defn apply-keyword-compression
   "Applies the keyword compression utility onto every key that is a list"
   [m]
+  {:pre [s/valid? map? m]}
   (reduce-kv (fn [acc k v] (assoc acc (if (vector? k) (compress-keyword-vec k) k) v)) {} m))
 
 (def base-url "https://api.github.com")
@@ -89,6 +95,12 @@
     ;  )
     ))
 
+(def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization) "/repos?per_page=100")
+                       :labels #(str base-url "/repos/" (env :github-organization) "/"
+                                     (:name (db/get-repo (select-keys % [:repo_id]))) "/labels")
+                       :issues #(str base-url "/repos/" (env :github-organization) "/"
+                                     (:name (db/get-repo (select-keys % [:repo_id]))) "/issues")})
+
 (defn sync-repositories
   "Fetch all repositories of the organization.
   Merge existing information with new updates.
@@ -97,7 +109,7 @@
   ([]
    (sync-repositories (db/get-repo-provider {:name "github"})))
   ([access_token]
-   (fetch-and-sync-with-local (str base-url "/orgs" "/" (env :github-organization) "/repos?per_page=100")
+   (fetch-and-sync-with-local ((github-endpoints :repos))
                               {:id :git_id
                                :name :name
                                :description :description
@@ -109,22 +121,20 @@
 
 (defn sync-labels
   [repo-id]
-  (let [name (:name (db/get-repo {:repo_id repo-id}))]
-    (fetch-and-sync-with-local (str base-url "/repos/" (env :github-organization) "/" name "/labels")
-                               {:id :git_id
-                                :name :name
-                                :description :description
-                                :url :url
-                                :color :color}
-                               :git_id
-                               db/get-labels
-                               #(db/create-label! (assoc % :repo_id repo-id))
-                               db/update-label!)))
+  (fetch-and-sync-with-local (get-github-endpoint :labels {:repo_id repo-id})
+                             {:id :git_id
+                              :name :name
+                              :description :description
+                              :url :url
+                              :color :color}
+                             :git_id
+                             db/get-labels
+                             #(db/create-label! (assoc % :repo_id repo-id))
+                             db/update-label!))
 
 (defn sync-issues
   [repo-id]
-  (fetch-and-sync-with-local (str base-url "/repos/" (env :github-organization) "/"
-                                  (:name (db/get-repo {:repo_id repo-id})) "/issues")
+  (fetch-and-sync-with-local (get-github-endpoint :issues {:repo_id repo-id})
                              {:id :git_id
                               :html_url :url
                               :title :title
@@ -134,7 +144,6 @@
                              db/get-issues
                              #(db/create-issue! (assoc % :repo_id repo-id))
                              db/update-issue!))
-
 
 (defn create-repo-hooks [repo-id])
 
