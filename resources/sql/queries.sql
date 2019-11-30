@@ -127,3 +127,23 @@ SELECT * FROM labels
 UPDATE labels
 SET name = :name, description = :description, url = :url, color = :color
 WHERE git_id = :git_id
+
+
+/* ---- ISSUES ----- */
+
+-- :name create-issue! :insert :raw
+INSERT INTO issues
+(git_id, url, title, time, repo_id, author)
+VALUES (:git_id, :url, :title, :time, :repo_id, :author)
+
+-- :name get-issues :? :*
+SELECT * FROM issues
+
+-- :name get-issue :? :1
+SELECT * FROM isuess
+WHERE issue_id = :issue_id
+
+-- :name update-issue! :! :n
+UPDATE issues
+SET url = :url, title = :title, time = :time, author = :author
+WHERE git_id = :git_id

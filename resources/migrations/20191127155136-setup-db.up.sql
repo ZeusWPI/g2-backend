@@ -33,13 +33,13 @@ CREATE TABLE repos
 CREATE TABLE issues
 (
   issue_id  integer auto_increment primary key,
+  git_id    varchar(255) not null,
   url       varchar(512) not null,
   title     varchar(255) not null,
   time      timestamp    not null,
   repo_id   integer      not null,
   author    integer      not null,
-  foreign key (repo_id) references repos(repo_id),
-  foreign key (author) references users(user_id)
+  foreign key (repo_id) references repos(repo_id)
 ) CHARACTER SET utf8mb4;
 --;;
 
