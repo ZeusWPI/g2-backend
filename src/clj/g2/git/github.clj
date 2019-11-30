@@ -26,10 +26,27 @@
                               db/create-repo!
                               db/update-repo!)))
 
+(defn sync-labels
+  [repo-id]
+  (let [name (:name (db/get-repo {:repo_id repo-id}))]
+    (fetch-and-sync-with-local (str "/repos/" (env :github-organization) "/" name "/labels")
+                               {:id :git_id
+                                :url :url
+                                :name :name
+                                :color :color
+                                :description :description
+                                }
+                               :git_id
+                               db/get-labels
+                               #(db/create-label! (assoc % :repo_id repo-id))
+                               db/update-label!
+                               )
+    ))
+
 (defn fetch-and-sync-with-local
   "This function can now be used for any synchronization
   operation with an api and our database. You only specify the endpoint, the
-  needed properties and the relevant sql queries.
+  needed properties and the relevant sql (queries.)
 
   Removal is atm not supported. This will probably be implemented with gravestones.
 

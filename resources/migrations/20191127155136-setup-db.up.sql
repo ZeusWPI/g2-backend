@@ -64,7 +64,8 @@ CREATE TABLE tags
 
 CREATE TABLE labels 
 (
-	label_id    integer primary key,
+	label_id    integer auto_increment primary key,
+  git_id      varchar(255) not null,
 	url         varchar(512),
 	name        varchar(255) not null,
 	color       varchar(255) default "#FFFFFF",

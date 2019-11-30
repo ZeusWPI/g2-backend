@@ -108,3 +108,22 @@ WHERE project_id = :id;
 UPDATE repos
 SET project_id = :project_id
 WHERE repo_id = :repo_id;
+
+
+/* LABELS */
+-- :name create-label! :insert :raw
+INSERT INTO labels
+(git_id, name, description, url, color, repo_id)
+VALUES (:git_id, :name, :description, :url, :color, :repo_id)
+
+  -- :name get-labels :? :*
+SELECT * FROM labels
+
+  -- :name get-label :? :1
+SELECT * FROM labels
+ WHERE label_id = :label_id
+
+-- :name update-label! :! :n
+UPDATE labels
+SET name = :name, description = :description, url = :url, color = :color
+WHERE git_id = :git_id
