@@ -157,7 +157,7 @@ WHERE git_id = :git_id
 -- :name create-branch! :insert :raw
 INSERT INTO branches
             (commit_sha, name, repo_id)
-VALUES (:commit_sha, name, :repo_id)
+VALUES (:commit_sha, :name, :repo_id)
 
 -- :name get-branches :? :*
 SELECT * FROM branches

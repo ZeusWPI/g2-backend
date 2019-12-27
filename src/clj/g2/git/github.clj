@@ -96,7 +96,9 @@
     ))
 
 (defn get-repo-name [repo-data]
-  (:name (db/get-repo (select-keys repo-data [:repo_id]))))
+  (if-let [name (:name (db/get-repo (select-keys repo-data [:repo_id])))]
+    name
+    (throw (Exception. "repo_id not found in database"))))
 
 (def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization) "/repos?per_page=100")
                        :labels #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/labels")
