@@ -9,24 +9,27 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 
 
 -- :name create-user! :insert :raw
--- :doc creates a new user record
 INSERT INTO users
-(name, zeus_id, access_token)
-VALUES (:name, :zeus_id, :access_token)
+            (name, email, admin, last_login)
+VALUES (:name, :email, :admin, :last_login)
 
 -- :name get-user :? :1
--- :doc retrieves a user record given the id
 SELECT * FROM users
-WHERE id = :id
+LEFT OUTER JOIN zeus_users using (user_id)
+ WHERE user_id = :user_id
 
 -- :name get-user-on-zeusid :? :1
 SELECT * FROM users
+LEFT INNER JOIN zeus_users using (user_id)
 WHERE zeus_id = :zeus_id
 
+-- :name get-users :? :*
+SELECT * FROM users
+LEFT OUTER JOIN zeus_users using (user_id)
+
 -- :name delete-user! :! :n
--- :doc deletes a user record given the id
 DELETE FROM users
-WHERE id = :id
+WHERE user_id = :user_id
 
 /*
   Repository Providers
@@ -147,3 +150,24 @@ WHERE issue_id = :issue_id
 UPDATE issues
 SET url = :url, title = :title, time = :time, author = :author
 WHERE git_id = :git_id
+
+
+/* ---- BRANCHES ---- */
+
+-- :name create-branch! :insert :raw
+INSERT INTO branches
+            (commit_sha, name, repo_id)
+VALUES (:commit_sha, name, :repo_id)
+
+-- :name get-branches :? :*
+SELECT * FROM branches
+
+-- :name get-branch :? :1
+SELECT * FROM branches
+ WHERE branch_id = :branch_id
+
+-- :name update-branch! :! :n
+UPDATE branches
+SET name = :name
+WHERE commit_sha = :commit_sha
+

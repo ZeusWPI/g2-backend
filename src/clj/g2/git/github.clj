@@ -95,11 +95,13 @@
     ;  )
     ))
 
+(defn get-repo-name [repo-data]
+  (:name (db/get-repo (select-keys repo-data [:repo_id]))))
+
 (def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization) "/repos?per_page=100")
-                       :labels #(str base-url "/repos/" (env :github-organization) "/"
-                                     (:name (db/get-repo (select-keys % [:repo_id]))) "/labels")
-                       :issues #(str base-url "/repos/" (env :github-organization) "/"
-                                     (:name (db/get-repo (select-keys % [:repo_id]))) "/issues")})
+                       :labels #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/labels")
+                       :issues #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/issues")
+                       :branches #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/branches")})
 
 (defn sync-repositories
   "Fetch all repositories of the organization.
@@ -121,7 +123,7 @@
 
 (defn sync-labels
   [repo-id]
-  (fetch-and-sync-with-local (get-github-endpoint :labels {:repo_id repo-id})
+  (fetch-and-sync-with-local ((github-endpoints :labels) {:repo_id repo-id})
                              {:id :git_id
                               :name :name
                               :description :description
@@ -134,7 +136,7 @@
 
 (defn sync-issues
   [repo-id]
-  (fetch-and-sync-with-local (get-github-endpoint :issues {:repo_id repo-id})
+  (fetch-and-sync-with-local ((github-endpoints :issues) {:repo_id repo-id})
                              {:id :git_id
                               :html_url :url
                               :title :title
@@ -144,6 +146,16 @@
                              db/get-issues
                              #(db/create-issue! (assoc % :repo_id repo-id))
                              db/update-issue!))
+
+(defn sync-branches
+  [repo-id]
+  (fetch-and-sync-with-local ((github-endpoints :branches) {:repo_id repo-id})
+                             {[:commit :sha] :commit_sha
+                              :name :name}
+                             :commit_sha
+                             db/get-branches
+                             #(db/create-branch! (assoc % :repo_id repo-id))
+                             db/update-branch!))
 
 (defn create-repo-hooks [repo-id])
 

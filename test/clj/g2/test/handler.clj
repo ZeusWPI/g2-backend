@@ -46,6 +46,7 @@
         (is (= {:project_id generated_id
                 :name "project-name",
                 :description "project-description"
+                :image_url nil
                 :repo_ids nil} body-get))
         (is (= 204 (:status resp-delete)))
         (is (= 404 (:status resp-get-after-delete)))))

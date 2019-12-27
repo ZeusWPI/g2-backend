@@ -25,7 +25,7 @@
                                  (fn [updated-body] (is (= {:aa "2" :bb 3} updated-body))))))
   (testing "Synchronize repositories"
     (testing "All new"
-      (with-fake-routes {((get-github-endpoint :repos))
+      (with-fake-routes {((github-endpoints :repos))
                          (fn [req] {:status 200 :content-type "application/json"
                                     :body (json/generate-string [{:id 123
                                                                   :name "Repo 1"
@@ -46,7 +46,7 @@
                  :name "Repo 2"
                  :description "Descr 2"
                  :url "http://gh.com/repo/456"}]
-               ;; TODO we should have an exact match and don't filter here. Select-keys is fine
+               ;; TODO we should have an exact match and don't filter here.
                (->> (db/get-repos)
                     (filter (fn [repo] (contains? #{"123" "456"} (:git_id repo))))
                     (map #(select-keys % [:git_id :name :description :url])))))))))

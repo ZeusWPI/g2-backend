@@ -1,4 +1,4 @@
-CREATE TABLE users 
+CREATE TABLE users
 (
 	user_id    integer auto_increment primary key,
 	name       varchar(255) not null,
@@ -8,7 +8,7 @@ CREATE TABLE users
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE projects 
+CREATE TABLE projects
 (
 	project_id  integer auto_increment primary key,
 	name        varchar(255) not null,
@@ -17,7 +17,7 @@ CREATE TABLE projects
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE repos 
+CREATE TABLE repos
 (
 	repo_id     integer auto_increment primary key,
   git_id      varchar(255) not null,
@@ -46,6 +46,7 @@ CREATE TABLE issues
 CREATE TABLE branches
 (
 	branch_id integer auto_increment primary key,
+  commit_sha varchar(255) not null,
 	name      varchar(255) not null,
 	repo_id   integer not null,
   foreign key (repo_id) references repos(repo_id)
@@ -62,7 +63,7 @@ CREATE TABLE tags
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE labels 
+CREATE TABLE labels
 (
 	label_id    integer auto_increment primary key,
   git_id      varchar(255) not null,
@@ -70,14 +71,14 @@ CREATE TABLE labels
 	name        varchar(255) not null,
 	color       varchar(255) default "#FFFFFF",
 	description varchar(512),
-	repo_id     integer not null, 
+	repo_id     integer not null,
 	tag_id      integer,
   foreign key (repo_id) references repos(repo_id),
   foreign key (tag_id) references tags(tag_id)
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE issues_labels 
+CREATE TABLE issues_labels
 (
 	label_id integer not null,
 	issue_id integer not null,
@@ -87,7 +88,7 @@ CREATE TABLE issues_labels
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE zeus_user 
+CREATE TABLE zeus_users
 (
 	zeus_id integer primary key,
 	user_id integer not null,
@@ -95,7 +96,7 @@ CREATE TABLE zeus_user
 ) CHARACTER SET utf8mb4;
 --;;
 
-CREATE TABLE github_user 
+CREATE TABLE github_user
 (
 	github_id  integer primary key,
 	html_url   varchar(512) not null,
