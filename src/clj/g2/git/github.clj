@@ -61,7 +61,8 @@
   [url property-mapping shared-identifier local-query-get local-query-create local-query-update]
   (log/debug "==============")
   (log/info "Syncing with endpoint" url)
-  (let [remote-data (->> (http/get url {:as :json})
+  (let [remote-data (->> (http/get url {:headers {"Authorization" (str "token " (env :github-personal-access-token))}
+                                        :as :json})
                          (:body)
                          (map #(-> %1
                                    (select-keys* (keys property-mapping))
@@ -100,10 +101,14 @@
     name
     (throw (Exception. "repo_id not found in database"))))
 
-(def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization) "/repos?per_page=100")
-                       :labels #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/labels")
-                       :issues #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/issues")
-                       :branches #(str base-url "/repos/" (env :github-organization) "/" (get-repo-name %) "/branches")})
+(def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization)
+                                    "/repos?per_page=100")
+                       :labels #(str base-url "/repos/" (env :github-organization) "/"
+                                     (get-repo-name %) "/labels")
+                       :issues #(str base-url "/repos/" (env :github-organization) "/"
+                                     (get-repo-name %) "/issues")
+                       :branches #(str base-url "/repos/" (env :github-organization) "/"
+                                       (get-repo-name %) "/branches")})
 
 (defn sync-repositories
   "Fetch all repositories of the organization.

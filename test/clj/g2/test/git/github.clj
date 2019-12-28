@@ -40,13 +40,18 @@
         (sync-repositories)
         (is (= [{:git_id "123"
                  :name "Repo 1"
+                 :repo_type nil
+                 :project_id nil
                  :description "Descr 1"
                  :url "http://gh.com/repo/123"}
                 {:git_id "456"
                  :name "Repo 2"
+                 :repo_type nil
+                 :project_id nil
                  :description "Descr 2"
                  :url "http://gh.com/repo/456"}]
                ;; TODO we should have an exact match and don't filter here.
                (->> (db/get-repos)
                     (filter (fn [repo] (contains? #{"123" "456"} (:git_id repo))))
-                    (map #(select-keys % [:git_id :name :description :url])))))))))
+                    ((fn [x] (println x) x))
+                    (map #(dissoc % :repo_id)))))))))

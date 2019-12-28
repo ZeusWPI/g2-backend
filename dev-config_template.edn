@@ -25,4 +25,7 @@
 
  ;; Github organization
  :github-organization "ZeusWPI"
+
+ ;;Github app oauth token
+ :github-personal-access-token ""
  }

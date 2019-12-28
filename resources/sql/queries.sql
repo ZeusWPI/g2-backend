@@ -143,13 +143,19 @@ VALUES (:git_id, :url, :title, :time, :repo_id, :author)
 SELECT * FROM issues
 
 -- :name get-issue :? :1
-SELECT * FROM isuess
+SELECT * FROM issues
 WHERE issue_id = :issue_id
 
 -- :name update-issue! :! :n
 UPDATE issues
 SET url = :url, title = :title, time = :time, author = :author
 WHERE git_id = :git_id
+
+-- :name get-project-issues :? :*
+SELECT * from issues
+INNER JOIN repos using (repo_id)
+INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
 
 
 /* ---- BRANCHES ---- */

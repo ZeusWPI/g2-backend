@@ -5,6 +5,7 @@
             [g2.github-auth :as github-auth]
             [g2.db.core :refer [*db*] :as db]
             [g2.oauth :as oauth]
+            [g2.routes.issues :as issues]
             [compojure.core :refer [defroutes GET DELETE]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
@@ -39,7 +40,7 @@
   (if (nil? repo_ids_string)
     nil
     (map #(Integer/parseInt %)
-        (string/split repo_ids_string #","))))
+         (string/split repo_ids_string #","))))
 
 (defn projects-get [request]
   (let [projects (db/get-projects)]
@@ -80,21 +81,37 @@
   [["/" {:get {:handler home-page}}]
    ["/user" {:get {:handler (fn [req] (log/info "session: " (:session req)) (response/ok (get-in req [:session :user])))}}]
    ["/repository"
+    {:swagger {:tags ["repository"]}}
     ["" {:get {:handler repo-resource}}]
-    ["/sync" {:post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]
+    ["/sync" {:swagger {:tags ["sync"]}
+              :post {:handler (fn [_] (git/sync-repositories) (response/ok))}}]
     ["/:id"
      ["" {:get {:parameters {:path {:id int?}}
                 :handler (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
      ["/link/:pid" {:put {:parameters {:path {:pid int?, :id int?}}
-                          :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]]]
+                          :handler (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]
+     ["/branches"
+      [""]
+      ["/:branch_id"]]
+     ["/labels"
+      [""]
+      ["/:label_id"]]]]
    ["/project"
-    ["" {:get {:handler projects-get}
-         :post {:parameters {:body {:name string?, :description string?}}
+    {:swagger {:tags ["project"]}}
+    ["" {:get {:summary "Get all projects"
+               :handler projects-get}
+         :post {:summary "Create a new project"
+                :parameters {:body {:name string?, :description string?}}
                 :handler (fn [{{{:keys [name description]} :body} :parameters}] (project-create name description))}}]
-    ["/:id" {:get {:parameters {:path {:id int?}}
-                   :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
-             :delete {:parameters {:path {:id int?}}
-                      :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]]
+
+    ["/:id"
+     ["" {:get {:summary "Get a specific project"
+                :parameters {:path {:id int?}}
+                :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
+          :delete {:parameters {:path {:id int?}}
+                   :handler (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
+     (issues/route-handler-per-project)]]
+   (issues/route-handler-global)
    ["/repo-providers"
     {:get {:handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
    ["/hooks"
@@ -105,6 +122,7 @@
                           (log/info "DELETE HOOK: " (pprint req))
                           (response/ok))}}]] ;TODO test this
    ["/oauth"
+    {:swagger {:tags ["oauth"]}}
     ["/github" {:get {:handler (fn [auth-goal] (github-auth/login-github (keyword auth-goal)))}}]
     ["/github-callback/:auth-goal" {:get {:handler (fn [req]
                                                      (github-auth/login-github-callback req))}}]
