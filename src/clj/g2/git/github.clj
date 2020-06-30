@@ -62,7 +62,7 @@
   (log/debug "==============")
   (log/info "Syncing with endpoint" url)
   (let [remote-data (->> (http/get url {:headers {"Authorization" (str "token " (env :github-personal-access-token))}
-                                        :as :json})
+                                        :as      :json})
                          (:body)
                          (map #(-> %1
                                    (select-keys* (keys property-mapping))
@@ -85,6 +85,7 @@
     (log/debug (format "Creating %d new objects" (count new-ids)))
     (doseq [id new-ids]
       (let [remote-entity (get remote-entity-map id)]
+        (println "Creating" remote-entity)
         (local-query-create remote-entity)))
     ;Update local entities with their remote data
     (log/debug (format "Updating %d of %d objects" (count update-ids) (count common-ids)))
@@ -101,12 +102,12 @@
     name
     (throw (Exception. "repo_id not found in database"))))
 
-(def github-endpoints {:repos #(str base-url "/orgs/" (env :github-organization)
-                                    "/repos?per_page=100")
-                       :labels #(str base-url "/repos/" (env :github-organization) "/"
-                                     (get-repo-name %) "/labels")
-                       :issues #(str base-url "/repos/" (env :github-organization) "/"
-                                     (get-repo-name %) "/issues")
+(def github-endpoints {:repos    #(str base-url "/orgs/" (env :github-organization)
+                                       "/repos?per_page=100")
+                       :labels   #(str base-url "/repos/" (env :github-organization) "/"
+                                       (get-repo-name %) "/labels")
+                       :issues   #(str base-url "/repos/" (env :github-organization) "/"
+                                       (get-repo-name %) "/issues")
                        :branches #(str base-url "/repos/" (env :github-organization) "/"
                                        (get-repo-name %) "/branches")})
 
@@ -119,23 +120,23 @@
    (sync-repositories (db/get-repo-provider {:name "github"})))
   ([access_token]
    (fetch-and-sync-with-local ((github-endpoints :repos))
-                              {:id :git_id
-                               :name :name
+                              {:id          :git_id
+                               :name        :name
                                :description :description
-                               :html_url :url}
-                              :git_id ; local and remote shared unique identifier
-                              db/get-repos ;; TODO filter to only fetch github repos
+                               :html_url    :url}
+                              :git_id                       ; local and remote shared unique identifier
+                              db/get-repos                  ;; TODO filter to only fetch github repos
                               db/create-repo!
                               db/update-repo!)))
 
 (defn sync-labels
   [repo-id]
   (fetch-and-sync-with-local ((github-endpoints :labels) {:repo_id repo-id})
-                             {:id :git_id
-                              :name :name
+                             {:id          :git_id
+                              :name        :name
                               :description :description
-                              :url :url
-                              :color :color}
+                              :url         :url
+                              :color       :color}
                              :git_id
                              db/get-labels
                              #(db/create-label! (assoc % :repo_id repo-id))
@@ -144,9 +145,9 @@
 (defn sync-issues
   [repo-id]
   (fetch-and-sync-with-local ((github-endpoints :issues) {:repo_id repo-id})
-                             {:id :git_id
-                              :html_url :url
-                              :title :title
+                             {:id         :git_id
+                              :html_url   :url
+                              :title      :title
                               :created_at :time
                               [:user :id] :author}
                              :git_id
@@ -158,7 +159,7 @@
   [repo-id]
   (fetch-and-sync-with-local ((github-endpoints :branches) {:repo_id repo-id})
                              {[:commit :sha] :commit_sha
-                              :name :name}
+                              :name          :name}
                              :commit_sha
                              db/get-branches
                              #(db/create-branch! (assoc % :repo_id repo-id))

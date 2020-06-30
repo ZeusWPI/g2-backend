@@ -14,6 +14,7 @@
 (conman/bind-connection *db* "sql/queries.sql")
 
 
+;; Make sure that sql time related columns are converted you our correct clojure datastructures.
 (extend-protocol jdbc/IResultSetReadColumn
   java.sql.Timestamp
   (result-set-read-column [v _2 _3]
@@ -25,6 +26,8 @@
   (result-set-read-column [v _2 _3]
     (.toLocalTime v)))
 
+
+;; Make sure that our clojure datastructures are converted to the correct sql column types.
 (extend-protocol jdbc/ISQLValue
   java.util.Date
   (sql-value [v]
