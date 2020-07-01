@@ -6,6 +6,8 @@
             [g2.db.core :refer [*db*] :as db]
             [g2.oauth :as oauth]
             [g2.routes.issues :as issues]
+            [g2.routes.labels :as labels]
+            [g2.routes.branches :as branches]
             [compojure.core :refer [defroutes GET DELETE]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
@@ -69,6 +71,8 @@
     (response/no-content)))
 
 (defn link-repo-to-project [id pid]
+  ;; TODO check that the project exists
+  ;; TODO check that the repo exists
   (do
     (db/link-repo-to-project! {:project_id pid, :repo_id id})
     (response/no-content)))
@@ -128,8 +132,12 @@
           :delete {:summary    "Delete a project"
                    :parameters {:path {:id int?}}
                    :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
-     (issues/route-handler-per-project)]]
+     (issues/route-handler-per-project)
+     (labels/route-handler-per-project)
+     (branches/route-handler-per-project)]]
    (issues/route-handler-global)
+   (labels/route-handler-global)
+   (branches/route-handler-global)
    ["/repo-providers"
     {:get {:summary "Get the list of repository providers configured (like for ex. github or gitlab)"
            :handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]

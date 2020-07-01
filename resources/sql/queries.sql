@@ -113,7 +113,7 @@ SET project_id = :project_id
 WHERE repo_id = :repo_id;
 
 
-/* LABELS */
+/* ---- LABELS ---- */
 -- :name create-label! :insert :raw
 INSERT INTO labels
 (git_id, name, description, url, color, repo_id)
@@ -130,6 +130,12 @@ SELECT * FROM labels
 UPDATE labels
 SET name = :name, description = :description, url = :url, color = :color
 WHERE git_id = :git_id
+
+-- :name get-project-labels :? :*
+SELECT * from labels
+                  INNER JOIN repos using (repo_id)
+                  INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
 
 
 /* ---- ISSUES ----- */
@@ -177,3 +183,8 @@ UPDATE branches
 SET name = :name
 WHERE commit_sha = :commit_sha
 
+-- :name get-project-branches :? :*
+SELECT * from branches
+                  INNER JOIN repos using (repo_id)
+                  INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
