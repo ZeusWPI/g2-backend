@@ -1,0 +1,42 @@
+title: Pull
+type: object
+x-examples:
+  Example:
+    id: 1
+    title: Updating README with latest documentation
+    timestamp: 1594018083
+    status: closed
+    author:
+      id: 1
+      name: maartenvn
+      url: 'https://github.com/maartenvn'
+    repository:
+      id: 1
+      name: Tab
+      description: ':moneybag: Yes. We have to drink. But we also have to pay. This does the paying part.'
+      url: 'https://github.com/ZeusWPI/Tab'
+      image: 'https://localhost:3000/repositories/1/image'
+    labels:
+      - id: 1
+        name: IMPORTANT
+        color: '#c0392b'
+properties:
+  id:
+    type: number
+  title:
+    type: string
+  timestamp:
+    type: number
+  status:
+    type: string
+    enum:
+      - open
+      - closed
+  author:
+    $ref: ./Author.v1.yaml
+  repository:
+    $ref: ./Repository.v1.yaml
+  labels:
+    type: array
+    items:
+      $ref: ./Label.v1.yaml

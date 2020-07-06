@@ -1,0 +1,22 @@
+title: Branch
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: master
+    url: 'https://github.com/ZeusWPI/g2-backend/tree/master'
+    repository:
+      id: 2
+      name: g2-backend
+      description: Backend for the G2 project
+      url: 'https://github.com/ZeusWPI/g2-backend'
+      image: 'https://localhost:3000/repositories/1/image'
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  url:
+    type: string
+  repository:
+    $ref: ./Repository.v1.yaml
