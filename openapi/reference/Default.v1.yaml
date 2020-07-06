@@ -231,7 +231,9 @@ paths:
     post:
       summary: ''
       operationId: post-repositories-id-link-projectId
-      responses: {}
+      responses:
+        '200':
+          description: OK
       description: Link a given project id to a given repository.
   '/repositories/{id}/unlink/{projectId}':
     parameters:
