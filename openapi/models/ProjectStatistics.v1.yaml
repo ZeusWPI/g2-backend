@@ -7,8 +7,8 @@ x-examples:
     pullsCount: 11
 properties:
   issuesCount:
-    type: number
+    type: integer
   repositoriesCount:
-    type: number
+    type: integer
   pullsCount:
-    type: number
+    type: integer

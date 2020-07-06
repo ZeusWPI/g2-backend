@@ -9,7 +9,7 @@ x-examples:
     image: 'https://localhost:3000/repositories/1/image'
 properties:
   id:
-    type: number
+    type: integer
   name:
     type: string
   description:

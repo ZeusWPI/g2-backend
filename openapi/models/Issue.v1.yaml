@@ -23,11 +23,11 @@ x-examples:
         color: '#c0392b'
 properties:
   id:
-    type: number
+    type: integer
   title:
     type: string
   timestamp:
-    type: number
+    type: integer
   status:
     type: string
     enum:

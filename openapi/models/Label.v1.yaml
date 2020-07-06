@@ -8,7 +8,7 @@ x-examples:
     color: '#c0392b'
 properties:
   id:
-    type: number
+    type: integer
   name:
     type: string
   color:

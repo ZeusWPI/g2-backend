@@ -16,7 +16,7 @@ x-examples:
       pullsCount: 2
 properties:
   id:
-    type: number
+    type: integer
   name:
     type: string
   description:
