@@ -2,55 +2,55 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>G2 backend</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>G2 backend</title>
 </head>
 
 <body>
-    <header>
-        <h1>G2 backend Dashboard</h1>
-        <p>Welcome {{user.name}}</p>
-    </header>
-    <section>
-        <h2>API</h2>
-        <p>The api has a swagger gui which can be used to discover and try out the endpoints.
-            Find it <a href="/api-docs/">here</a>
-        </p>
-    </section>
-    <section>
-        <h2>HTML</h2>
-        <p>Some endpoints cannot simply be served via swagger because they have for example redirects.
-            You can find those in this section.</p>
-        <h3>Logging in</h3>
-        <a href="/oauth/zeus">Login with zeus</a><br />
-        <a href="/oauth/github?auth-goal=auth">Login with github (todo)</a><br />
-        <a href="/oauth/github?auth-goal=provider">Login with github - provider</a><br />
-        <a href="/oauth/github?auth-goal=not-supported">Login with github - not supported</a><br />
-        <h3>A list of the registered repository providers.</h3>
-        <p>(This has to be moved to the api)</p>
-        <table>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Secret</th>
-            </tr>
-            {% for provider in repo-providers %}
-            <tr>
-                <td>{{provider.id}}</td>
-                <td>{{provider.name}}</td>
-                <td>{{provider.access_token|subs:0:6}}...</td>
-            </tr>
-            {% endfor %}
+<header>
+  <h1>G2 backend Dashboard</h1>
+  <p>Welcome {{user.name}}</p>
+</header>
+<section>
+  <h2>API</h2>
+  <p>The api has a swagger gui which can be used to discover and try out the endpoints.
+    Find it <a href="/api-docs/">here</a>
+  </p>
+</section>
+<section>
+  <h2>HTML</h2>
+  <p>Some endpoints cannot simply be served via swagger because they have for example redirects.
+    You can find those in this section.</p>
+  <h3>Logging in</h3>
+  <a href="/oauth/zeus">Login with zeus</a><br/>
+  <a href="/oauth/github?auth-goal=auth">Login with github (todo)</a><br/>
+  <a href="/oauth/github?auth-goal=provider">Login with github - provider</a><br/>
+  <a href="/oauth/github?auth-goal=not-supported">Login with github - not supported</a><br/>
+  <h3>A list of the registered repository providers.</h3>
+  <p>(This has to be moved to the api)</p>
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Secret</th>
+    </tr>
+    {% for provider in repo-providers %}
+    <tr>
+      <td>{{provider.id}}</td>
+      <td>{{provider.name}}</td>
+      <td>{{provider.access_token|subs:0:6}}...</td>
+    </tr>
+    {% endfor %}
 
-        </table>
-    </section>
-    </div>
+  </table>
+</section>
+</div>
 
-    <!-- scripts and styles -->
-    {% style "/css/screen.css" %}
+<!-- scripts and styles -->
+{% style "/css/screen.css" %}
 
-    </script>
+</script>
 </body>
 
 </html>

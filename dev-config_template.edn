@@ -24,5 +24,8 @@
  :github-oauth-consumer-secret "7d90249f0e4cc6884ace454253938c587737254d"
 
  ;; Github organization
- :github-organization "ZeusWPI"}
+ :github-organization "ZeusWPI"
 
+ ;;Github app oauth token
+ :github-personal-access-token ""
+ }

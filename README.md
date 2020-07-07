@@ -42,6 +42,22 @@ The database used by the backend will be primarily mariadb.
 3. Check these configs for variables that are different in your setup. They should normally work out of the box.
 
 4. Create a new local database and create or modify a database user so it has access to the database. (You can use the dev database for the tests to, but it will possibly be filled with testing data.)
+    
+    !! Make sure to create the database with character set *utf8mb4* and collation *utf8mb4_unicode_ci*. This is so we can support emoji's which are found in for example git repositories. 
+    ```
+    create database g2_dev character set utf8mb4 collate utf8mb4_unicode_ci;
+   ```
+    
+    It's possible you also need to configure your config so the server accepts connections with the correct charset.
+    Add the following lines to `/etc/mysql/my.cnf` and restart your mysql server.
+    ```
+   [mysql]
+   default-character-set=utf8mb4
+   
+   [mysqld]
+   character-set-server=utf8mb4
+   collation-server=utf8mb4_unicode_ci
+   ```
 5. Update the database-url parameter in the `dev-config.edn` and `test-config.edn` file with your newly created db and user.
 
 [1]: https://github.com/technomancy/leiningen
