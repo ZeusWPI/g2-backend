@@ -26,7 +26,7 @@
            (response/found))
       (layout/error-page {:title "Non-supported auth goal"}))))
 
-(defn login-github-callback [{:keys [params session]} auth-goal]
+(defn login-github-callback [{:keys [params session]}]
   "Gets the access token from github, connects it as the repo provider"
   (if (:denied params)
     (-> (response/found "/")

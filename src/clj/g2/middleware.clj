@@ -12,9 +12,16 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
-            [buddy.auth.backends.session :refer [session-backend]])
+            [buddy.auth.backends.session :refer [session-backend]]
+            [camel-snake-kebab.core :as csk]
+            [clojure.data.json :as json]
+            )
   (:import))
 
+
+(defn wrap-snake-to-camelcase
+   []
+  )
 
 (defn wrap-csrf [handler]
   (wrap-anti-forgery

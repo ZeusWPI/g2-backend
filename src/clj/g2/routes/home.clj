@@ -6,6 +6,7 @@
             [g2.db.core :refer [*db*] :as db]
             [g2.oauth :as oauth]
             [g2.routes.issues :as issues]
+            [g2.routes.projects :as projects]
             [g2.routes.labels :as labels]
             [g2.routes.branches :as branches]
             [compojure.core :refer [defroutes GET DELETE]]
@@ -36,39 +37,7 @@
       (response/ok repo)
       (response/not-found {:msg "Repository not found"}))))
 
-(defn parse-repo-ids [repo_ids_string]
-  (log/debug repo_ids_string)
-  (log/debug "type: " (type repo_ids_string))
-  (if (nil? repo_ids_string)
-    nil
-    (map #(Integer/parseInt %)
-         (string/split repo_ids_string #","))))
 
-(defn projects-get [request]
-  (let [projects (db/get-projects)]
-    (log/debug "projects: " projects)
-    (let [n (map (fn [project] (log/debug "project: " project) (assoc project :repo_ids (parse-repo-ids (:repo_ids project)))) projects)]
-      (log/debug "n-projects: " n)
-      (response/ok n))))
-
-(defn project-get [project_id]
-  (log/debug "Get project" project_id)
-  (let [project (db/get-project {:project_id project_id})]
-    (if-not (nil? project)
-      (response/ok project)
-      (response/not-found))))
-
-(defn project-create [name description]
-  (do
-    (log/debug "Create project: " name " " description)
-    (let [insert_id (db/create-project! {:name name, :description description})]
-      (response/ok {:new_project_id (:generated_key insert_id)}))))
-
-(defn project-delete [id]
-  (do
-    (db/delete-project! {:id id})
-    (log/debug "Delete project" id)
-    (response/no-content)))
 
 (defn link-repo-to-project [id pid]
   ;; TODO check that the project exists
@@ -102,8 +71,8 @@
                         :handler (fn [_] (git/sync-repositories) (response/ok))}}]
     ["/:id"
      ["" {:get {:summary    "Get a specific repository."
-                :responses {200 {}
-                            404 {:description "The repository with the specified id does not exist."}}
+                :responses  {200 {}
+                             404 {:description "The repository with the specified id does not exist."}}
                 :parameters {:path {:id int?}}
                 :handler    (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
      ["/link/:pid" {:put {:summary    "Connect a repository to a project"
@@ -115,26 +84,7 @@
      ["/labels"
       [""]
       ["/:label_id"]]]]
-   ["/project"
-    {:swagger {:tags ["project"]}}
-    ["" {:get  {:summary "Get all projects"
-                :handler projects-get}
-         :post {:summary    "Create a new project"
-                :parameters {:body {:name string?, :description string?}}
-                :handler    (fn [{{{:keys [name description]} :body} :parameters}] (project-create name description))}}]
-
-    ["/:id"
-     ["" {:get    {:summary    "Get a specific project"
-                   :responses {200 {}
-                               404 {:description "The project with the specified id does not exist."}}
-                   :parameters {:path {:id int?}}
-                   :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
-          :delete {:summary    "Delete a project"
-                   :parameters {:path {:id int?}}
-                   :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}}]
-     (issues/route-handler-per-project)
-     (labels/route-handler-per-project)
-     (branches/route-handler-per-project)]]
+   (projects/route-handler-global)
    (issues/route-handler-global)
    (labels/route-handler-global)
    (branches/route-handler-global)

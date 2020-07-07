@@ -34,7 +34,9 @@
                  ;                 [org.apache.logging.log4j/log4j-api "2.11.0"]
                  ;                 [org.apache.logging.log4j/log4j-core "2.11.0"]
                  ;                 [org.apache.logging.log4j/log4j-1.2-api "2.11.0"]
-                 [metosin/reitit "0.3.7"]]
+                 [metosin/reitit "0.3.7"]
+                 [camel-snake-kebab "0.4.1"]                ; automatic conversion between different casing of words
+                 ]
 
   :min-lein-version "2.0.0"
 
