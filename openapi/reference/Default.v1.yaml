@@ -30,6 +30,11 @@ paths:
           in: query
           description: Sort the data according to a given value. Default is alphabetical.
           name: sort
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Amount of projects to return.
     post:
       summary: ''
       operationId: post-projects
