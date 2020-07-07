@@ -1,0 +1,41 @@
+title: Project
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: Tab
+    description: Because we eat and drink!
+    image: 'https://localhost:3000/projects/10/image'
+    repositories: 'https://localhost:3000/projects/1/repositories'
+    issues: 'https://localhost:3000/projects/1/issues'
+    pulls: 'https://localhost:3000/projects/1/pulls'
+    branches: 'https://localhost:3000/projects/1/branches'
+    statistics:
+      issuesCount: 10
+      repositoriesCount: 4
+      pullsCount: 2
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  description:
+    type: string
+  image:
+    type: string
+  repositories:
+    type: string
+    format: uri
+    example: 'https://localhost:3000/projects/1/repositories'
+  issues:
+    type: string
+    example: 'https://localhost:3000/projects/1/issues'
+    format: uri
+  pulls:
+    type: string
+    example: 'https://localhost:3000/projects/1/pulls'
+    format: uri
+  branches:
+    type: string
+  statistics:
+    $ref: ./ProjectStatistics.v1.yaml

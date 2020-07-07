@@ -1,0 +1,17 @@
+title: Label
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: Bug
+    description: Something that is broken
+    color: '#c0392b'
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  color:
+    type: string
+  description:
+    type: string

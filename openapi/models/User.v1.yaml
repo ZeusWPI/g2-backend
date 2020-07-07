@@ -1,0 +1,15 @@
+title: User
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: maartenvn
+    admin: true
+    avatar: 'https://avatars0.githubusercontent.com/u/6013068?s=60&v=4'
+properties:
+  name:
+    type: string
+  admin:
+    type: boolean
+  avatar:
+    type: string

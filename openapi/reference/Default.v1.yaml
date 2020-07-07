@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  title: Default
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /projects:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Project.v1.yaml
+      operationId: get-projects
+      description: Get a list with available projects.
+    post:
+      summary: ''
+      operationId: post-projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Project.v1.yaml
+      description: Create a new project.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+  '/projects/{id}':
+    parameters:
+      - schema:
+          type: number
+          example: 1
+        name: id
+        in: path
+        description: ''
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Project.v1.yaml
+      operationId: get-project-id
+      description: Get a project by id.
+    patch:
+      summary: ''
+      operationId: patch-project-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Project.v1.yaml
+      description: Modify a project by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+        description: |-
+          Every property is optional.
+          Only the given properties are updated with a new value.
+    delete:
+      summary: ''
+      operationId: delete-project-id
+      responses:
+        '200':
+          description: OK
+      description: Delete a project by id.
+  '/projects/{id}/repositories':
+    parameters:
+      - schema:
+          type: number
+          example: 1
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Repository.v1.yaml
+      operationId: get-projects-id-repositories
+      description: Get a list with repositories for a given project.
+  '/projects/{id}/issues':
+    parameters:
+      - schema:
+          type: number
+          example: 1
+        name: id
+        in: path
+        required: true
+        description: ''
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Issue.v1.yaml
+      operationId: get-projects-id-issues
+      description: Get a list with issues for a given project.
+  '/projects/{id}/pulls':
+    parameters:
+      - schema:
+          type: number
+          example: 1
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Pull.v1.yaml
+      operationId: get-projects-id-pulls
+      description: Get a list of pull requests for a given project.
+  '/projects/{id}/branches':
+    parameters:
+      - schema:
+          type: number
+          example: 1
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Branch.v1.yaml
+      operationId: get-projects-id-branches
+      description: Get a list with branches for a given project.
+  /repositories:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Repository.v1.yaml
+      operationId: get-repositories
+      description: Get a list with available repositories.
+  '/repositories/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Repository.v1.yaml
+      operationId: get-repositories-id
+      description: Get a repository by id.
+  '/repositories/{id}/link/{projectId}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: number
+        name: projectId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-repositories-id-link-projectId
+      responses:
+        '200':
+          description: OK
+      description: Link a given project id to a given repository.
+  '/repositories/{id}/unlink/{projectId}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: number
+        name: projectId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-repositories-id-unlink-projectId
+      responses:
+        '200':
+          description: OK
+      description: Unlink a given project id from a given repository.
+  /repositories/sync:
+    post:
+      summary: ''
+      operationId: post-repositories-sync
+      responses:
+        '200':
+          description: OK
+      description: Sync the repositories with the git providers.
+  /user:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      operationId: get-user
+      description: Get the logged in user.
+components:
+  schemas: {}
