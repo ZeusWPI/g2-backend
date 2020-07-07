@@ -3,9 +3,9 @@
             [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
             [mount.core :as mount]
-            [g2.figwheel :refer [start-fw stop-fw cljs]]
             [g2.core :refer [start-app]]
             [g2.db.core]
+            [clojure.tools.logging :as log]
             [conman.core :as conman]
             [luminus-migrations.core :as migrations]))
 

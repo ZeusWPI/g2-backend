@@ -1,0 +1,14 @@
+title: ProjectStatistics
+type: object
+x-examples:
+  Example:
+    issuesCount: 2
+    repositoriesCount: 4
+    pullsCount: 11
+properties:
+  issuesCount:
+    type: integer
+  repositoriesCount:
+    type: integer
+  pullsCount:
+    type: integer

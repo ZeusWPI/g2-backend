@@ -1,6 +1,7 @@
 version: "3"
 services:
   backend:
+    container_name: g2-backend_server
     build:
      context: . # Use the dockerfile in this repo
      dockerfile: Dockerfile
@@ -12,10 +13,8 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC
-    command: >
-      sh -c "lein run migrate &&
-             lein run"
   db:
+    container_name: g2-backend_db
     image: mariadb:latest
     volumes:
       - database:/var/lib/mysql
@@ -27,8 +26,6 @@ services:
       MYSQL_USER: g2_user
       MYSQL_PASSWORD: local-pass
     restart: always
-
-
 
 networks:
   base:

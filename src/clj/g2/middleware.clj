@@ -1,8 +1,5 @@
 (ns g2.middleware
   (:require [g2.env :refer [defaults]]
-            [cheshire.generate :as cheshire]
-            [cognitect.transit :as transit]
-            [clojure.tools.logging :as log]
             [g2.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.cors :refer [wrap-cors]]

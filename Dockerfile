@@ -1,4 +1,8 @@
-FROM clojure:lein-alpine
+FROM clojure:openjdk-14-lein-2.9.1-slim-buster
+
+# Update the system and install netstat command
+RUN apt-get update
+RUN apt-get install net-tools
 
 # download the dependencies and compile the project ahead of time. This will significantly reduce startup time when you run your image
 RUN mkdir -p /g2
@@ -12,7 +16,14 @@ COPY resources /g2/resources
 COPY env /g2/env
 COPY dev-config_template.edn /g2/dev-config.edn
 
+RUN lein uberjar
+
 EXPOSE 3000
 
-# For some reasing CMD doesn't work here so it's specified in the docker-compose file. If used here together with docker-compose it enters the repl as specified in the clojure image and exists immediatly after the repl is started.
-# CMD lein run migrate && lein run
+COPY add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
+RUN chmod +x add-docker-host-to-hosts-file.sh
+
+COPY staging-entrypoint.sh /g2/staging-entrypoint.sh
+RUN chmod +x staging-entrypoint.sh
+
+CMD ./staging-entrypoint.sh

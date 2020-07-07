@@ -62,6 +62,8 @@
                                      :throw-exceptions false
                                      :accept      :json
                                      :insecure? true})]
+          (log/info (:status resp))
+          (log/info (:body resp))
           (condp = (:status resp)
             200 (:body resp)
             401 (-> {:status 401 :body "Invalid authentication credentials"})

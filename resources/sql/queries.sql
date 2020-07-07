@@ -95,6 +95,11 @@ INSERT INTO projects
 (name, description)
 VALUES (:name, :description);
 
+-- :name update-project! :! :1
+UPDATE projects
+SET name = :name, description = :description
+WHERE project_id = :project_id;
+
 -- :name delete-project! :! :1
 DELETE FROM projects
 WHERE project_id = :id;

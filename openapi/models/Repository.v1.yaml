@@ -1,0 +1,20 @@
+title: Repository
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: Tab
+    description: ':moneybag: Yes. We have to drink. But we also have to pay. This does the paying part.'
+    url: 'https://github.com/ZeusWPI/Tab'
+    image: 'https://localhost:3000/repositories/1/image'
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  description:
+    type: string
+  url:
+    type: string
+  image:
+    type: string
