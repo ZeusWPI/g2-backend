@@ -20,6 +20,21 @@ paths:
                   $ref: ../models/Project.v1.yaml
       operationId: get-projects
       description: Get a list with available projects.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - recent
+              - popular
+              - alphabetical
+          in: query
+          description: Sort the data according to a given value. Default is alphabetical.
+          name: sort
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Amount of projects to return.
     post:
       summary: ''
       operationId: post-projects
