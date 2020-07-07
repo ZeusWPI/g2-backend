@@ -80,13 +80,13 @@ WHERE git_id = :git_id
 */
 
 -- :name get-project :? :1
-SELECT project_id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
+SELECT project_id as id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
 from projects p LEFT JOIN repos using(project_id)
 where project_id = :project_id
 GROUP BY project_id, name;
 
 -- :name get-projects :? :*
-SELECT project_id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
+SELECT project_id as id, p.name as name, p.description, p.image_url, GROUP_CONCAT(repo_id SEPARATOR ',') as repo_ids
 FROM projects p LEFT JOIN repos using(project_id)
 GROUP BY project_id, p.name;
 
@@ -119,6 +119,7 @@ WHERE repo_id = :repo_id;
 
 
 /* ---- LABELS ---- */
+
 -- :name create-label! :insert :raw
 INSERT INTO labels
 (git_id, name, description, url, color, repo_id)

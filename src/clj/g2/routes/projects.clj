@@ -4,6 +4,7 @@
     [clojure.tools.logging :as log]
     [clojure.string :as string]
     [ring.util.http-response :as response]
+    [g2.config :refer [env]]
 
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
@@ -21,7 +22,19 @@
 (defn projects-get [request]
   (let [projects (db/get-projects)]
     (log/debug "projects: " projects)
-    (let [n (map (fn [project] (log/debug "project: " project) (assoc project :repo_ids (parse-repo-ids (:repo_ids project)))) projects)]
+    (let [n (map (fn [project]
+                   (log/debug "project: " project)
+                   (-> project
+
+                       (assoc :repositories (str (env :app-host) "/projects/" (:project_id project) "/repositories"))
+                       (assoc :issues (str (env :app-host) "/projects/" (:project_id project) "/issues"))
+                       (assoc :pulls (str (env :app-host) "/projects/" (:project_id project) "/pulls"))
+                       (assoc :branches (str (env :app-host) "/projects/" (:project_id project) "/branches"))
+                       (dissoc :repo_ids)                   ; TODO remove this in query
+                       )
+
+                   #_(assoc project :repo_ids (parse-repo-ids (:repo_ids project))))
+                 projects)]
       (log/debug "n-projects: " n)
       (response/ok n))))
 
