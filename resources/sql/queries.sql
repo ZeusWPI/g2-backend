@@ -9,24 +9,27 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 
 
 -- :name create-user! :insert :raw
--- :doc creates a new user record
 INSERT INTO users
-(name, zeus_id, access_token)
-VALUES (:name, :zeus_id, :access_token)
+            (name, email, admin, last_login)
+VALUES (:name, :email, :admin, :last_login)
 
 -- :name get-user :? :1
--- :doc retrieves a user record given the id
 SELECT * FROM users
-WHERE id = :id
+LEFT OUTER JOIN zeus_users using (user_id)
+ WHERE user_id = :user_id
 
 -- :name get-user-on-zeusid :? :1
 SELECT * FROM users
+LEFT INNER JOIN zeus_users using (user_id)
 WHERE zeus_id = :zeus_id
 
+-- :name get-users :? :*
+SELECT * FROM users
+LEFT OUTER JOIN zeus_users using (user_id)
+
 -- :name delete-user! :! :n
--- :doc deletes a user record given the id
 DELETE FROM users
-WHERE id = :id
+WHERE user_id = :user_id
 
 /*
   Repository Providers
@@ -70,7 +73,7 @@ WHERE repo_id = :repo_id
 -- :name update-repo! :! :n
 UPDATE repos
 SET name = :name, description = :description, url = :url
-WHERE repo_id = :repo_id
+WHERE git_id = :git_id
 
 /*
   Projects
@@ -108,3 +111,80 @@ WHERE project_id = :id;
 UPDATE repos
 SET project_id = :project_id
 WHERE repo_id = :repo_id;
+
+
+/* ---- LABELS ---- */
+-- :name create-label! :insert :raw
+INSERT INTO labels
+(git_id, name, description, url, color, repo_id)
+VALUES (:git_id, :name, :description, :url, :color, :repo_id)
+
+  -- :name get-labels :? :*
+SELECT * FROM labels
+
+  -- :name get-label :? :1
+SELECT * FROM labels
+ WHERE label_id = :label_id
+
+-- :name update-label! :! :n
+UPDATE labels
+SET name = :name, description = :description, url = :url, color = :color
+WHERE git_id = :git_id
+
+-- :name get-project-labels :? :*
+SELECT * from labels
+                  INNER JOIN repos using (repo_id)
+                  INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
+
+
+/* ---- ISSUES ----- */
+
+-- :name create-issue! :insert :raw
+INSERT INTO issues
+(git_id, url, title, time, repo_id, author)
+VALUES (:git_id, :url, :title, :time, :repo_id, :author)
+
+-- :name get-issues :? :*
+SELECT * FROM issues
+
+-- :name get-issue :? :1
+SELECT * FROM issues
+WHERE issue_id = :issue_id
+
+-- :name update-issue! :! :n
+UPDATE issues
+SET url = :url, title = :title, time = :time, author = :author
+WHERE git_id = :git_id
+
+-- :name get-project-issues :? :*
+SELECT * from issues
+INNER JOIN repos using (repo_id)
+INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
+
+
+/* ---- BRANCHES ---- */
+
+-- :name create-branch! :insert :raw
+INSERT INTO branches
+            (commit_sha, name, repo_id)
+VALUES (:commit_sha, :name, :repo_id)
+
+-- :name get-branches :? :*
+SELECT * FROM branches
+
+-- :name get-branch :? :1
+SELECT * FROM branches
+ WHERE branch_id = :branch_id
+
+-- :name update-branch! :! :n
+UPDATE branches
+SET name = :name
+WHERE commit_sha = :commit_sha
+
+-- :name get-project-branches :? :*
+SELECT * from branches
+                  INNER JOIN repos using (repo_id)
+                  INNER JOIN projects using (project_id)
+WHERE project_id = :project_id
