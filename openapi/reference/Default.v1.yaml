@@ -130,6 +130,7 @@ paths:
                   $ref: ../models/Repository.v1.yaml
       operationId: get-projects-id-repositories
       description: Get a list with repositories for a given project.
+      parameters: []
   '/projects/{id}/issues':
     parameters:
       - schema:
@@ -153,6 +154,21 @@ paths:
                   $ref: ../models/Issue.v1.yaml
       operationId: get-projects-id-issues
       description: Get a list with issues for a given project.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - recent
+              - popular
+              - alphabetical
+          in: query
+          name: sort
+          description: Sort the data according to a given value. Default is alphabetical.
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Amount of issues to return.
   '/projects/{id}/pulls':
     parameters:
       - schema:
@@ -175,6 +191,21 @@ paths:
                   $ref: ../models/Pull.v1.yaml
       operationId: get-projects-id-pulls
       description: Get a list of pull requests for a given project.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - recent
+              - popular
+              - alphabetical
+          in: query
+          name: sort
+          description: Sort the data according to a given value. Default is alphabetical.
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Amount of pulls to return.
   '/projects/{id}/branches':
     parameters:
       - schema:
@@ -197,6 +228,21 @@ paths:
                   $ref: ../models/Branch.v1.yaml
       operationId: get-projects-id-branches
       description: Get a list with branches for a given project.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - recent
+              - popular
+              - alphabetical
+          in: query
+          name: sort
+          description: Sort the data according to a given value. Default is alphabetical.
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Amount of branches to return.
   /repositories:
     get:
       summary: Your GET endpoint
