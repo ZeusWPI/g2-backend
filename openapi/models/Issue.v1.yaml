@@ -7,6 +7,7 @@ x-examples:
     title: Update README with latest documentation
     timestamp: 1594018083
     status: open
+    url: 'https://github.com/ZeusWPI/g2-frontend/issue/32'
     author:
       id: 1
       name: maartenvn
@@ -33,6 +34,9 @@ properties:
     enum:
       - open
       - closed
+  url:
+    type: string
+    format: uri
   author:
     $ref: ./Author.v1.yaml
   repository:
