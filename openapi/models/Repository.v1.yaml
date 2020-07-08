@@ -18,3 +18,11 @@ properties:
     type: string
   image:
     type: string
+  newIssueUrl:
+    type: string
+    format: uri
+    description: URL to the provider allowing to create a new issue.
+  newPullUrl:
+    type: string
+    format: uri
+    description: URL to the provider allowing to create a new issue.
