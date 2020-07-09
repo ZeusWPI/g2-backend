@@ -7,6 +7,8 @@ x-examples:
     description: ':moneybag: Yes. We have to drink. But we also have to pay. This does the paying part.'
     url: 'https://github.com/ZeusWPI/Tab'
     image: 'https://localhost:3000/repositories/1/image'
+    default_tags:
+      - 3
 properties:
   id:
     type: integer
@@ -18,3 +20,8 @@ properties:
     type: string
   image:
     type: string
+  default_tags:
+    type: array
+    description: "Alle nieuwe content uit de repo zal gelinkt worden aan tag '3'. Dit kan bijv. het tab project zijn."
+    items:
+      type: number

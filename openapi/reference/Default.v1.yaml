@@ -292,5 +292,62 @@ paths:
           description: Unauthorized
       operationId: get-user
       description: Get the logged in user.
+  '/child-tags/{id}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ''
+      operationId: get-child-tags
+      description: ''
+      parameters: []
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+  '/parent-tags/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-parent-tags-id
+  /items:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-tag
+      parameters:
+        - schema:
+            type: array
+          in: query
+          name: tag_ids
+          description: Items that have all these tags.
+    parameters: []
+  /issues:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-issues
+      parameters:
+        - schema:
+            type: array
+          in: query
+          name: tag_ids
+          description: Issues that have all these tags.
 components:
   schemas: {}
