@@ -338,5 +338,47 @@ paths:
           description: Unauthorized
       operationId: get-user
       description: Get the logged in user.
+  '/projects/{id}/maintainers':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Author.v1.yaml
+      operationId: get-project-id-maintainers
+      description: Get a list with maintainers for a given project.
+  '/projects/{id}/contributors':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Author.v1.yaml
+      operationId: get-projects-id-contributors
+      description: Get a list with contributors for a given project.
 components:
   schemas: {}
