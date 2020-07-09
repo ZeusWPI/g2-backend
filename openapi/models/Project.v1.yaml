@@ -4,7 +4,7 @@ x-examples:
   Example:
     id: 1
     name: Tab
-    description: Because we eat and drink!
+    description: 'Because we eat and drink!'
     image: 'https://localhost:3000/projects/10/image'
     repositories: 'https://localhost:3000/projects/1/repositories'
     issues: 'https://localhost:3000/projects/1/issues'
@@ -39,3 +39,11 @@ properties:
     type: string
   statistics:
     $ref: ./ProjectStatistics.v1.yaml
+  maintainers:
+    type: array
+    items:
+      $ref: ./Author.v1.yaml
+  contributors:
+    type: array
+    items:
+      $ref: ./Author.v1.yaml
