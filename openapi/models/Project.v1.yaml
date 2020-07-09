@@ -10,6 +10,8 @@ x-examples:
     issues: 'https://localhost:3000/projects/1/issues'
     pulls: 'https://localhost:3000/projects/1/pulls'
     branches: 'https://localhost:3000/projects/1/branches'
+    maintainers: 'https://localhost:3000/projects/1/maintainers'
+    contributors: 'https://localhost:3000/projects/1/contributors'
     statistics:
       issuesCount: 10
       repositoriesCount: 4
@@ -37,13 +39,15 @@ properties:
     format: uri
   branches:
     type: string
+    format: uri
+    pattern: 'https://localhost:3000/projects/1/branches'
+  maintainers:
+    type: string
+    format: uri
+    pattern: 'https://localhost:3000/projects/1/maintainers'
+  contributors:
+    type: string
+    format: uri
+    pattern: 'https://localhost:3000/projects/1/contributors'
   statistics:
     $ref: ./ProjectStatistics.v1.yaml
-  maintainers:
-    type: array
-    items:
-      $ref: ./Author.v1.yaml
-  contributors:
-    type: array
-    items:
-      $ref: ./Author.v1.yaml
