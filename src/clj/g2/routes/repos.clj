@@ -1,9 +1,11 @@
 (ns g2.routes.repos
   (:require
-   [g2.db.core :refer [*db*] :as db]
-   [g2.git.github :as git]
-   [ring.util.http-response :as response]
-   [g2.utils.projects :as p-util]))
+    [g2.db.core :refer [*db*] :as db]
+    [g2.git.github :as git]
+    [ring.util.http-response :as response]
+    [g2.utils.projects :as p-util]
+    [conman.core :refer [with-transaction]]
+    [clojure.tools.logging :as log]))
 
 (defn convert-db-to-api-object
   [db-repo]
@@ -26,11 +28,21 @@
       (response/not-found {:msg "Repository not found"}))))
 
 (defn link-repo-to-project [id pid]
-  ;; TODO check that the project exists
-  ;; TODO check that the repo exists
   (do
-    (db/link-repo-to-project! {:project_id pid, :repo_id id})
-    (response/no-content)))
+    (log/debug "Link repo" id "to project" pid)
+    (p-util/is-project
+      pid
+      (let [repo (db/get-repo {:repo_id id})]
+        (if (nil? repo)
+          (response/not-found)
+          (with-transaction
+            [*db*]
+            (do
+              (db/link-repo-to-project! {:project_id pid, :repo_id id})
+              (response/no-content))))))))
+
+(defn unlink-repo-from-project [id pid]
+  (response/not-implemented))
 
 (defn repos-get [request]
   (response/ok {:repos (map (fn [repo]
@@ -39,7 +51,7 @@
                             (db/get-repos))}))
 
 (defn route-handler-global []
-  ["/repository"
+  ["/repositories"
    {:swagger {:tags ["repository"]}}
    ["" {:get {:summary "Get the list of code repositories in our backend."
               :handler repos-get}}]
@@ -52,15 +64,22 @@
                             404 {:description "The repository with the specified id does not exist."}}
                :parameters {:path {:id int?}}
                :handler    (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
-    ["/link/:pid" {:put {:summary    "Connect a repository to a project"
-                         :parameters {:path {:pid int?, :id int?}}
-                         :handler    (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]
-    ["/branches"
-     [""]
-     ["/:branch_id"]]
-    ["/labels"
-     [""]
-     ["/:label_id"]]]])
+    ["/link/:pid" {:post {:summary    "Connect a repository to a project"
+                          :responses  {200 {}
+                                       404 {:description "The project or repository with the specified id does not exist."}}
+                          :parameters {:path {:pid int?, :id int?}}
+                          :handler    (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]
+    ["/unlink/:pid" {:post {:summary    "Disconnect a repository from a project"
+                            :responses  {200 {}
+                                         404 {:description "The project or repository with the specified id does not exist."}}
+                            :parameters {:path {:pid int?, :id int?}}
+                            :handler    (fn [{{:keys [id pid]} :path-params}] (unlink-repo-from-project id pid))}}]
+    #_["/branches"
+       [""]
+       ["/:branch_id"]]
+    #_["/labels"
+       [""]
+       ["/:label_id"]]]])
 
 (defn route-handler-per-project []
   ["/repositories"

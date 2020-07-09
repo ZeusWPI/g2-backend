@@ -5,7 +5,7 @@
     [ring.util.http-response :as response]))
 
 (defn is-project [project_id success]
-  (let [project (db/get-project project_id)]
+  (let [project (db/get-project {:project_id project_id})]
     (if (nil? project)
       (response/not-found)
       (success))))
@@ -15,5 +15,4 @@
     (log/debug "Get " what " project" project_id)
     (is-project
       project_id
-      (response/not-found)
       (response/ok (query-fun {:project_id project_id})))))
