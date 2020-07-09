@@ -380,5 +380,26 @@ paths:
                   $ref: ../models/Author.v1.yaml
       operationId: get-projects-id-contributors
       description: Get a list with contributors for a given project.
+  '/projects/{id}/features':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Feature.v1.yaml
+      operationId: get-projects-id-featured
+      description: Get a list with features for a given project.
 components:
   schemas: {}
