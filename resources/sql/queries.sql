@@ -144,7 +144,8 @@ VALUES (:tag_id, :name, :description);
 -- :name update-project! :! :1
 UPDATE projects
 SET name        = :name,
-    description = :description
+    description = :description,
+    image_url   = :image
 WHERE tag_id = :project_id;
 
 -- :name delete-project! :! :1

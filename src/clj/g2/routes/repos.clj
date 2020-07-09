@@ -2,7 +2,8 @@
   (:require
    [g2.db.core :refer [*db*] :as db]
    [g2.git.github :as git]
-   [ring.util.http-response :as response]))
+   [ring.util.http-response :as response]
+   [g2.utils.projects :as p-util]))
 
 (defn convert-db-to-api-object
   [db-repo]
@@ -11,8 +12,11 @@
 
 (defn get-project-repositories
   [project_id]
-  (response/ok (-> (db/get-project-repos {:project_id project_id})
-                   convert-db-to-api-object)))
+  (p-util/is-project
+    project_id
+    (response/not-found)
+    (response/ok (-> (db/get-project-repos {:project_id project_id})
+                     convert-db-to-api-object))))
 
 (defn repo-get
   "Fetch 1 repo"

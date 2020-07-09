@@ -3,10 +3,15 @@
             [g2.git.github :refer [sync-issues]]
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
-            [ring.util.http-response :as response]))
+            [ring.util.http-response :as response]
+            [g2.utils.projects :as p-util]))
 
-(defn get-all-for-project [project_id]
-  (response/ok (db/get-project-issues {:project_id project_id})))
+(defn get-project-issues [project_id]
+  (do
+    (log/debug "Get issues project" project_id)
+    (p-util/is-project
+      project_id
+      (response/ok (db/get-project-issues {:project_id project_id})))))
 
 (defn sync-all [req]
   (let [repos (db/get-repos)]
@@ -31,11 +36,11 @@
   ["/issues"
    ["/sync"
     {:swagger {:tags ["sync"]}
-     :post    {:summary "Force synchronize the issues with our git backends. Use with limits"
-               :responses  {200 {:description "TODO"}
-                            403 {:description "TODO"}
-                            404 {:description "TODO"}}
-               :handler sync-all}}]
+     :post    {:summary   "Force synchronize the issues with our git backends. Use with limits"
+               :responses {200 {:description "TODO"}
+                           403 {:description "TODO"}
+                           404 {:description "TODO"}}
+               :handler   sync-all}}]
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
                           :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]])
 
@@ -45,4 +50,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(get-all-for-project (get-in % [:path-params :id]))}}]])
+              :handler    #(get-project-issues (get-in % [:path-params :id]))}}]])

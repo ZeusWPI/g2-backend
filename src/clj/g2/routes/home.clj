@@ -42,7 +42,8 @@
    (repos/route-handler-global)
    (projects/route-handler-global)
    (issues/route-handler-global)
-   (labels/route-handler-global)
+   ; not included in the newer spec
+   #_(labels/route-handler-global)
    (branches/route-handler-global)
    ["/repo-providers"
     {:get {:summary "Get the list of repository providers configured (like for ex. github or gitlab)"
