@@ -14,7 +14,6 @@
   [project_id]
   (p-util/is-project
     project_id
-    (response/not-found)
     (response/ok (-> (db/get-project-repos {:project_id project_id})
                      convert-db-to-api-object))))
 
