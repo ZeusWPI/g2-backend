@@ -221,6 +221,7 @@
 (defn handler [message exception request]
   {:status 500
    :body   {:message   message
+            :description (.getMessage exception)
             :exception (.getClass exception)
             :data      (ex-data exception)
             :method    (:request-method request)
