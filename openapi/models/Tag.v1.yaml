@@ -1,0 +1,19 @@
+title: Tag
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  color:
+    type: string
+  project:
+    type: string
+    example: 'http://localhost:3000/projects/1'
+    format: uri
+x-examples:
+  Example:
+    id: 1
+    name: Rust
+    type: language
+    project: 'https://localhost:3000/projects/1'

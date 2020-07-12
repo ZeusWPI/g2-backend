@@ -401,5 +401,353 @@ paths:
                   $ref: ../models/Feature.v1.yaml
       operationId: get-projects-id-featured
       description: Get a list with features for a given project.
+  /tags:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Tag.v1.yaml
+      operationId: get-tags
+      description: Get a list with tags.
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: global
+          description: Should only the global tags (tags not linked to a project) be displayed
+        - schema:
+            type: integer
+          in: query
+          name: projectId
+          description: Id of the project to display all available tags for. Subprojects should also return tags from its parents recursivly.
+    post:
+      summary: ''
+      operationId: post-tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Tag.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+                type:
+                  type: string
+      description: Create a new tag.
+  '/tags/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    patch:
+      summary: ''
+      operationId: patch-tags-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Tag.v1.yaml
+              examples: {}
+      description: Update a given tag by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+                type:
+                  type: string
+        description: |-
+          Every property is optional.
+          Only the given properties are updated with a new value.
+    get:
+      summary: ''
+      operationId: get-tags-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Tag.v1.yaml
+      description: Get a tag by id.
+    delete:
+      summary: ''
+      operationId: delete-tags-id
+      responses:
+        '200':
+          description: OK
+      description: Delete a given tag by id.
+  '/issues/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Issue.v1.yaml
+      operationId: get-issues-id
+      description: Get an issue by id.
+  '/issues/{id}/tags':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Tag.v1.yaml
+      operationId: get-issues-id-tags
+      description: Get a list with linked tags for a given issue.
+  '/issues/{id}/tags/{tagId}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: tagId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-issues-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Link a given tag by id to a given issue.
+    delete:
+      summary: ''
+      operationId: delete-issues-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Unlink a given tag by id to a given issue.
+  '/pulls/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Pull.v1.yaml
+      operationId: get-pulls-id
+      description: Get a pull request by id.
+  '/pulls/{id}/tags':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Pull.v1.yaml
+      operationId: get-pulls-id-tags
+      description: Get a list with linked tags for a given pull request.
+  '/pulls/{id}/tags/{tagId}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: tagId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-pulls-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Link a given tag by id to a given pull request.
+    delete:
+      summary: ''
+      operationId: delete-pulls-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Unlink a given tag by id to a given pull request.
+  '/branches/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Branch.v1.yaml
+      operationId: get-branches-id
+      description: Get a branch by id.
+  '/branches/{id}/tags':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Tag.v1.yaml
+      operationId: get-branches-id-tags
+      description: Get a list with linked tags for a given branch.
+  '/branches/{id}/tags/{tagId}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: tagId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-branches-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Link a given tag by id to a given branch.
+    delete:
+      summary: ''
+      operationId: delete-branches-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Unlink a given tag by id to a given branch.
+  '/projects/{id}/tags':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Tag.v1.yaml
+      operationId: get-projects-id-tags
+      description: Get a list with linked tags for a given project.
+  '/projects/{id}/tags/{tagId}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: tagId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-projects-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Link a given tag by id to a given project.
+    delete:
+      summary: ''
+      operationId: delete-projects-id-tags-tagId
+      responses:
+        '200':
+          description: OK
+      description: Unlink a given tag by id to a given project.
 components:
   schemas: {}
