@@ -7,6 +7,7 @@ x-examples:
     color: brown
     type: language
     project: 'https://localhost:3000/projects/1'
+    projectName: Haldis
 properties:
   id:
     type: integer
@@ -17,6 +18,8 @@ properties:
   type:
     type: string
   project:
-    type: string
     example: 'http://localhost:3000/projects/1'
     format: uri
+    type: string
+  projectName:
+    type: string
