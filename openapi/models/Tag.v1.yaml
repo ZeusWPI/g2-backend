@@ -1,5 +1,12 @@
 title: Tag
 type: object
+x-examples:
+  Example:
+    id: 1
+    name: Rust
+    color: brown
+    type: language
+    project: 'https://localhost:3000/projects/1'
 properties:
   id:
     type: integer
@@ -7,13 +14,9 @@ properties:
     type: string
   color:
     type: string
+  type:
+    type: string
   project:
     type: string
     example: 'http://localhost:3000/projects/1'
     format: uri
-x-examples:
-  Example:
-    id: 1
-    name: Rust
-    type: language
-    project: 'https://localhost:3000/projects/1'
