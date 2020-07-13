@@ -1,0 +1,28 @@
+title: Tag
+type: object
+x-examples:
+  Example:
+    id: 1
+    name: Rust
+    color: brown
+    type: language
+    description: 'Faster & more secure than C++'
+    project: 'https://localhost:3000/projects/1'
+    projectName: Haldis
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  description:
+    type: string
+  color:
+    type: string
+  type:
+    type: string
+  project:
+    example: 'http://localhost:3000/projects/1'
+    format: uri
+    type: string
+  projectName:
+    type: string

@@ -44,3 +44,7 @@ properties:
     type: array
     items:
       $ref: ./Label.v1.yaml
+  tags:
+    type: array
+    items:
+      $ref: ./Tag.v1.yaml

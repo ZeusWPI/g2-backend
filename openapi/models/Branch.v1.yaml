@@ -20,3 +20,7 @@ properties:
     type: string
   repository:
     $ref: ./Repository.v1.yaml
+  tags:
+    type: array
+    items:
+      $ref: ./Tag.v1.yaml

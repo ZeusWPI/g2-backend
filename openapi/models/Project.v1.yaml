@@ -51,3 +51,7 @@ properties:
     pattern: 'https://localhost:3000/projects/1/contributors'
   statistics:
     $ref: ./ProjectStatistics.v1.yaml
+  tags:
+    type: array
+    items:
+      $ref: ./Tag.v1.yaml
