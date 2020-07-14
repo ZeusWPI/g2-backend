@@ -809,7 +809,7 @@ paths:
           name: q
           description: |-
             Query search string.
-            Filter options are seperated by a ";"
+            Filter options are seperated by a space.
 
             Available options are:
             - <string>: display all the items that have the given string inside their name
