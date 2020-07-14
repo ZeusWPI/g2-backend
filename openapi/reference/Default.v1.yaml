@@ -772,5 +772,61 @@ paths:
         '200':
           description: OK
       description: Unlink a given tag by id to a given project.
+  /search:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  issues:
+                    type: array
+                    items:
+                      $ref: ../models/Issue.v1.yaml
+                  pulls:
+                    type: array
+                    items:
+                      $ref: ../models/Pull.v1.yaml
+                  projects:
+                    type: array
+                    items:
+                      $ref: ../models/Project.v1.yaml
+                  branches:
+                    type: array
+                    items:
+                      $ref: ../models/Branch.v1.yaml
+      operationId: get-search
+      description: Search for specific data using a given query.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: |-
+            Query search string.
+            Filter options are seperated by a space.
+
+            Available options are:
+            - <string>: display all the items that have the given string inside their name
+            - label:"<name>": display all items matching the label with given name.
+            - tag:"<name>": display all items matching the tag with given name.
+            - project:"<name>": display all items matching the project with given name.
+
+            All filters are inclusive, meaning that the items that are returned must match all given filters.
+        - schema:
+            type: integer
+          in: query
+          name: limit
+          description: 'Limit for each array of data. (eg: 5: only return 5 issues + 5 pulls + ...)'
+        - schema:
+            type: integer
+          in: query
+          name: page
+          description: 'Page of data, based on the given limit (start: (page - 1) x limit; end: page x limit'
 components:
   schemas: {}
