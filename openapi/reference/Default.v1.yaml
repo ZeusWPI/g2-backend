@@ -401,6 +401,32 @@ paths:
                   $ref: ../models/Feature.v1.yaml
       operationId: get-projects-id-featured
       description: Get a list with features for a given project.
+    post:
+      summary: ''
+      operationId: post-projects-id-features
+      responses:
+        '200':
+          description: OK
+      description: 'Feature an item (project, issue, pull, branch) onto the project overview page.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - project
+                    - issue
+                    - pull
+                    - branch
+                  description: Type of item to display
+                id:
+                  type: integer
+                priority:
+                  type: string
+                  description: How important is the featured item. Higher values will be displayed first.
   /tags:
     get:
       summary: Your GET endpoint
