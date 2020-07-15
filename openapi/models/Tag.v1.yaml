@@ -20,9 +20,3 @@ properties:
     type: string
   type:
     type: string
-  project:
-    example: 'http://localhost:3000/projects/1'
-    format: uri
-    type: string
-  projectName:
-    type: string

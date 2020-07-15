@@ -442,17 +442,7 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-tags
       description: Get a list with tags.
-      parameters:
-        - schema:
-            type: boolean
-          in: query
-          name: global
-          description: Should only the global tags (tags not linked to a project) be displayed
-        - schema:
-            type: integer
-          in: query
-          name: projectId
-          description: Id of the project to display all available tags for. Subprojects should also return tags from its parents recursivly.
+      parameters: []
     post:
       summary: ''
       operationId: post-tags
