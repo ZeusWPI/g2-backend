@@ -11,6 +11,7 @@ x-examples:
       description: Backend for the G2 project
       url: 'https://github.com/ZeusWPI/g2-backend'
       image: 'https://localhost:3000/repositories/1/image'
+    tags: []
 properties:
   id:
     type: integer

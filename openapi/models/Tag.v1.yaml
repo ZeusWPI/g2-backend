@@ -7,8 +7,6 @@ x-examples:
     color: brown
     type: language
     description: 'Faster & more secure than C++'
-    project: 'https://localhost:3000/projects/1'
-    projectName: Haldis
 properties:
   id:
     type: integer
