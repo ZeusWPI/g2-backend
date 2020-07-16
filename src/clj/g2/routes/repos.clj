@@ -4,6 +4,7 @@
     [g2.git.github :as git]
     [ring.util.http-response :as response]
     [g2.utils.projects :as p-util]
+    [g2.routes.tags :as tags]
     [conman.core :refer [with-transaction]]
     [clojure.tools.logging :as log]))
 
@@ -27,22 +28,23 @@
       (response/ok repo)
       (response/not-found {:msg "Repository not found"}))))
 
-(defn link-repo-to-project [id pid]
-  (do
-    (log/debug "Link repo" id "to project" pid)
-    (p-util/is-project
-      pid
-      (let [repo (db/get-repo {:repo_id id})]
-        (if (nil? repo)
-          (response/not-found)
-          (with-transaction
-            [*db*]
-            (do
-              (db/link-repo-to-project! {:project_id pid, :repo_id id})
-              (response/no-content))))))))
+; not used for the moment
+#_(defn link-repo-to-project [id pid]
+    (do
+      (log/debug "Link repo" id "to project" pid)
+      (p-util/is-project
+        pid
+        (let [repo (db/get-repo {:repo_id id})]
+          (if (nil? repo)
+            (response/not-found)
+            (with-transaction
+              [*db*]
+              (do
+                (db/link-repo-to-project! {:project_id pid, :repo_id id})
+                (response/no-content))))))))
 
-(defn unlink-repo-from-project [id pid]
-  (response/not-implemented))
+#_(defn unlink-repo-from-project [id pid]
+    (response/not-implemented))
 
 (defn repos-get [request]
   (response/ok {:repos (map (fn [repo]
@@ -58,30 +60,13 @@
    ["/sync" {:swagger {:tags ["sync"]}
              :post    {:summary "Synchronise the data from all repositories with our database."
                        :handler (fn [_] (git/sync-repositories) (response/ok))}}]
-   ; TODO lobby to replace this by tags :D, things happen very similar, would prevent us from having to implement these endpoints.
-   ; Otherwise something "hacky" can be done to make this work with the tags code, ideally not.
-   ["/:id"
-    ["" {:get {:summary    "Get a specific repository."
-               :responses  {200 {}
-                            404 {:description "The repository with the specified id does not exist."}}
-               :parameters {:path {:id int?}}
-               :handler    (fn [req] (let [id (get-in req [:path-params :id])] (repo-get id)))}}]
-    ["/link/:pid" {:post {:summary    "Connect a repository to a project"
-                          :responses  {200 {}
-                                       404 {:description "The project or repository with the specified id does not exist."}}
-                          :parameters {:path {:pid int?, :id int?}}
-                          :handler    (fn [{{:keys [id pid]} :path-params}] (link-repo-to-project id pid))}}]
-    ["/unlink/:pid" {:post {:summary    "Disconnect a repository from a project"
-                            :responses  {200 {}
-                                         404 {:description "The project or repository with the specified id does not exist."}}
-                            :parameters {:path {:pid int?, :id int?}}
-                            :handler    (fn [{{:keys [id pid]} :path-params}] (unlink-repo-from-project id pid))}}]
-    #_["/branches"
-       [""]
-       ["/:branch_id"]]
-    #_["/labels"
-       [""]
-       ["/:label_id"]]]])
+   (tags/tags-route-handler "Repository" db/get-repository)
+   #_["/branches"
+      [""]
+      ["/:branch_id"]]
+   #_["/labels"
+      [""]
+      ["/:label_id"]]])
 
 (defn route-handler-per-project []
   ["/repositories"

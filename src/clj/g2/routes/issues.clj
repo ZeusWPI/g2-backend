@@ -4,7 +4,8 @@
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
             [ring.util.http-response :as response]
-            [g2.utils.projects :as p-util]))
+            [g2.utils.projects :as p-util]
+            [g2.routes.tags :as tags]))
 
 (defn get-project-issues [project_id]
   (do
@@ -34,6 +35,7 @@
 
 (defn route-handler-global []
   ["/issues"
+   (tags/tags-route-handler "Issue" db/get-issue)
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the issues with our git backends. Use with limits"
