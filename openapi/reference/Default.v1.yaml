@@ -277,7 +277,7 @@ paths:
                 $ref: ../models/Repository.v1.yaml
       operationId: get-repositories-id
       description: Get a repository by id.
-  '/repositories/{id}/link/{projectId}':
+  '/repositories/{id}/tags/{tagid}':
     parameters:
       - schema:
           type: number
@@ -285,8 +285,8 @@ paths:
         in: path
         required: true
       - schema:
-          type: number
-        name: projectId
+          type: string
+        name: tagid
         in: path
         required: true
     post:
@@ -296,25 +296,12 @@ paths:
         '200':
           description: OK
       description: Link a given project id to a given repository.
-  '/repositories/{id}/unlink/{projectId}':
-    parameters:
-      - schema:
-          type: number
-        name: id
-        in: path
-        required: true
-      - schema:
-          type: number
-        name: projectId
-        in: path
-        required: true
-    post:
+    delete:
       summary: ''
-      operationId: post-repositories-id-unlink-projectId
+      operationId: delete-repositories-id-tags-tagid
       responses:
         '200':
           description: OK
-      description: Unlink a given project id from a given repository.
   /repositories/sync:
     post:
       summary: ''
@@ -574,9 +561,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: ../models/Pull.v1.yaml
+                $ref: ../models/Pull.v1.yaml
+              examples: {}
       operationId: get-pulls-id
       description: Get a pull request by id.
   '/pulls/{id}/tags':
@@ -713,29 +699,6 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-projects-id-tags
       description: Get a list with linked tags for a given project.
-    post:
-      summary: ''
-      operationId: post-projects-id-tags
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Tag.v1.yaml
-      description: Create a new tag for a specific project.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                color:
-                  type: string
-                type:
-                  type: string
   '/projects/{id}/tags/{tagId}':
     parameters:
       - schema:
@@ -902,5 +865,25 @@ paths:
         '200':
           description: OK
       description: Unfeature the projects with given id.
+  '/repositories/{id}/tags':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Get tags linked to a specific repository
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Tag.v1.yaml
+      operationId: get-repositories-id-tags
 components:
   schemas: {}
