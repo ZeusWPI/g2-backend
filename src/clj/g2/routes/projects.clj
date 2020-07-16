@@ -11,7 +11,8 @@
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
     [g2.routes.branches :as branches]
-    [g2.routes.pulls :as pulls]))
+    [g2.routes.pulls :as pulls]
+    [g2.routes.tags :as tags]))
 
 
 #_(defn parse-repo-ids [repo_ids_string]
@@ -147,4 +148,5 @@
     (issues/route-handler-per-project)
     (pulls/route-handler-per-project)
     (labels/route-handler-per-project)
-    (branches/route-handler-per-project)]])
+    (branches/route-handler-per-project)
+    (tags/tags-operations-route-handler "Projects" db/get-project)]])

@@ -58,6 +58,8 @@
    ["/sync" {:swagger {:tags ["sync"]}
              :post    {:summary "Synchronise the data from all repositories with our database."
                        :handler (fn [_] (git/sync-repositories) (response/ok))}}]
+   ; TODO lobby to replace this by tags :D, things happen very similar, would prevent us from having to implement these endpoints.
+   ; Otherwise something "hacky" can be done to make this work with the tags code, ideally not.
    ["/:id"
     ["" {:get {:summary    "Get a specific repository."
                :responses  {200 {}
