@@ -25,10 +25,4 @@ properties:
     items:
       $ref: ./Tag.v1.yaml
   featured:
-    type: object
-    properties:
-      featured:
-        type: boolean
-        description: If the item is featured or not.
-      priority:
-        type: integer
+    type: boolean

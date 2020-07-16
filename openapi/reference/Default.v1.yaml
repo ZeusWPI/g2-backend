@@ -832,14 +832,6 @@ paths:
         '200':
           description: OK
       description: Feature the issue with given id.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                priority:
-                  type: integer
     delete:
       summary: ''
       operationId: delete-issues-id-feature
@@ -861,14 +853,6 @@ paths:
         '200':
           description: OK
       description: Feature the pull request with given id.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                priority:
-                  type: integer
     delete:
       summary: ''
       operationId: delete-pulls-id-feature
@@ -890,14 +874,6 @@ paths:
         '200':
           description: OK
       description: Feature the branch with given id.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                priority:
-                  type: integer
     delete:
       summary: ''
       operationId: delete-branches-id-feature
@@ -919,14 +895,6 @@ paths:
         '200':
           description: OK
       description: Feature the projects with given id.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                priority:
-                  type: integer
     delete:
       summary: ''
       operationId: delete-projects-id-feature
