@@ -26,3 +26,5 @@ properties:
     type: array
     items:
       $ref: ./Tag.v1.yaml
+  featured:
+    type: boolean
