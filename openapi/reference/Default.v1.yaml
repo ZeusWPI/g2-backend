@@ -285,7 +285,7 @@ paths:
         in: path
         required: true
       - schema:
-          type: string
+          type: number
         name: tagid
         in: path
         required: true
