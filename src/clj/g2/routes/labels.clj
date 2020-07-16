@@ -31,18 +31,17 @@
   ["/labels"
    ["/sync"
     {:swagger {:tags ["sync"]}
-     :post    {:summary "Force synchronize the labels with our git backends. Use with limits"
-               :responses  {200 {:description "TODO"}
-                            403 {:description "TODO"}
-                            404 {:description "TODO"}}
-               :handler sync-all}}]
+     :post    {:summary   "Force synchronize the labels with our git backends. Use with limits"
+               :responses {200 {:description "TODO"}
+                           403 {:description "TODO"}
+                           404 {:description "TODO"}}
+               :handler   sync-all}}]
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
                           :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]])
 
 (defn route-handler-per-project []
-  ["/labels"
-   ["" {:get {:summary    "Get the labels of a project"
-              :responses  {200 {}
-                           404 {:description "The project with the specified id does not exist."}}
-              :parameters {:path {:id int?}}
-              :handler    #(get-all-for-project (get-in % [:path-params :id]))}}]])
+  ["/labels" {:get {:summary    "Get the labels of a project"
+                    :responses  {200 {}
+                                 404 {:description "The project with the specified id does not exist."}}
+                    :parameters {:path {:id int?}}
+                    :handler    #(get-all-for-project (get-in % [:path-params :id]))}}])

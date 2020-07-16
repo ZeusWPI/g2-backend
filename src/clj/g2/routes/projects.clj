@@ -10,7 +10,8 @@
     [g2.routes.repos :as repos]
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
-    [g2.routes.branches :as branches]))
+    [g2.routes.branches :as branches]
+    [g2.routes.pulls :as pulls]))
 
 
 #_(defn parse-repo-ids [repo_ids_string]
@@ -25,25 +26,23 @@
 
 
 
-(defn linkup-project [project]
-  (do
-    (log/debug "project: " project)
-    (-> project
-        (assoc :repositories (str (env :app-host) "/projects/" (:project_id project) "/repositories"))
-        (assoc :issues (str (env :app-host) "/projects/" (:project_id project) "/issues"))
-        (assoc :pulls (str (env :app-host) "/projects/" (:project_id project) "/pulls"))
-        (assoc :branches (str (env :app-host) "/projects/" (:project_id project) "/branches"))
-        #_(assoc project :repo_ids (parse-repo-ids (:repo_ids project)))
-        )))
+#_(defn linkup-project [project]
+    (do
+      (log/debug "project: " project)
+      (-> project
+          (assoc :repositories (str (env :app-host) "/projects/" (:project_id project) "/repositories"))
+          (assoc :issues (str (env :app-host) "/projects/" (:project_id project) "/issues"))
+          (assoc :pulls (str (env :app-host) "/projects/" (:project_id project) "/pulls"))
+          (assoc :branches (str (env :app-host) "/projects/" (:project_id project) "/branches"))
+          #_(assoc project :repo_ids (parse-repo-ids (:repo_ids project)))
+          )))
 
 (defn projects-get [request]
   (do
     (log/debug "Get Projects")
     (let [projects (db/get-projects)]
       (log/debug "projects: " projects)
-      (let [n (map linkup-project projects)]
-        (log/debug "n-projects: " n)
-        (response/ok n)))))
+      (response/ok n))))
 
 (defn project-get [project_id]
   (do
@@ -84,6 +83,23 @@
     (db/delete-project! {:id id})
     (response/no-content)))
 
+; TODO
+(defn project-maintainers [id]
+  (do
+    (log/debug "Get Maintainers" id)
+    (response/ok [])))
+
+; TODO
+(defn project-contributors [id]
+  (do
+    (log/debug "Get Contributors" id)
+    (response/ok [])))
+
+; TODO
+(defn project-features [id]
+  (do
+    (log/debug "Get Features" id)
+    (response/ok [])))
 
 (defn route-handler-global []
   ["/projects"
@@ -112,8 +128,23 @@
                   :parameters {:path {:id int?}
                                :body {:name string?, :description string?, :image string?}}
                   :handler    #(project-edit (get-in % [:path-params :id]) (:body-params %))}}]
+    ["/maintainers" {:get {:summary    "Get Maintainers of a specific projects"
+                           :responses  {200 {}
+                                        404 {:description "The project with the specified id does not exist."}}
+                           :parameters {:path {:id int?}}
+                           :handler    #(project-maintainers [:path-params :id])}}]
+    ["/contributors" {:get {:summary    "Get Contributors of a specific projects"
+                            :responses  {200 {}
+                                         404 {:description "The project with the specified id does not exist."}}
+                            :parameters {:path {:id int?}}
+                            :handler    #(project-contributors [:path-params :id])}}]
+    ["/features" {:get {:summary    "Get Features of a specific projects"
+                        :responses  {200 {}
+                                     404 {:description "The project with the specified id does not exist."}}
+                        :parameters {:path {:id int?}}
+                        :handler    #(project-features [:path-params :id])}}]
     (repos/route-handler-per-project)
     (issues/route-handler-per-project)
-    ;(pulls/route-handler-per-project) ; TODO
-    ;(labels/route-handler-per-project)
+    (pulls/route-handler-per-project)
+    (labels/route-handler-per-project)
     (branches/route-handler-per-project)]])
