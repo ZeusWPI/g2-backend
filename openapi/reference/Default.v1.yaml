@@ -277,16 +277,16 @@ paths:
                 $ref: ../models/Repository.v1.yaml
       operationId: get-repositories-id
       description: Get a repository by id.
-  '/repositories/{id}/tags/{tagid}':
+  '/repositories/{id}/projects/{projectId}':
     parameters:
       - schema:
-          type: number
+          type: integer
         name: id
         in: path
         required: true
       - schema:
-          type: number
-        name: tagid
+          type: integer
+        name: projectId
         in: path
         required: true
     post:
