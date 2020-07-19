@@ -111,6 +111,26 @@
    ::coercion/request-coercion  (create-coercion-handler 400)
    ::coercion/response-coercion (create-coercion-handler 500)})
 
+(defn- wrap [handlers]
+  (fn [handler]
+    (fn
+      ([request]
+       (try
+         (try
+           (handler request)
+           (catch Exception e                               ;; Push cause of the error up, needed because conman wraps exceptions...
+             (throw
+               (if-some [cause (.getCause e)]
+                 cause
+                 e))))
+         (catch Throwable e
+           (on-exception handlers e request identity #(throw %)))))
+      ([request respond raise]
+       (try
+         (handler request respond (fn [e] (on-exception handlers e request respond raise)))
+         (catch Throwable e
+           (on-exception handlers e request respond raise)))))))
+
 (defn wrap-exception
   ([handler]
    (handler default-handlers))
@@ -205,26 +225,6 @@
             :data      (ex-data exception)
             :method    (:request-method request)
             :uri       (:uri request)}})
-
-(defn- wrap [handlers]
-  (fn [handler]
-    (fn
-      ([request]
-       (try
-         (try
-           (handler request)
-           (catch Exception e                               ;; Push cause of the error up, needed because conman wraps exceptions...
-             (throw
-               (if-some [cause (.getCause e)]
-                 cause
-                 e))))
-         (catch Throwable e
-           (on-exception handlers e request identity #(throw %)))))
-      ([request respond raise]
-       (try
-         (handler request respond (fn [e] (on-exception handlers e request respond raise)))
-         (catch Throwable e
-           (on-exception handlers e request respond raise)))))))
 
 (def exception-middleware
   (create-exception-middleware

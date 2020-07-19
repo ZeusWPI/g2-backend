@@ -60,7 +60,7 @@
    ["/sync" {:swagger {:tags ["sync"]}
              :post    {:summary "Synchronise the data from all repositories with our database."
                        :handler (fn [_] (git/sync-repositories) (response/ok))}}]
-   (tags/tags-route-handler "Repository" db/get-repository)
+   (tags/tags-route-handler "Repository" db/get-repos)
    #_["/branches"
       [""]
       ["/:branch_id"]]

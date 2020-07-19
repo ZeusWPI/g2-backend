@@ -43,14 +43,14 @@
     (log/debug "Get Projects")
     (let [projects (db/get-projects)]
       (log/debug "projects: " projects)
-      (response/ok n))))
+      (response/ok projects))))
 
 (defn project-get [project_id]
   (do
     (log/debug "Get project" project_id)
     (let [project (db/get-project {:project_id project_id})]
       (if-not (nil? project)
-        (response/ok (linkup-project project))
+        (response/ok project)
         (response/not-found)))))
 
 (defn project-create [name description]

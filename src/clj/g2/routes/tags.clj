@@ -24,8 +24,7 @@
   (response/ok))
 
 (defn tags-operations-route-handler [^String what identity-query]
-  ["tags"
-   {:swagger {:tags [(string/lower-case what)]}}
+  ["/tags"
    ["" {:get {:summary (str "Get tags associated with " what ".")
               :responses {200 {}
                           404 {:description (str "The " what " with the specified id does not exist.")}}
@@ -44,7 +43,6 @@
 
 (defn tags-route-handler [^String what identity-query]
   ["/:id"
-   {:swagger {:tags [(string/lower-case what)]}}
    ["" {:get {:summary (str "Get a " what " by id")
               :responses {200 {}
                           404 {:description (str "The " what " with the specified id does not exist.")}}
