@@ -5,7 +5,8 @@
             [clojure.tools.logging :as log]
             [ring.util.http-response :as response]
             [g2.utils.projects :as p-utils]
-            [g2.routes.tags :as tags]))
+            [g2.routes.tags :as tags]
+            [g2.utils.entity :as entity]))
 
 (defn get-project-branches [project_id]
   (do
@@ -35,7 +36,7 @@
 
 (defn route-handler-global []
   ["/branches"
-   (tags/tags-route-handler "Branch" db/get-branch)
+   (tags/tags-route-handler (entity/branch) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the branches with our git backends. Use with limits"

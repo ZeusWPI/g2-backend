@@ -5,7 +5,8 @@
             [clojure.tools.logging :as log]
             [ring.util.http-response :as response]
             [g2.utils.projects :as p-util]
-            [g2.routes.tags :as tags]))
+            [g2.routes.tags :as tags]
+            [g2.utils.entity :as entity]))
 
 (defn get-project-issues [project_id]
   (do
@@ -35,7 +36,7 @@
 
 (defn route-handler-global []
   ["/issues"
-   (tags/tags-route-handler "Issue" db/get-issue)
+   (tags/tags-route-handler (entity/issue) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the issues with our git backends. Use with limits"

@@ -6,7 +6,8 @@
     [g2.utils.projects :as p-util]
     [g2.routes.tags :as tags]
     [conman.core :refer [with-transaction]]
-    [clojure.tools.logging :as log]))
+    [clojure.tools.logging :as log]
+    [g2.utils.entity :as entity]))
 
 (defn convert-db-to-api-object
   [db-repo]
@@ -60,7 +61,7 @@
    ["/sync" {:swagger {:tags ["sync"]}
              :post    {:summary "Synchronise the data from all repositories with our database."
                        :handler (fn [_] (git/sync-repositories) (response/ok))}}]
-   (tags/tags-route-handler "Repository" db/get-repos)
+   (tags/tags-route-handler (entity/repository) [])
    #_["/branches"
       [""]
       ["/:branch_id"]]

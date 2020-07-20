@@ -1,51 +1,54 @@
 (ns g2.routes.tags
   (:require [ring.util.http-response :as response]
-            [clojure.string :as string]))
+            [g2.utils.entity :as entity])
+  (:import (java.util List)))
 
-(defn assert-entity [req query f]
-  (let [entity (query (get-in req [:path-params :id]))]
-    (if (nil? entity)
+(defn assert-id-of-entity [req entity f]
+  (let [db-object ((entity/-get entity) (get-in req [:path-params :id]))]
+    (if (nil? db-object)
       (response/not-found)
-      (f entity))))
+      (f db-object))))
 
-(defn get-entity [entity]
-  (response/ok entity))
+(defn get-entity [db-object]
+  (response/ok db-object))
 
-; TODO
-(defn get-tags [entity]
+; TODO write a db-querry to fetch the named-tags of an entity
+(defn get-tags [db-object]
   (response/ok []))
 
-; TODO
-(defn tag-entity-with [entity tag]
+; TODO implement this using the allowed-links list, these are tho only entities that are allowed to link with this entity
+(defn tag-entity-with [db-object tag]
   (response/ok))
 
 ; TODO
-(defn untag-entity-with [entity tag]
+(defn untag-entity-with [db-object tag]
   (response/ok))
 
-(defn tags-operations-route-handler [^String what identity-query]
-  ["/tags"
-   ["" {:get {:summary (str "Get tags associated with " what ".")
-              :responses {200 {}
-                          404 {:description (str "The " what " with the specified id does not exist.")}}
-              :parameters {:path {:id int?}}
-              :handler #(assert-entity % identity-query get-tags)}}]
-   ["/:tag" {:post   {:summary    (str "Tag an " what " with a specific tag.")
-                      :responses  {200 {}
-                                   404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
-                      :parameters {:path {:id int?}}
-                      :handler    #(assert-entity % identity-query (fn [x] (tag-entity-with x (get-in % [:path-params :tag]))))}
-             :delete {:summary    (str "Remove specific tag from " what ".")
-                      :responses  {200 {}
-                                   404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
-                      :parameters {:path {:id int?}}
-                      :handler    #(assert-entity % identity-query (fn [x] (untag-entity-with x (get-in % [:path-params :tag]))))}}]])
+(defn tags-operations-route-handler [entity ^List allowed-links]
+  (let [what (entity/-name entity)]
+    ["/tags"
+     ["" {:get {:summary    (str "Get tags associated with " what ".")
+                :responses  {200 {}
+                             404 {:description (str "The " what " with the specified id does not exist.")}}
+                :parameters {:path {:id int?}}
+                :handler    #(assert-id-of-entity % entity get-tags)}}]
+     ["/:tag" {:post   {:summary    (str "Tag an " what " with a specific tag.")
+                        :responses  {200 {}
+                                     404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
+                        :parameters {:path {:id int?}}
+                        :handler    #(assert-id-of-entity % entity (fn [x] (tag-entity-with x (get-in % [:path-params :tag]))))}
+               :delete {:summary    (str "Remove specific tag from " what ".")
+                        :responses  {200 {}
+                                     404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
+                        :parameters {:path {:id int?}}
+                        :handler    #(assert-id-of-entity % entity (fn [x] (untag-entity-with x (get-in % [:path-params :tag]))))}}]]))
 
-(defn tags-route-handler [^String what identity-query]
-  ["/:id"
-   ["" {:get {:summary (str "Get a " what " by id")
-              :responses {200 {}
-                          404 {:description (str "The " what " with the specified id does not exist.")}}
-              :parameters {:path {:id int?}}
-              :handler #(assert-entity % identity-query get-entity)}}]
-   (tags-operations-route-handler what identity-query)])
+(defn tags-route-handler [entity allowed-links]
+  (let [what (entity/-name entity)]
+    ["/:id"
+     ["" {:get {:summary    (str "Get a " what " by id")
+                :responses  {200 {}
+                             404 {:description (str "The " what " with the specified id does not exist.")}}
+                :parameters {:path {:id int?}}
+                :handler    #(assert-id-of-entity % entity get-entity)}}]
+     (tags-operations-route-handler entity allowed-links)]))
