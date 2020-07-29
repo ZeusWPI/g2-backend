@@ -122,7 +122,7 @@ where tag_id = :project_id
 GROUP BY tag_id, name;
 
 -- :name get-projects :? :*
-SELECT tag_id as id, p.name as name, p.description, p.image_url
+SELECT tag_id as id, p.name as name, p.description, p.image_url as image
 FROM projects p
          LEFT JOIN repos using (tag_id)
 GROUP BY tag_id, p.name;
@@ -132,7 +132,7 @@ SELECT *
 FROM projects
          JOIN tag_relations on projects.tag_id = tag_relations.parent_id
          JOIN repos on tag_relations.child_id = repos.tag_id
-WHERE repos.tag_id = :project_id;
+WHERE projects.tag_id = :project_id;
 
 -- :name create-project! :insert :raw
 -- :command :execute

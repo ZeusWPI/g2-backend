@@ -11,14 +11,16 @@
 
 (defn convert-db-to-api-object
   [db-repo]
+  (log/debug "converting object:" db-repo)
   (-> db-repo
       (dissoc :default-tags)))
 
 (defn get-project-repositories
   [project_id]
+  (log/debug "Get repos of project" project_id)
   (p-util/is-project
     project_id
-    (response/ok (-> (db/get-project-repos {:project_id project_id})
+    #(response/ok (-> (db/get-project-repos {:project_id project_id})
                      convert-db-to-api-object))))
 
 (defn repo-get

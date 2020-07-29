@@ -6,6 +6,7 @@
 
 (defn is-project [project_id success]
   (let [project (db/get-project {:project_id project_id})]
+    (log/debug "object" project)
     (if (nil? project)
       (response/not-found)
       (success))))
