@@ -20,8 +20,7 @@
   ["/pulls"
    {:swagger {:tags ["pulls"]}}
    (tags/tags-route-handler (entity/pull) [])
-   ["/:id"
-    ["/feature" {:delete {:summary "Unfeature the pull request with the given id."
+   ["/:id/feature" {:delete {:summary "Unfeature the pull request with the given id."
                           :responses {200 {}
                                       404 {:description "The pull request with the specified id does not exist."}}
                           :parameters {:path {:id int?}}
@@ -31,7 +30,7 @@
                                     404 {:description "The pull request with the specified id does not exist."}}
                         :parameters {:path {:id int?}}
                         :handler #(response/not-implemented)}}]]
-   ])
+   )
 
 (defn route-handler-per-project []
   ["/pulls" {:get {:summary    "Get the pulls of a project"
