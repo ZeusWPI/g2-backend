@@ -12,7 +12,7 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
  */
 -- :name create-tag! :insert :raw
 INSERT INTO tags ()
-values ();
+VALUES ();
 
 -- :name get-tag :? :1
 SELECT * FROM :i:table
@@ -22,14 +22,14 @@ WHERE tag_id = :tag_id;
 SELECT * FROM :i:table;
 
 -- :name get-tags-linked-with-tag :? :*
-select * from tag_relations
-inner join :i:table on tag_relations.child_id = :i:table.tag_id
-where tag_relations.parent_id = :tag_id;
+SELECT * FROM tag_relations
+INNER JOIN :i:table ON child_id = tag_id
+WHERE parent_id = :tag_id;
 
 -- :name link-tag! :! :n
 INSERT INTO tag_relations
 (parent_id, child_id)
-values (:parent_id, :child_id);
+VALUES (:parent_id, :child_id);
 
 -- :name unlink-tag! :! :n
 DELETE FROM tag_relations

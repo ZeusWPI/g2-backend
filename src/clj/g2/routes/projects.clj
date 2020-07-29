@@ -111,7 +111,10 @@
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}}
-                  :handler    (fn [req] (tags/assert-id-of-entity req "projects"))}
+                  :handler    (fn [req] (tags/assert-id-of-entity req "projects" (fn [project]
+                                                                                   (-> project
+                                                                                       (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
+                                                                                       (response/ok)))))}
          :delete {:summary    "Delete a specific project"
                   :responses  {200 {}}
                   :parameters {:path {:id int?}}

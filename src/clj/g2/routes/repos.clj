@@ -71,6 +71,7 @@
               :parameters {:path {:id int?}}
               :handler    #(tags/assert-id-of-entity % "projects"
                                                 (fn [{tag_id :tag_id}]
+                                                  (log/debug "Fetching repos for the project")
                                                   (->
                                                     (db/get-tags-linked-with-tag {:table "repos" :tag_id tag_id})
                                                     (response/ok))))}}]])
