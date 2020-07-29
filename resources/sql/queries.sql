@@ -14,6 +14,27 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 INSERT INTO tags ()
 values ();
 
+-- :name get-tag :? :1
+SELECT * FROM :i:table
+WHERE tag_id = :tag_id;
+
+-- :name get-tags :? :*
+SELECT * FROM :i:table;
+
+-- :name get-tags-linked-with-tag :? :*
+select * from tag_relations
+inner join :i:table on tag_relations.child_id = :i:table.tag_id
+where tag_relations.parent_id = :tag_id;
+
+-- :name link-tag! :! :n
+INSERT INTO tag_relations
+(parent_id, child_id)
+values (:parent_id, :child_id);
+
+-- :name unlink-tag! :! :n
+DELETE FROM tag_relations
+WHERE parent_id = :parent_id and child_id = :child_id;
+
 /*
     User stuff
  */
@@ -117,9 +138,7 @@ WHERE git_id = :git_id;
 -- :name get-project :? :1
 SELECT tag_id as id, p.name as name, p.description, p.image_url
 from projects p
-         LEFT JOIN repos using (tag_id)
-where tag_id = :project_id
-GROUP BY tag_id, name;
+where tag_id = :project_id;
 
 -- :name get-projects :? :*
 SELECT tag_id as id, p.name as name, p.description, p.image_url

@@ -36,6 +36,7 @@
 
 (defn route-handler-global []
   ["/issues"
+   {:swagger {:tags ["issues"]}}
    (tags/tags-route-handler (entity/issue) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
@@ -49,6 +50,7 @@
 
 (defn route-handler-per-project []
   ["/issues"
+   {:swagger {:tags ["issues"]}}
    ["" {:get {:summary    "Get the issues of a project"
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}

@@ -36,6 +36,7 @@
 
 (defn route-handler-global []
   ["/branches"
+   {:swagger {:tags ["branches"]}}
    (tags/tags-route-handler (entity/branch) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
@@ -49,6 +50,7 @@
 
 (defn route-handler-per-project []
   ["/branches"
+   {:swagger {:tags ["branches"]}}
    ["" {:get {:summary    "Get the branches of a project"
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}

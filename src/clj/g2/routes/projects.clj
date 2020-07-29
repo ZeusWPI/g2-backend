@@ -46,14 +46,6 @@
       (log/debug "projects: " projects)
       (response/ok projects))))
 
-(defn project-get [project_id]
-  (do
-    (log/debug "Get project" project_id)
-    (let [project (db/get-project {:project_id project_id})]
-      (if-not (nil? project)
-        (response/ok project)
-        (response/not-found)))))
-
 (defn project-create [name description]
   (do
     (log/debug "Create project: " name " " description)
@@ -119,7 +111,7 @@
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}}
-                  :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-get id)))}
+                  :handler    (fn [req] (tags/assert-id-of-entity req "projects"))}
          :delete {:summary    "Delete a specific project"
                   :responses  {200 {}}
                   :parameters {:path {:id int?}}
