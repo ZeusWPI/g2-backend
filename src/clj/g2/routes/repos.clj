@@ -12,8 +12,7 @@
 (defn convert-db-to-api-object
   [db-repo]
   (log/debug "converting object:" db-repo)
-  (-> db-repo
-      (dissoc :default-tags)))
+  (map #(dissoc % :default-tags) db-repo))
 
 (defn get-project-repositories
   [project_id]

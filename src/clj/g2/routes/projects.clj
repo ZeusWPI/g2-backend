@@ -51,7 +51,8 @@
     (log/debug "Get project" project_id)
     (let [project (db/get-project {:project_id project_id})]
       (if-not (nil? project)
-        (response/ok project)
+        (response/ok (-> project
+                         (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})))
         (response/not-found)))))
 
 (defn project-create [name description]

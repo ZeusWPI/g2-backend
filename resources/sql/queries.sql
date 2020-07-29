@@ -115,7 +115,7 @@ WHERE git_id = :git_id;
 */
 
 -- :name get-project :? :1
-SELECT tag_id as id, p.name as name, p.description, p.image_url
+SELECT tag_id as id, p.name as name, p.description, p.image_url as image
 from projects p
          LEFT JOIN repos using (tag_id)
 where tag_id = :project_id
