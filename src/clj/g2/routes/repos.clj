@@ -50,9 +50,13 @@
   ["/repositories"
    {:swagger {:tags ["repository"]}}
    ["" {:get {:summary "Get the list of code repositories in our backend."
+              :responses {200 {}}
               :handler repos-get}}]
    ["/sync" {:swagger {:tags ["sync"]}
              :post    {:summary "Synchronise the data from all repositories with our database."
+                       :responses {200 {:description "TODO"}
+                                   403 {:description "TODO"}
+                                   404 {:description "TODO"}}
                        :handler (fn [_] (git/sync-repositories) (response/ok))}}]
    (tags/tags-route-handler (entity/repository) [])
    #_["/branches"
