@@ -16,7 +16,8 @@
             [clojure.pprint :refer [pprint]]
             [clojure.string :as string]
             [reitit.swagger :as swagger]
-            [reitit.swagger-ui :as swagger-ui]))
+            [reitit.swagger-ui :as swagger-ui]
+            [g2.routes.pulls :as pulls]))
 
 (defn home-page [request]
   (let [repo-providers (db/get-all-repo-providers)]
@@ -45,6 +46,7 @@
    ; not included in the newer spec
    #_(labels/route-handler-global)
    (branches/route-handler-global)
+   (pulls/route-handler-global)
    ["/repo-providers"
     {:get {:summary "Get the list of repository providers configured (like for ex. github or gitlab)"
            :handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]
