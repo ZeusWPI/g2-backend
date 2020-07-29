@@ -126,6 +126,16 @@
                                      404 {:description "The project with the specified id does not exist."}}
                         :parameters {:path {:id int?}}
                         :handler    #(project-features [:path-params :id])}}]
+    ["/feature" {:delete {:summary "Unfeature the project with the given id."
+                           :responses {200 {}
+                                       404 {:description "The project with the specified id does not exist."}}
+                           :parameters {:path {:id int?}}
+                           :handler (response/not-implemented)}
+                  :post {:summary "Feature the project with the given id."
+                         :responses {200 {}
+                                     404 {:description "The project with the specified id does not exist."}}
+                         :parameters {:path {:id int?}}
+                         :handler (response/not-implemented)}}]
     (repos/route-handler-per-project)
     (issues/route-handler-per-project)
     (pulls/route-handler-per-project)
