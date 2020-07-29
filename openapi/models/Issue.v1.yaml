@@ -7,6 +7,7 @@ x-examples:
     title: Update README with latest documentation
     timestamp: 1594018083
     status: open
+    url: 'https://github.com/ZeusWPI/g2-frontend/issue/32'
     author:
       id: 1
       name: maartenvn
@@ -21,6 +22,7 @@ x-examples:
       - id: 1
         name: IMPORTANT
         color: '#c0392b'
+    tags: []
 properties:
   id:
     type: integer
@@ -33,6 +35,9 @@ properties:
     enum:
       - open
       - closed
+  url:
+    type: string
+    format: uri
   author:
     $ref: ./Author.v1.yaml
   repository:
@@ -42,3 +47,9 @@ properties:
     format: uri
     items:
       $ref: ./Label.v1.yaml
+  tags:
+    type: array
+    items:
+      $ref: ./Tag.v1.yaml
+  featured:
+    type: boolean

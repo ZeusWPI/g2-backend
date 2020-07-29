@@ -1,0 +1,26 @@
+title: Feature
+type: object
+properties:
+  id:
+    type: number
+  author:
+    $ref: ./Author.v1.yaml
+  type:
+    type: string
+    enum:
+      - project
+      - issue
+      - pull
+      - branch
+  data:
+    type: object
+    description: "Only the field corresponding to 'type' has to be provided"
+    properties:
+      project:
+        $ref: ./Project.v1.yaml
+      issue:
+        $ref: ./Issue.v1.yaml
+      pull:
+        $ref: ./Pull.v1.yaml
+      branch:
+        $ref: ./Branch.v1.yaml

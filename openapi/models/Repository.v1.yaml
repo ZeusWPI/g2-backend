@@ -20,8 +20,11 @@ properties:
     type: string
   image:
     type: string
-  default_tags:
-    type: array
-    description: "Alle nieuwe content uit de repo zal gelinkt worden aan tag '3'. Dit kan bijv. het tab project zijn."
-    items:
-      type: number
+  newIssueUrl:
+    type: string
+    format: uri
+    description: URL to the provider allowing to create a new issue.
+  newPullUrl:
+    type: string
+    format: uri
+    description: URL to the provider allowing to create a new issue.

@@ -4,11 +4,17 @@ description: ''
 x-examples:
   Example:
     id: 1
-    name: maartenvn
+    username: maartenvn
+    name: Maarten VN
+    description: 'Computer Science student at Ghent University. Passionate about Vue & Typescript.'
     url: 'https://github.com/maartenvn'
     avatar: 'https://avatars0.githubusercontent.com/u/6013068?s=60&v=4'
 properties:
   name:
+    type: string
+  username:
+    type: string
+  description:
     type: string
   url:
     type: string
