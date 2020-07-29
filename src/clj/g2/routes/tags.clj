@@ -7,26 +7,31 @@
 
 (defn assert-id-of-entity
   "Used to throw 404's if an entity doesn't exist"
-  ([req entity f]
-   (let [entity-id (get-in req [:path-params :id])]
-     (log/debug (format "Checking validity of entity of type '%s' with id '%s'" entity entity-id))
-     (let [db-object (entity/get-tag entity entity-id)]
-       (if (nil? db-object)
-         (do
-           (log/debug "Entity not found")
-           (response/not-found))
-         (do
-           (log/debug (format "Entity valid: %s" db-object))
-           (f db-object))))))
-  ([req entity]
-   (assert-id-of-entity req entity response/ok)))
+  [req entity f]
+  (let [entity-id (get-in req [:path-params :id])]
+    (log/debug (format "Checking validity of entity of type '%s' with id '%s'" entity entity-id))
+    (let [db-object (entity/get-tag entity entity-id)]
+      (if (nil? db-object)
+        (do
+          (log/debug "Entity not found")
+          (response/not-found))
+        (do
+          (log/debug (format "Entity valid: %s" db-object))
+          (f db-object))))))
+
+(defn get-tags-linked-with-tag
+  "Extracts the parent id from the request, returns the linked tags of type 'entity-child'"
+  [req entity-parent entity-child]
+  (assert-id-of-entity req entity-parent
+                       (fn [{tag_id :tag_id}]
+                         (log/debug (format "Fetching %s for entity of %s" entity-child entity-parent))
+                         (->>
+                           (db/get-tags-linked-with-tag {:table entity-child :tag_id tag_id})
+                           (map #(dissoc % :parent_id :child_id))
+                           (response/ok)))))
 
 (defn get-entity [db-object]
   (response/ok db-object))
-
-; TODO write a db-query to fetch the named-tags of an entity
-(defn get-named-tags [db-object]
-  (response/ok []))
 
 ; TODO implement this using the allowed-links list, these are tho only entities that are allowed to link with this entity
 (defn tag-entity-with [db-object-id tag-id]
@@ -38,14 +43,9 @@
   (db/unlink-tag! {:parent_id db-object-id :child_id tag-id})
   (response/ok))
 
-(defn tags-operations-route-handler [^String entity ^List allowed-links]
+(defn tags-operations-route-handler [^String entity ^List allowed-links] ; TODO implement allowed-links
   (let [what entity]
     ["/tags"
-     ["" {:get {:summary    (str "Get named-tags associated with " what ".")
-                :responses  {200 {}
-                             404 {:description (str "The " what " with the specified id does not exist.")}}
-                :parameters {:path {:id int?}}
-                :handler    #(assert-id-of-entity % entity get-named-tags)}}]
      ["/:tag" {:post   {:summary    (str "Tag an " what " with a specific tag.")
                         :responses  {200 {}
                                      404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
@@ -60,6 +60,7 @@
                         :handler    #(assert-id-of-entity % entity (fn [x] (untag-entity-with (get x :tag_id) (get-in % [:path-params :tag]))))}}]]))
 
 (defn tags-route-handler [entity allowed-links]
+  "A generic handler that can possible be used by an entity type that does no further conversions or joins."
   ["/:id"
    ["" {:get {:summary    (str "Get a " entity " by id")
               :responses  {200 {}

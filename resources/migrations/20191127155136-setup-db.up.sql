@@ -70,7 +70,7 @@ CREATE TABLE branches
 --;;
 
 -- named tags which are not projects, like language specific, ... To enable filtering over g2,
-CREATE TABLE named_tag
+CREATE TABLE named_tags
 (
     tag_id integer      not null unique,
     name   varchar(191) not null unique,

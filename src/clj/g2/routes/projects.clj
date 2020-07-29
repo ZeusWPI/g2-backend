@@ -11,6 +11,7 @@
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
     [g2.routes.branches :as branches]
+    [g2.routes.namedtags :as namedtags]
     [g2.routes.pulls :as pulls]
     [g2.routes.tags :as tags]
     [g2.utils.entity :as entity]))
@@ -145,4 +146,5 @@
     (pulls/route-handler-per-project)
     (labels/route-handler-per-project)
     (branches/route-handler-per-project)
+    (namedtags/route-handler-per-link (entity/project))
     (tags/tags-operations-route-handler (entity/project) [])]])

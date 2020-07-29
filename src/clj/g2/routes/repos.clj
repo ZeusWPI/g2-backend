@@ -69,9 +69,5 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(tags/assert-id-of-entity % "projects"
-                                                (fn [{tag_id :tag_id}]
-                                                  (log/debug "Fetching repos for the project")
-                                                  (->
-                                                    (db/get-tags-linked-with-tag {:table "repos" :tag_id tag_id})
-                                                    (response/ok))))}}]])
+              :handler   #(tags/get-tags-linked-with-tag % "projects" "repos")
+                          }}]])

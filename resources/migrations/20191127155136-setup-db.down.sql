@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS issues;
 --;;
 DROP TABLE IF EXISTS branches;
 --;;
-DROP TABLE IF EXISTS named_tag;
+DROP TABLE IF EXISTS named_tags;
 --;;
 DROP TABLE IF EXISTS g2_repo_label_mapping;
 --;;
