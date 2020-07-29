@@ -46,7 +46,17 @@
                            404 {:description "TODO"}}
                :handler   sync-all}}]
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
-                          :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]])
+                          :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
+    ["/:id/feature" {:delete {:summary "Unfeature the issue with the given id."
+                          :responses {200 {}
+                                      404 {:description "The issue with the specified id does not exist."}}
+                          :parameters {:path {:id int?}}
+                          :handler #(response/not-implemented)}
+                 :post {:summary "Feature the issue with the given id."
+                        :responses {200 {}
+                                    404 {:description "The issue with the specified id does not exist."}}
+                        :parameters {:path {:id int?}}
+                        :handler #(response/not-implemented)}}]])
 
 (defn route-handler-per-project []
   ["/issues"
