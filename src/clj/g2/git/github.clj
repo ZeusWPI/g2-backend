@@ -111,6 +111,7 @@
                        :branches #(str base-url "/repos/" (env :github-organization) "/"
                                        (get-repo-name %) "/branches")})
 
+
 (defn sync-repositories
   "Fetch all repositories of the organization.
   Merge existing information with new updates.
@@ -126,7 +127,8 @@
                                :html_url    :url}
                               :git_id                       ; local and remote shared unique identifier
                               db/get-repos                  ;; TODO filter to only fetch github repos
-                              db/create-repo!
+                              #(let [{tag_id :generated_key} (db/create-tag!)]
+                                 (db/create-repo! (assoc % :tag_id tag_id)))
                               db/update-repo!)))
 
 (defn sync-labels

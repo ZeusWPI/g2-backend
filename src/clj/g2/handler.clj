@@ -14,7 +14,6 @@
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as spec-coercion]
             [reitit.ring.middleware.muuntaja :as muuntaja]
-    ;[reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.parameters :as parameters]
             [reitit.ring.middleware.dev]
@@ -86,20 +85,20 @@
                         :muuntaja   formats/instance
                         :middleware [;; query-params & form-params
                                      parameters/parameters-middleware
+                                     ;; multipart
+                                     multipart/multipart-middleware
                                      ;; content-negotiation
                                      muuntaja/format-negotiate-middleware
-                                     ;; encoding response body
-                                     muuntaja/format-response-middleware
                                      ;; decoding request body
                                      muuntaja/format-request-middleware
-                                     ;; exception handling
-                                     exception/exception-middleware
-                                     ;; coercing response bodies
-                                     coercion/coerce-response-middleware
                                      ;; coercing request parameters
                                      coercion/coerce-request-middleware
-                                     ;; multipart
-                                     multipart/multipart-middleware]}
+                                     ;; encoding response body
+                                     muuntaja/format-response-middleware
+                                     ;; coercing response bodies
+                                     coercion/coerce-response-middleware
+                                     ;; exception handling
+                                     exception/exception-middleware]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]
                       {:conflicts nil})
