@@ -12,7 +12,7 @@ drop table if exists named_tags cascade;
 --;;
 drop table if exists projects cascade;
 --;;
-drop table if exists repo_default_tag_mapping cascade;
+DROP TABLE IF EXISTS named_tags;
 --;;
 drop table if exists repository_labels cascade;
 --;;
