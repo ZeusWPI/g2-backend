@@ -14,13 +14,6 @@
   (-> db-repo
       (dissoc :default-tags)))
 
-(defn get-project-repositories
-  [project_id]
-  (p-util/is-project
-    project_id
-    (response/ok (-> (db/get-project-repos {:project_id project_id})
-                     convert-db-to-api-object))))
-
 (defn repo-get
   "Fetch 1 repo"
   [repo_id]
@@ -76,4 +69,9 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(get-project-repositories (get-in % [:path-params :id]))}}]])
+              :handler    #(tags/assert-id-of-entity % "projects"
+                                                (fn [{tag_id :tag_id}]
+                                                  (log/debug "Fetching repos for the project")
+                                                  (->
+                                                    (db/get-tags-linked-with-tag {:table "repos" :tag_id tag_id})
+                                                    (response/ok))))}}]])
