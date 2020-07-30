@@ -24,16 +24,21 @@
           (f db-object))))))
 
 (defn get-tags-linked-with-tag
+  [tag-id entity-parent entity-child]
+  (log/debug (format "Fetching %s for %s<id: %s>" entity-child entity-parent tag-id))
+  (->>
+    (db/get-tags-linked-with-tag {:table entity-child :tag_id tag-id})
+    ((fn [obj] (log/debug obj) obj))
+    (map #(dissoc % :parent_id :child_id))
+    (map #(set/rename-keys % {:tag_id :id}))))
+
+(defn assert-get-tags-linked-with-tag
   "Extracts the parent id from the request, returns the linked tags of type 'entity-child'"
   [req entity-parent entity-child]
   (assert-id-of-entity req entity-parent
                        (fn [{tag-id :tag_id}]
-                         (log/debug (format "Fetching %s for %s<id: %s>" entity-child entity-parent tag-id))
-                         (->>
-                           (db/get-tags-linked-with-tag {:table entity-child :tag_id tag-id})
-                           ((fn [obj] (log/debug obj) obj))
-                           (map #(dissoc % :parent_id :child_id))
-                           (map #(set/rename-keys % {:tag_id :id}))))))
+                         (get-tags-linked-with-tag tag-id entity-parent entity-child)
+                         )))
 
 (defn get-entity [db-object]
   (response/ok db-object))

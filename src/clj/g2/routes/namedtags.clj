@@ -8,7 +8,7 @@
 (defn get-named_tags-linked-with-tag [req link-entity]
   (try
     (response/ok
-      (tags/get-tags-linked-with-tag req link-entity "named_tags"))
+      (tags/assert-get-tags-linked-with-tag req link-entity "named_tags"))
     (catch Exception e
       (let [e-data (ex-data e)
             e-cause (ex-message e)]

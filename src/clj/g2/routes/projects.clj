@@ -27,13 +27,13 @@
 
 (defn flip [f] (fn [x y & args] (apply f y x args)))
 
+(defn construct-project-from-base [project]
+  (-> project
+      (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
+      (assoc :tags (tags/get-tags-linked-with-tag (:tag_id project) "projects" "named_tags"))))
+
 (defn project-get [req]
-  (fn [req] (tags/assert-id-of-entity req "projects"
-                                      (fn [project]
-                                        (-> project
-                                            (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
-                                            (assoc :tags (tags/get-tags-linked-with-tag req "projects" "named_tags"))
-                                            (response/ok))))))
+  (tags/assert-id-of-entity req "projects" #(response/ok (construct-project-from-base %))))
 
 (defn project-create [name description]
   (do
