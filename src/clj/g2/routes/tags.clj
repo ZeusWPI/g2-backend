@@ -27,10 +27,11 @@
   "Extracts the parent id from the request, returns the linked tags of type 'entity-child'"
   [req entity-parent entity-child]
   (assert-id-of-entity req entity-parent
-                       (fn [{tag_id :tag_id}]
-                         (log/debug (format "Fetching %s for entity of %s" entity-child entity-parent))
+                       (fn [{tag-id :tag_id}]
+                         (log/debug (format "Fetching %s for %s<id: %s>" entity-child entity-parent tag-id))
                          (->>
-                           (db/get-tags-linked-with-tag {:table entity-child :tag_id tag_id})
+                           (db/get-tags-linked-with-tag {:table entity-child :tag_id tag-id})
+                           ((fn [obj] (log/debug obj) obj))
                            (map #(dissoc % :parent_id :child_id))
                            (map #(set/rename-keys % {:tag_id :id}))))))
 

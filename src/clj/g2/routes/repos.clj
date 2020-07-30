@@ -69,5 +69,5 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler   #(tags/get-tags-linked-with-tag % "projects" "repos")
-                          }}]])
+              :handler    #(response/ok (tags/get-tags-linked-with-tag % "projects" "repos"))
+              }}]])
