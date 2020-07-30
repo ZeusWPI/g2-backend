@@ -21,5 +21,8 @@
 (defn branch []
   "branches")
 
+(defn pull []
+  "pull request")
+
 #_(defn pull []
     (gen-entity "Pull" db/get-pull db/get-pulls))
