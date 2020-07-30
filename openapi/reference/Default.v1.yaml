@@ -952,6 +952,7 @@ paths:
       responses:
         '307':
           description: Temporary Redirect
+<<<<<<< HEAD
     parameters: [ ]
   '/projects/{id}/subprojects':
     parameters:
@@ -974,5 +975,16 @@ paths:
                   $ref: ../models/Project.v1.yaml
       operationId: get-projects-id-subprojects
       description: Get a list with subprojects for a given project.
+=======
+    parameters: []
+  /oauth/logout:
+    post:
+      summary: ''
+      operationId: post-oauth-logout
+      responses:
+        '200':
+          description: OK
+      description: Delete the current OAuth session
+>>>>>>> 08d9202 (Add oauth logout endpoint)
 components:
   schemas: { }
