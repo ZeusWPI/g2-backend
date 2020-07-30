@@ -27,25 +27,13 @@
 
 (defn flip [f] (fn [x y & args] (apply f y x args)))
 
-
-
-#_(defn linkup-project [project]
-    (do
-      (log/debug "project: " project)
-      (-> project
-          (assoc :repositories (str (env :app-host) "/projects/" (:project_id project) "/repositories"))
-          (assoc :issues (str (env :app-host) "/projects/" (:project_id project) "/issues"))
-          (assoc :pulls (str (env :app-host) "/projects/" (:project_id project) "/pulls"))
-          (assoc :branches (str (env :app-host) "/projects/" (:project_id project) "/branches"))
-          #_(assoc project :repo_ids (parse-repo-ids (:repo_ids project)))
-          )))
-
-(defn projects-get [request]
-  (do
-    (log/debug "Get Projects")
-    (let [projects (db/get-projects)]
-      (log/debug "projects: " projects)
-      (response/ok projects))))
+(defn project-get [req]
+  (fn [req] (tags/assert-id-of-entity req "projects"
+                                      (fn [project]
+                                        (-> project
+                                            (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
+                                            (assoc :tags (tags/get-tags-linked-with-tag req "projects" "named_tags"))
+                                            (response/ok))))))
 
 (defn project-create [name description]
   (do
@@ -112,11 +100,7 @@
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}}
-                  :handler    (fn [req] (tags/assert-id-of-entity req "projects" (fn [project]
-                                                                                   (-> project
-                                                                                       (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
-                                                                                       (assoc :tags (tags/get-tags-linked-with-tag req "projects" "named_tags"))
-                                                                                       (response/ok)))))}
+                  :handler    project-get}
          :delete {:summary    "Delete a specific project"
                   :responses  {200 {}}
                   :parameters {:path {:id int?}}

@@ -1,6 +1,7 @@
 CREATE TABLE tags
 (
-    id integer auto_increment primary key
+    id       integer auto_increment primary key,
+    featured bool default false
 ) CHARACTER SET utf8mb4;
 --;;
 
