@@ -885,5 +885,71 @@ paths:
                 items:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-repositories-id-tags
+  '/oauth/{provider}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '307':
+          description: Temporary Redirect
+          headers: {}
+      operationId: get-oauth-zeus
+      description: |-
+        OAuth endpoint for login with {provider}.
+        This should redirect to the backend /oauth/callback after completion.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: frontendSuccessCallback
+          description: Callback to the frontend after authentication is successful
+        - schema:
+            type: string
+          in: query
+          name: frontendErrorCallback
+          description: Callback to the frontend after authentication has failed
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - zeus
+            - github
+        name: provider
+        in: path
+        required: true
+        description: 'OAuth provider (zeus, github, ...)'
+  /oauth/callback:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      operationId: get-oauth-callback
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: frontendSuccessCallback
+          description: Callback to the frontend after authentication is successful
+        - schema:
+            type: string
+          in: query
+          name: frontendErrorCallback
+          description: Callback to the frontend after authentication has failed
+        - schema:
+            type: string
+          in: query
+          name: error
+          description: 'Only when failed: the error code received by the OAuth provider.'
+        - schema:
+            type: string
+          in: query
+          name: code
+          description: 'Only when succeeded: the OAuth access token'
+      description: |-
+        Callback after OAuth completion.
+        This should redirect to the correct frontend callback (provided using query params).
+      responses:
+        '307':
+          description: Temporary Redirect
+    parameters: []
 components:
   schemas: {}
