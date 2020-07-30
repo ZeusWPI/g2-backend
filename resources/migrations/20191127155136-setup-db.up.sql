@@ -72,8 +72,11 @@ CREATE TABLE branches
 -- named tags which are not projects, like language specific, ... To enable filtering over g2,
 CREATE TABLE named_tags
 (
-    tag_id integer      not null unique,
-    name   varchar(191) not null unique,
+    tag_id      integer      not null unique,
+    name        varchar(191) not null unique,
+    color       varchar(191),
+    type        varchar(191),
+    description varchar(191),
     foreign key (tag_id) references tags (id)
 ) CHARACTER SET utf8mb4;
 --;;
@@ -97,7 +100,7 @@ CREATE TABLE g2_repo_label_mapping
     repo_label_id integer not null,
     auto_export   boolean default true,
     auto_import   boolean default false,
-    foreign key (named_tag_id) references named_tag (tag_id),
+    foreign key (named_tag_id) references named_tags (tag_id),
     foreign key (repo_label_id) references repository_labels (label_id)
 ) CHARACTER SET utf8mb4;
 --;;

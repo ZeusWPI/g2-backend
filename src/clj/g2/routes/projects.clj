@@ -115,6 +115,7 @@
                   :handler    (fn [req] (tags/assert-id-of-entity req "projects" (fn [project]
                                                                                    (-> project
                                                                                        (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
+                                                                                       (assoc :tags (tags/get-tags-linked-with-tag req "projects" "named_tags"))
                                                                                        (response/ok)))))}
          :delete {:summary    "Delete a specific project"
                   :responses  {200 {}}

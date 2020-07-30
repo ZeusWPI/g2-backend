@@ -103,23 +103,23 @@ VALUES (:tag_id, :git_id, :name, :description, :url);
 -- :name get-repos :? :*
 SELECT repos.tag_id                               as id,
        repos.name                                 as name,
-       description,
+       repos.description,
        url,
-       group_concat(named_tag.name SEPARATOR ',') as default_tags
+       group_concat(named_tags.name SEPARATOR ',') as default_tags
 FROM repos
          LEFT JOIN repo_default_tag_mapping ON repos.tag_id = repo_default_tag_mapping.repo_id
-         LEFT JOIN named_tag ON repo_default_tag_mapping.tag_id = named_tag.tag_id
+         LEFT JOIN named_tags ON repo_default_tag_mapping.tag_id = named_tags.tag_id
 GROUP BY repos.tag_id;
 
 -- :name get-repo :? :1
 SELECT repos.tag_id                               as id,
        repos.name                                 as name,
-       description,
+       repos.description,
        url,
-       group_concat(named_tag.name SEPARATOR ',') as default_tags
+       group_concat(named_tags.name SEPARATOR ',') as default_tags
 FROM repos
          JOIN repo_default_tag_mapping ON repos.tag_id = repo_default_tag_mapping.repo_id
-         JOIN named_tag ON repo_default_tag_mapping.tag_id = named_tag.tag_id
+         JOIN named_tags ON repo_default_tag_mapping.tag_id = named_tags.tag_id
 WHERE repo_id = :repo_id
 GROUP BY repos.tag_id;
 

@@ -2,7 +2,9 @@
   (:require [ring.util.http-response :as response]
             [g2.db.core :refer [*db*] :as db]
             [g2.utils.entity :as entity]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [clojure.set :as set])
+  (:use [slingshot.slingshot :only [throw+ try+]])
   (:import (java.util List)))
 
 (defn assert-id-of-entity
@@ -14,7 +16,9 @@
       (if (nil? db-object)
         (do
           (log/debug "Entity not found")
-          (response/not-found))
+          (throw
+            (ex-info "not-found"
+                     {:causes #{"Entity not found in the database."}})))
         (do
           (log/debug (format "Entity valid: %s" db-object))
           (f db-object))))))
@@ -28,7 +32,7 @@
                          (->>
                            (db/get-tags-linked-with-tag {:table entity-child :tag_id tag_id})
                            (map #(dissoc % :parent_id :child_id))
-                           (response/ok)))))
+                           (map #(set/rename-keys % {:tag_id :id}))))))
 
 (defn get-entity [db-object]
   (response/ok db-object))
