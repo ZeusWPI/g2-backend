@@ -242,7 +242,7 @@ SELECT *
 FROM issues;
 
 -- :name get-project-indirect-issues :? :*
-SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured
+SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured, i.status
 FROM issues i
          INNER JOIN repos r on i.repo_id = r.tag_id
          INNER JOIN tag_relations on tag_relations.child_id = r.tag_id

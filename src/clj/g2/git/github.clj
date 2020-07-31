@@ -59,12 +59,13 @@
     * property mapping: The keys selected from original maps and how they will be renamed
     * shared-identifier: The name of the property that will be used to check which entities we already have in our database and which we don't. This is after property renaming for the remote entities.
   "
-  [url property-mapping shared-identifier local-query-get local-query-create local-query-update]
+  [url property-mapping shared-identifier exclude-key local-query-get local-query-create local-query-update]
   (log/debug "==============")
   (log/info "Syncing with endpoint" url)
   (let [remote-data (->> (http/get url {:headers {"Authorization" (str "token " (env :github-personal-access-token))}
                                         :as      :json})
                          (:body)
+                         (filter #(or (nil? exclude-key) (not (contains? % exclude-key))))
                          (map #(-> %1
                                    (select-keys* (keys property-mapping))
                                    (apply-date-conversion)
@@ -123,6 +124,7 @@
                                :description :description
                                :html_url    :url}
                               :git_id                       ; local and remote shared unique identifier
+                              nil
                               db/get-repos                  ;; TODO filter to only fetch github repos
                               #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
                               db/update-repo!)))
@@ -136,6 +138,7 @@
                               :url         :url
                               :color       :color}
                              :git_id
+                             nil
                              db/get-labels
                              #(db/create-label! (-> %
                                                     (assoc :tag_id (entity/generate-tag))
@@ -153,6 +156,26 @@
                               :state      :status
                               [:user :id] :author}
                              :git_id
+                             :pull_request
+                             db/get-issues
+                             #(db/create-issue! (-> %
+                                                    (assoc :tag_id (entity/generate-tag))
+                                                    (assoc :repo_id repo_id)))
+                             db/update-issue!))
+
+; TODO
+#_(defn sync-pullrequests
+  [{name :name repo_id :tag_id :as repo}]
+  (log/debug (format "Syncing issues for '%s'" (str repo)))
+  (fetch-and-sync-with-local ((github-endpoints :issues) name)
+                             {:id         :git_id
+                              :html_url   :url
+                              :title      :title
+                              :created_at :time
+                              :state      :status
+                              [:user :id] :author}
+                             :git_id
+                             :pull_request
                              db/get-issues
                              #(db/create-issue! (-> %
                                                     (assoc :tag_id (entity/generate-tag))
@@ -167,6 +190,7 @@
                              {[:commit :sha] :commit_sha
                               :name          :name}
                              :commit_sha
+                             nil
                              #(db/get-tags {:tables "branches"})
                              #(db/create-branch! (-> %
                                                      (assoc :tag_id (entity/generate-tag))
