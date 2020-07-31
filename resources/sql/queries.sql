@@ -8,6 +8,41 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 */
 
 /*
+ Generic Queries
+ */
+
+-- :name update-generic! :! :n
+/* :require [clojure.string :as string]
+            [hugsql.parameters :refer [identifier-param-quote]] */
+update :i:table set
+/*~
+(string/join ","
+  (for [[field _] (:updates params)]
+    (str (identifier-param-quote (name field) options)
+      " = :v:updates." (name field))))
+~*/
+where id = :id;
+
+-- :name create-generic! :! :n
+/* :require [clojure.string :as string]
+            [hugsql.parameters :refer [identifier-param-quote]] */
+INSERT INTO :i:table
+(
+/*~
+(string/join ","
+  (for [[field _] (:data params)]
+    (str (identifier-param-quote (name field) options))))
+~*/
+) VALUES
+(
+/*~
+(string/join ","
+  (for [[field _] (:data params)]
+    (str " :v:data." (name field))))
+~*/
+    );
+
+/*
     Generic tag table
  */
 -- :name create-tag! :insert :raw

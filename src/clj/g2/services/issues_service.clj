@@ -1,6 +1,7 @@
 (ns g2.services.issues-service
   (:require [g2.db.core :refer [*db*] :as db]
             [g2.services.generic-service :as generic-service]
+            [g2.services.author-service :as author-service]
             [g2.utils.debugging :refer [log-thread]]
             [clojure.tools.logging :as log]))
 
@@ -14,11 +15,7 @@
     (map (fn [issue]
            (log/debug (format "Issue<%s>" (str issue)))
            (-> issue
-               (assoc :author {:name "temp-name"
-                               :username "temp-username"
-                               :description "??"
-                               :url "url? ..."
-                               :avatar "https://cdn.icon-icons.com/icons2/1736/PNG/512/4043260-avatar-male-man-portrait_113269.png"})
+               (assoc :author (author-service/dummy-author))
                (assoc :repository (generic-service/get-entity (:repo_id issue) "repos"))
                (assoc :labels [])
                (assoc :tags [])

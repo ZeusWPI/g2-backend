@@ -426,6 +426,8 @@ paths:
                   type: string
                 type:
                   type: string
+                description:
+                  type: string
       description: Create a new tag.
   '/tags/{id}':
     parameters:

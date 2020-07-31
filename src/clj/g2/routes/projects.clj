@@ -16,7 +16,9 @@
     [g2.routes.pulls :as pulls]
     [g2.routes.tags :as tags]
     [g2.services.projects-service :as projects-service]
-    [g2.utils.entity :as entity]))
+    [g2.utils.entity :as entity]
+    [g2.services.author-service :as author-service]
+    [g2.services.issues-service :as issues-service]))
 
 
 #_(defn parse-repo-ids [repo_ids_string]
@@ -41,13 +43,11 @@
       [*db*]
       (let [{tag_id :generated_key} (db/create-tag!)]
         (db/create-project! {:tag_id tag_id, :name name, :description description})
-        (response/ok (projects-service/project-get tag_id))))
-    ))
+        (response/ok (projects-service/project-get tag_id))))))
 
 (defn project-edit [project_id new-values]
   (projects-service/project-edit project_id new-values)
-  (-> (response/ok (projects-service/project-get project_id))
-      (assoc :Access-Control-Allow-Methods ["PATCH"])))
+  (response/ok (projects-service/project-get project_id)))
 
 (defn project-delete [id]
   (do
@@ -72,10 +72,10 @@
   (do
     (log/debug "Get Features" id)
     (response/ok
-      [{:id 0
-        :author {}
-        :type "issue"
-        :data {:issue {}}}])))
+      [{:id     0
+        :author (author-service/dummy-author)
+        :type   "issue"
+        :data   {:issue (first (issues-service/get-project-issues id))}}])))
 
 (defn route-handler-global []
   ["/projects"
@@ -119,16 +119,16 @@
                                      404 {:description "The project with the specified id does not exist."}}
                         :parameters {:path {:id int?}}
                         :handler    #(project-features (get-in % [:path-params :id]))}}]
-    ["/feature" {:delete {:summary "Unfeature the project with the given id."
-                           :responses {200 {}
+    ["/feature" {:delete {:summary    "Unfeature the project with the given id."
+                          :responses  {200 {}
                                        404 {:description "The project with the specified id does not exist."}}
-                           :parameters {:path {:id int?}}
-                           :handler (response/not-implemented)}
-                  :post {:summary "Feature the project with the given id."
-                         :responses {200 {}
-                                     404 {:description "The project with the specified id does not exist."}}
-                         :parameters {:path {:id int?}}
-                         :handler (response/not-implemented)}}]
+                          :parameters {:path {:id int?}}
+                          :handler    (response/not-implemented)}
+                 :post   {:summary    "Feature the project with the given id."
+                          :responses  {200 {}
+                                       404 {:description "The project with the specified id does not exist."}}
+                          :parameters {:path {:id int?}}
+                          :handler    (response/not-implemented)}}]
     (repos/route-handler-per-project)
     (issues/route-handler-per-project)
     (pulls/route-handler-per-project)
