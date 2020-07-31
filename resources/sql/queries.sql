@@ -241,13 +241,21 @@ VALUES (:tag_id, :git_id, :url, :title, :time, :status, :repo_id, :author);
 SELECT *
 FROM issues;
 
--- :name get-indirect-issues-per-project
+-- :name get-project-indirect-issues :? :*
 SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured
 FROM issues i
          INNER JOIN repos r on i.repo_id = r.tag_id
          INNER JOIN tag_relations on tag_relations.child_id = r.tag_id
          INNER JOIN projects p on p.tag_id = tag_relations.parent_id
          INNER JOIN tags t on i.tag_id = t.id
+WHERE p.tag_id = :project_id;
+
+-- :name get-project-indirect-issues-count :? :1
+SELECT count(i.tag_id) as count
+FROM issues i
+         INNER JOIN repos r on i.repo_id = r.tag_id
+         INNER JOIN tag_relations on tag_relations.child_id = r.tag_id
+         INNER JOIN projects p on p.tag_id = tag_relations.parent_id
 WHERE p.tag_id = :project_id;
 
 -- :name get-issue :? :1
