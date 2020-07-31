@@ -11,6 +11,14 @@
                       :tag_id entity-id})
   (db/delete-tag! {:id entity-id}))
 
+(defn feature-entity [entity-id]
+  (db/set-feature-tag! {:tag_id entity-id
+                       :featured true}))
+
+(defn unfeature-entity [entity-id]
+  (db/set-feature-tag! {:tag_id entity-id
+                       :featured false}))
+
 (defn get-project-entities [project-id entity-type]
   "Get the entities of a type of a project"
   (tags-service/assert-get-tags-linked-with-tag project-id "projects" entity-type))

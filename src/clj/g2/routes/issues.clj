@@ -7,7 +7,8 @@
             [g2.utils.projects :as p-util]
             [g2.routes.tags :as tags]
             [g2.services.issues-service :as issues-service]
-            [g2.utils.entity :as entity]))
+            [g2.utils.entity :as entity]
+            [g2.services.generic-service :as generic-service]))
 
 (defn get-project-issues [project_id]
   (do
@@ -50,16 +51,18 @@
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
                           :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
    (tags/tags-route-handler (entity/issue) [])
-    ["/:id/feature" {:delete {:summary "Unfeature the issue with the given id."
-                          :responses {200 {}
-                                      404 {:description "The issue with the specified id does not exist."}}
-                          :parameters {:path {:id int?}}
-                          :handler #(response/not-implemented)}
-                 :post {:summary "Feature the issue with the given id."
-                        :responses {200 {}
-                                    404 {:description "The issue with the specified id does not exist."}}
-                        :parameters {:path {:id int?}}
-                        :handler #(response/not-implemented)}}]])
+   ["/:id/feature" {:delete {:summary    "Unfeature the issue with the given id."
+                             :responses  {200 {}
+                                          404 {:description "The issue with the specified id does not exist."}}
+                             :parameters {:path {:id int?}} ;; TODO check that the entity exists
+                             :handler    #(do (generic-service/unfeature-entity (get-in % [:path-params :id]))
+                                              (response/no-content))}
+                    :post   {:summary    "Feature the issue with the given id."
+                             :responses  {200 {}
+                                          404 {:description "The issue with the specified id does not exist."}}
+                             :parameters {:path {:id int?}} ;; TODO check that the entity exists
+                             :handler    #(do (generic-service/feature-entity (get-in % [:path-params :id]))
+                                              (response/no-content))}}]])
 
 (defn route-handler-per-project []
   ["/issues"

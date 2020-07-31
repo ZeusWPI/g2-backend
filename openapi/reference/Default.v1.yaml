@@ -794,8 +794,8 @@ paths:
       summary: ''
       operationId: post-issues-id-feature
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
       description: Feature the issue with given id.
     delete:
       summary: ''

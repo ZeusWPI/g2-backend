@@ -14,14 +14,15 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 -- :name update-generic! :! :n
 /* :require [clojure.string :as string]
             [hugsql.parameters :refer [identifier-param-quote]] */
-update :i:table set
+UPDATE :i:table
+SET
 /*~
 (string/join ","
   (for [[field _] (:updates params)]
     (str (identifier-param-quote (name field) options)
       " = :v:updates." (name field))))
 ~*/
-where tag_id = :id;
+WHERE tag_id = :id;
 
 -- :name create-generic! :! :n
 /* :require [clojure.string :as string]
@@ -33,8 +34,9 @@ INSERT INTO :i:table
   (for [[field _] (:data params)]
     (str (identifier-param-quote (name field) options))))
 ~*/
-) VALUES
-(
+)
+VALUES
+    (
 /*~
 (string/join ","
   (for [[field _] (:data params)]
@@ -43,12 +45,8 @@ INSERT INTO :i:table
     );
 
 /*
-    Generic tag table
- */
--- :name create-tag! :insert :raw
-INSERT INTO tags ()
-VALUES ();
-
+    Entity queries
+*/
 -- :name get-tag :? :1
 SELECT *
 FROM :i:table
@@ -58,10 +56,6 @@ WHERE tag_id = :tag_id;
 SELECT *
 FROM :i:table;
 
--- :name delete-tag! :! :1
-DELETE
-FROM tags
-WHERE id = :id;
 
 -- :name delete-entity! :! :1
 DELETE
@@ -81,6 +75,24 @@ FROM tag_relations
          INNER JOIN :i:table
 ON child_id = tag_id
 WHERE parent_id = :tag_id;
+
+/*
+    Tag table
+ */
+-- :name create-tag! :insert :raw
+INSERT INTO tags ()
+VALUES ();
+
+-- :name delete-tag! :! :1
+DELETE
+FROM tags
+WHERE id = :id;
+
+-- :name set-feature-tag! :! :n
+UPDATE tags
+set featured = :featured
+WHERE id = :tag_id;
+
 
 -- :name link-tag! :! :n
 INSERT INTO tag_relations
@@ -156,19 +168,21 @@ FROM repository_providers;
 ( -- The issues directly linked to a project
     select i.*
     from :i:table i
-             inner join tags t on i.tag_id = t.id
-             inner join tag_relations tr on tr.child_id = i.tag_id
-             inner join projects p on tr.parent_id = p.tag_id
+             inner join tags t
+    on i.tag_id = t.id
+        inner join tag_relations tr on tr.child_id = i.tag_id
+        inner join projects p on tr.parent_id = p.tag_id
     where p.tag_id = :project_id and featured = true
 )
 UNION
 ( -- The issues linked to a project via a repo
     select i.*
     from :i:table i
-             inner join tags t2 on i.tag_id = t2.id
-             inner join repos r on i.repo_id = r.tag_id
-             inner join tag_relations tr on tr.child_id = r.tag_id
-             inner join projects p2 on tr.parent_id = p2.tag_id
+             inner join tags t2
+    on i.tag_id = t2.id
+        inner join repos r on i.repo_id = r.tag_id
+        inner join tag_relations tr on tr.child_id = r.tag_id
+        inner join projects p2 on tr.parent_id = p2.tag_id
     where p2.tag_id = :project_id and featured = true
 );
 
