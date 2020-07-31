@@ -1,9 +1,15 @@
 (ns g2.services.generic-service
   (:require [g2.services.tags-service :as tags-service]
+            [g2.db.core :refer [*db*] :as db]
             [g2.utils.debugging :as debugging]))
 
 (defn get-entity [entity-id entity-type]
   (tags-service/assert-id-of-entity entity-id entity-type identity))
+
+(defn delete-entity [entity-id entity-type]
+  (db/delete-entity! {:table  entity-type
+                      :tag_id entity-id})
+  (db/delete-tag! {:id entity-id}))
 
 (defn get-project-entities [project-id entity-type]
   "Get the entities of a type of a project"

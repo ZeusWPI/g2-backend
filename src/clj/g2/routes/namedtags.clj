@@ -8,7 +8,7 @@
     [g2.utils.entity :as entity]
     [g2.services.tags-service :as tags-service]
     [g2.services.namedtags-service :as namedtags-service]
-    ))
+    [g2.services.generic-service :as generic-service]))
 
 
 (defn get-named_tags-linked-with-tag [req link-entity]
@@ -42,7 +42,14 @@
                :handler    (fn [{body :body-params :as req}]
                              (log/debug "Creating a tag")
                              (let [id (namedtags-service/namedtag-create body)]
-                               (response/ok (namedtags-service/namedtag-get id))))}}]])
+                               (response/ok (namedtags-service/namedtag-get id))))}}]
+   ["/:id"
+    ["" {:delete {:summary    "Delete a named tag"
+                  :responses  {204 {}}
+                  :parameters {:path {:id int?}}
+                  :handler    (fn [{{id :id} :path-params :as req}]
+                                (generic-service/delete-entity id "named_tags")
+                                (response/no-content))}}]]])
 
 (defn route-handler-per-link [link-entity]
   ["/tags"

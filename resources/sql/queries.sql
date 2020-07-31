@@ -58,6 +58,16 @@ WHERE tag_id = :tag_id;
 SELECT *
 FROM :i:table;
 
+-- :name delete-tag! :! :1
+DELETE
+FROM tags
+WHERE id = :id;
+
+-- :name delete-entity! :! :1
+DELETE
+FROM :i:table
+WHERE tag_id = :tag_id;
+
 -- :name get-tags-linked-with-tag :? :*
 SELECT *
 FROM tag_relations
