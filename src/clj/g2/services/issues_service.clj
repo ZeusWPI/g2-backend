@@ -3,8 +3,9 @@
             [g2.services.generic-service :as generic-service]
             [clojure.tools.logging :as log]))
 
+(defn get-project-issues-count [project_id])
 
-(defn issues-get-per-project [project_id]
+(defn get-project-issues [project_id]
   (let [issues (db/get-indirect-issues-per-project {:project_id project_id})]
     (map (fn [issue]
            (log/debug (format "Issue<%s>" (str issue)))

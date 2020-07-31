@@ -68,4 +68,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(response/ok (issues-service/issues-get-per-project (get-in % [:path-params :id]))) #_(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])
+              :handler    #(response/ok (issues-service/get-project-issues (get-in % [:path-params :id]))) #_(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])
