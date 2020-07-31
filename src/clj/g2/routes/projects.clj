@@ -27,7 +27,6 @@
       (map #(Integer/parseInt %)
            (string/split repo_ids_string #","))))
 
-(defn flip [f] (fn [x y & args] (apply f y x args)))
 
 (defn project-get [{{project-id :id} :path-params :as req}]
   (response/ok (projects-service/project-get project-id)))
@@ -46,19 +45,9 @@
     ))
 
 (defn project-edit [project_id new-values]
-  (do
-    (log/debug "Update project" project_id " new values" new-values)
-    (with-transaction
-      [*db*]
-      (let [project (db/get-project {:project_id project_id})]
-        (if (nil? project)
-          (response/not-found)
-          (do
-            (-> project
-                (comment "(flip merge) because otherwise the new content would be overwritten")
-                ((flip merge) new-values)
-                (db/update-project!))
-            (response/no-content)))))))
+  (projects-service/project-edit project_id new-values)
+  (-> (response/ok (projects-service/project-get project_id))
+      (assoc :Access-Control-Allow-Methods ["PATCH"])))
 
 (defn project-delete [id]
   (do
@@ -100,20 +89,20 @@
                :parameters {:body {:name string?, :description string?}}
                :handler    (fn [{{{:keys [name description]} :body} :parameters}] (project-create name description))}}]
    ["/:id"
-    ["" {:get    {:summary    "Get a specific project"
+    ["" {:get    {:summary    "Get a project"
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}}
                   :handler    project-get}
-         :delete {:summary    "Delete a specific project"
+         :delete {:summary    "Delete a project"
                   :responses  {200 {}}
                   :parameters {:path {:id int?}}
                   :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}
-         :patch  {:summary    "patch a specific project"
+         :patch  {:summary    "Modify a project"
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}
-                               :body {:name string?, :description string?, :image string?}}
+                               #_:body #_{:name string?, :description string?}}
                   :handler    #(project-edit (get-in % [:path-params :id]) (:body-params %))}}]
     ["/maintainers" {:get {:summary    "Get Maintainers of a specific projects"
                            :responses  {200 {}

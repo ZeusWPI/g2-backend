@@ -178,7 +178,7 @@ UPDATE projects
 SET name        = :name,
     description = :description,
     image_url   = :image
-WHERE tag_id = :project_id;
+WHERE tag_id = :id;
 
 -- :name delete-project! :! :1
 DELETE

@@ -4,5 +4,5 @@
 
 
 (defn log-thread [data]
-  (log/debug (format "thread data: ''" (str data)))
+  (log/debug (format "thread data: '%s'" (str data)))
   data)
