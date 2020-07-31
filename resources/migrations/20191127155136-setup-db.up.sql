@@ -52,6 +52,7 @@ CREATE TABLE issues
     url     varchar(512) not null,
     title   varchar(191) not null,
     time    timestamp    not null,
+    status  varchar(191) not null,
     repo_id integer      not null,
     author  integer      not null,
     foreign key (tag_id) references tags (id),

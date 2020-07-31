@@ -234,12 +234,21 @@ WHERE project_id = :project_id;
 
 -- :name create-issue! :insert :raw
 INSERT INTO issues
-    (git_id, url, title, time, repo_id, author)
-VALUES (:git_id, :url, :title, :time, :repo_id, :author);
+    (tag_id, git_id, url, title, time, status, repo_id, author)
+VALUES (:tag_id, :git_id, :url, :title, :time, :status, :repo_id, :author);
 
 -- :name get-issues :? :*
 SELECT *
 FROM issues;
+
+-- :name get-indirect-issues-per-project
+SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured
+FROM issues i
+         INNER JOIN repos r on i.repo_id = r.tag_id
+         INNER JOIN tag_relations on tag_relations.child_id = r.tag_id
+         INNER JOIN projects p on p.tag_id = tag_relations.parent_id
+         INNER JOIN tags t on i.tag_id = t.id
+WHERE p.tag_id = :project_id;
 
 -- :name get-issue :? :1
 SELECT *
@@ -266,8 +275,8 @@ WHERE project_id = :project_id;
 
 -- :name create-branch! :insert :raw
 INSERT INTO branches
-    (commit_sha, name, repo_id)
-VALUES (:commit_sha, :name, :repo_id);
+    (tag_id, commit_sha, name, repo_id)
+VALUES (:tag_id, :commit_sha, :name, :repo_id);
 
 -- :name get-branches :? :*
 SELECT *

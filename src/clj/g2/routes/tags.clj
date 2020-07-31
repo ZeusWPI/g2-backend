@@ -12,22 +12,20 @@
   (response/ok db-object))
 
 ; TODO implement this using the allowed-links list, these are tho only entities that are allowed to link with this entity
-(defn tag-entity-with [req entity]
+(defn tag-entity-with [{{tag-id :tag entity-id :id} :path-params :as req} entity]
   (tags-service/assert-id-of-entity
-    req entity
+    entity-id entity
     (fn [x]
-      (let [db-object-id (get x :id)
-            tag-id (get-in req [:path-params :tag])]
+      (let [db-object-id (get x :id)]
         (log/debug (format "Linking '%s' with '%s'" db-object-id tag-id))
         (db/link-tag! {:parent_id db-object-id :child_id tag-id})
         (response/ok)))))
 
-(defn untag-entity-with [req entity]
+(defn untag-entity-with [{{tag-id :tag entity-id :id} :path-params :as req} entity]
   (tags-service/assert-id-of-entity
-    req entity
+    entity-id entity
     (fn [x]
-      (let [db-object-id (get x :id)
-            tag-id (get-in req [:path-params :tag])]
+      (let [db-object-id (get x :id)]
         (log/debug (format "Linking '%s' with '%s'" db-object-id tag-id))
         (db/unlink-tag! {:parent_id db-object-id :child_id tag-id})
         (response/ok)))))

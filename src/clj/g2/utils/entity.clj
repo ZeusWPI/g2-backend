@@ -4,6 +4,11 @@
     [clojure.tools.logging :as log]
     [clojure.set :as set]))
 
+(defn generate-tag
+  "Returns the id of a newly create tag"
+  []
+  (:generated_key (db/create-tag!)))
+
 (defn get-tags [entity-type]
   (->> (db/get-tags {:table entity-type})
        (map #(set/rename-keys % {:tag_id :id}))))

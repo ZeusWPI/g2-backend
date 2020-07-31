@@ -2,6 +2,9 @@
   (:require [g2.services.tags-service :as tags-service]
             [g2.utils.debugging :as debugging]))
 
+(defn get-entity [entity-id entity-type]
+  (tags-service/assert-id-of-entity entity-id entity-type identity))
+
 (defn get-project-entities [project-id entity-type]
   "Get the entities of a type of a project"
   (tags-service/assert-get-tags-linked-with-tag project-id "projects" entity-type))

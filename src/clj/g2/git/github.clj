@@ -6,7 +6,8 @@
             [clojure.tools.logging :as log]
             [clojure.set :as set]
             [clojure.spec.alpha :as s]
-            [java-time :refer [local-date-time zoned-date-time]]))
+            [java-time :refer [local-date-time zoned-date-time]]
+            [g2.utils.entity :as entity]))
 
 (s/def ::seq-of-keywords (s/* keyword?))
 
@@ -97,19 +98,14 @@
     ;  )
     ))
 
-(defn get-repo-name [repo-data]
-  (if-let [name (:name (db/get-tag {:table "repos" :tag_id (select-keys repo-data [:repo_id])}))]
-    name
-    (throw (Exception. (format "Repository<id=%s> not found in database" (:repo_id repo-data))))))
-
-(def github-endpoints {:repos    #(str base-url "/orgs/" (env :github-organization)
-                                       "/repos?per_page=100")
-                       :labels   #(str base-url "/repos/" (env :github-organization) "/"
-                                       (get-repo-name %) "/labels")
-                       :issues   (fn [repo-name] str base-url "/repos/" (env :github-organization) "/"
-                                   repo-name "/issues")
-                       :branches #(str base-url "/repos/" (env :github-organization) "/"
-                                       (get-repo-name %) "/branches")})
+(def github-endpoints {:repos    (fn [] (str base-url "/orgs/" (env :github-organization)
+                                             "/repos?per_page=100"))
+                       :labels   (fn [repo-name] (str base-url "/repos/" (env :github-organization) "/"
+                                                      repo-name "/labels"))
+                       :issues   (fn [repo-name] (str base-url "/repos/" (env :github-organization) "/"
+                                                      repo-name "/issues"))
+                       :branches (fn [repo-name] (str base-url "/repos/" (env :github-organization) "/"
+                                                      repo-name "/branches"))})
 
 
 
@@ -128,13 +124,12 @@
                                :html_url    :url}
                               :git_id                       ; local and remote shared unique identifier
                               db/get-repos                  ;; TODO filter to only fetch github repos
-                              #(let [{tag_id :generated_key} (db/create-tag!)]
-                                 (db/create-repo! (assoc % :tag_id tag_id)))
+                              #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
                               db/update-repo!)))
 
 (defn sync-labels
-  [repo-id]
-  (fetch-and-sync-with-local ((github-endpoints :labels) {:repo_id repo-id})
+  [{name :name repo_id :tag_id :as repo}]
+  (fetch-and-sync-with-local ((github-endpoints :labels) name)
                              {:id          :git_id
                               :name        :name
                               :description :description
@@ -142,31 +137,40 @@
                               :color       :color}
                              :git_id
                              db/get-labels
-                             #(db/create-label! (assoc % :tag_id repo-id))
+                             #(db/create-label! (-> %
+                                                    (assoc :tag_id (entity/generate-tag))
+                                                    (assoc :repo_id repo_id)))
                              db/update-label!))
 
 (defn sync-issues
-  [repo]
+  [{name :name repo_id :tag_id :as repo}]
   (log/debug (format "Syncing issues for '%s'" (str repo)))
-  (fetch-and-sync-with-local ((github-endpoints :issues) (:name repo))
+  (fetch-and-sync-with-local ((github-endpoints :issues) name)
                              {:id         :git_id
                               :html_url   :url
                               :title      :title
                               :created_at :time
+                              :state      :status
                               [:user :id] :author}
                              :git_id
                              db/get-issues
-                             #(db/create-issue! (assoc % :tag_id (:tag_id repo)))
+                             #(db/create-issue! (-> %
+                                                    (assoc :tag_id (entity/generate-tag))
+                                                    (assoc :repo_id repo_id)))
                              db/update-issue!))
 
 (defn sync-branches
-  [repo-id]
-  (fetch-and-sync-with-local ((github-endpoints :branches) {:repo_id repo-id})
+  [{name :name repo_id :tag_id :as repo}]
+  (log/debug (format "Syncing branches for '%s'" (str repo)))
+  (flush)
+  (fetch-and-sync-with-local ((github-endpoints :branches) name)
                              {[:commit :sha] :commit_sha
                               :name          :name}
                              :commit_sha
-                             db/get-branches
-                             #(db/create-branch! (assoc % :tag_id repo-id))
+                             #(db/get-tags {:tables "branches"})
+                             #(db/create-branch! (-> %
+                                                     (assoc :tag_id (entity/generate-tag))
+                                                     (assoc :repo_id repo_id)))
                              db/update-branch!))
 
 (defn create-repo-hooks [repo-id])

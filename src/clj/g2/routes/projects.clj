@@ -42,7 +42,7 @@
       [*db*]
       (let [{tag_id :generated_key} (db/create-tag!)]
         (db/create-project! {:tag_id tag_id, :name name, :description description})
-        (response/ok {:new_project_id tag_id})))
+        (response/ok (projects-service/project-get tag_id))))
     ))
 
 (defn project-edit [project_id new-values]

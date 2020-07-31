@@ -1,5 +1,6 @@
 (ns g2.routes.branches
-  (:require [g2.db.core :refer [*db*] :as db]
+  (:require
+    [g2.db.core :refer [*db*] :as db]
             [g2.git.github :refer [sync-branches]]
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
@@ -15,15 +16,17 @@
       project_id
       (response/ok (db/get-project-branches {:project_id project_id})))))
 
-(defn sync-all [req]
-  (let [repos (db/get-repos)]
+
+(defn sync-all [_]
+  (log/debug "Syncing all branches")
+  (let [repos (db/get-tags {:table "repos"})]
     (doseq [repo repos]
       (try+
-        (sync-branches (:repo_id repo))
-        (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync repo_id" (:repo_id repo))
+        (sync-branches repo)
+        (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo))
                                                 (log/error "Code: 403. This can be due to ratelimiting." body)))
-        (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync repo_id" (:repo_id repo) "." body)))))
-    (response/ok)))
+        (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo) "." body)))))
+    (response/no-content)))
 
 ; Not yet needed so commented
 #_(defn get-by-id [issue_id]
@@ -41,7 +44,7 @@
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the branches with our git backends. Use with limits"
-               :responses {200 {:description "TODO"}
+               :responses {204 {:description "Sync successful."}
                            403 {:description "TODO"}
                            404 {:description "TODO"}}
                :handler   sync-all}}]

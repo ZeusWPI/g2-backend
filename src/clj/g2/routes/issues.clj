@@ -6,6 +6,7 @@
             [ring.util.http-response :as response]
             [g2.utils.projects :as p-util]
             [g2.routes.tags :as tags]
+            [g2.services.issues-service :as issues-service]
             [g2.utils.entity :as entity]))
 
 (defn get-project-issues [project_id]
@@ -67,4 +68,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])
+              :handler    #(response/ok (issues-service/issues-get-per-project (get-in % [:path-params :id]))) #_(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])
