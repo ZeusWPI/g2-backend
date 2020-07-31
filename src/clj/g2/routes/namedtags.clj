@@ -11,6 +11,10 @@
     [g2.services.generic-service :as generic-service]))
 
 
+(defn namedtag-edit [id new-values]
+  (namedtags-service/namedtag-edit id new-values)
+  (response/ok (namedtags-service/namedtag-get id)))
+
 (defn get-named_tags-linked-with-tag [req link-entity]
   (try
     (response/ok
@@ -44,7 +48,13 @@
                              (let [id (namedtags-service/namedtag-create body)]
                                (response/ok (namedtags-service/namedtag-get id))))}}]
    ["/:id"
-    ["" {:delete {:summary    "Delete a named tag"
+    ["" {:patch {:summary    "Modify a named tag"
+                 :responses  {200 {}
+                              404 {:description "The named tag with the specified id does not exist."}}
+                 :parameters {:path {:id int?}
+                              #_:body #_{:name string?, :description string?}}
+                 :handler    #(namedtag-edit (get-in % [:path-params :id]) (:body-params %))}
+         :delete {:summary    "Delete a named tag"
                   :responses  {204 {}}
                   :parameters {:path {:id int?}}
                   :handler    (fn [{{id :id} :path-params :as req}]

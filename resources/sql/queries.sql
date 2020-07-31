@@ -21,7 +21,7 @@ update :i:table set
     (str (identifier-param-quote (name field) options)
       " = :v:updates." (name field))))
 ~*/
-where id = :id;
+where tag_id = :id;
 
 -- :name create-generic! :! :n
 /* :require [clojure.string :as string]
