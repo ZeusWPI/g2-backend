@@ -5,13 +5,14 @@
     [ring.util.http-response :as response]
     [g2.utils.debugging :refer [log-thread]]
     [clojure.tools.logging :as log]
-    [g2.utils.entity :as entity]))
+    [g2.utils.entity :as entity]
+    [g2.services.tags-service :as tags-service]))
 
 
 (defn get-named_tags-linked-with-tag [req link-entity]
   (try
     (response/ok
-      (tags/assert-get-tags-linked-with-tag req link-entity "named_tags"))
+      (tags-service/assert-get-tags-linked-with-tag req link-entity "named_tags"))
     (catch Exception e
       (let [e-data (ex-data e)
             e-cause (ex-message e)]

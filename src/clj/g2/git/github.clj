@@ -98,18 +98,19 @@
     ))
 
 (defn get-repo-name [repo-data]
-  (if-let [name (:name (db/get-repo (select-keys repo-data [:repo_id])))]
+  (if-let [name (:name (db/get-tag {:table "repos" :tag_id (select-keys repo-data [:repo_id])}))]
     name
-    (throw (Exception. "repo_id not found in database"))))
+    (throw (Exception. (format "Repository<id=%s> not found in database" (:repo_id repo-data))))))
 
 (def github-endpoints {:repos    #(str base-url "/orgs/" (env :github-organization)
                                        "/repos?per_page=100")
                        :labels   #(str base-url "/repos/" (env :github-organization) "/"
                                        (get-repo-name %) "/labels")
-                       :issues   #(str base-url "/repos/" (env :github-organization) "/"
-                                       (get-repo-name %) "/issues")
+                       :issues   (fn [repo-name] str base-url "/repos/" (env :github-organization) "/"
+                                   repo-name "/issues")
                        :branches #(str base-url "/repos/" (env :github-organization) "/"
                                        (get-repo-name %) "/branches")})
+
 
 
 (defn sync-repositories
@@ -141,12 +142,13 @@
                               :color       :color}
                              :git_id
                              db/get-labels
-                             #(db/create-label! (assoc % :repo_id repo-id))
+                             #(db/create-label! (assoc % :tag_id repo-id))
                              db/update-label!))
 
 (defn sync-issues
-  [repo-id]
-  (fetch-and-sync-with-local ((github-endpoints :issues) {:repo_id repo-id})
+  [repo]
+  (log/debug (format "Syncing issues for '%s'" (str repo)))
+  (fetch-and-sync-with-local ((github-endpoints :issues) (:name repo))
                              {:id         :git_id
                               :html_url   :url
                               :title      :title
@@ -154,7 +156,7 @@
                               [:user :id] :author}
                              :git_id
                              db/get-issues
-                             #(db/create-issue! (assoc % :repo_id repo-id))
+                             #(db/create-issue! (assoc % :tag_id (:tag_id repo)))
                              db/update-issue!))
 
 (defn sync-branches
@@ -164,7 +166,7 @@
                               :name          :name}
                              :commit_sha
                              db/get-branches
-                             #(db/create-branch! (assoc % :repo_id repo-id))
+                             #(db/create-branch! (assoc % :tag_id repo-id))
                              db/update-branch!))
 
 (defn create-repo-hooks [repo-id])

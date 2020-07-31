@@ -5,9 +5,11 @@
     [ring.util.http-response :as response]
     [g2.utils.projects :as p-util]
     [g2.routes.tags :as tags]
+    [g2.services.repos-service :as repos-service]
     [conman.core :refer [with-transaction]]
     [clojure.tools.logging :as log]
-    [g2.utils.entity :as entity]))
+    [g2.utils.entity :as entity]
+    [g2.services.generic-service :as generic-service]))
 
 (defn convert-db-to-api-object
   [db-repo]
@@ -61,7 +63,6 @@
                                    403 {:description "TODO"}
                                    404 {:description "TODO"}}
                        :handler   (fn [_] (git/sync-repositories) (response/ok))}}]
-   (tags/tags-route-handler (entity/repository) [] "link")
    #_["/branches"
       [""]
       ["/:branch_id"]]
@@ -88,5 +89,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(response/ok (tags/assert-get-tags-linked-with-tag % "projects" "repos"))
-              }}]])
+              :handler    #(response/ok (generic-service/get-project-entities (get-in % [:path-params :id]) "repos"))}}]])

@@ -3,57 +3,34 @@
             [g2.db.core :refer [*db*] :as db]
             [g2.utils.entity :as entity]
             [clojure.tools.logging :as log]
-            [clojure.set :as set])
+            [clojure.set :as set]
+            [g2.services.tags-service :as tags-service])
   (:use [slingshot.slingshot :only [throw+ try+]])
   (:import (java.util List)))
-
-(defn assert-id-of-entity
-  "Used to throw 404's if an entity doesn't exist"
-  [req entity f]
-  (let [entity-id (get-in req [:path-params :id])]
-    (log/debug (format "Checking validity of entity of type '%s' with id '%s'" entity entity-id))
-    (let [db-object (db/get-tag {:table entity :tag_id entity-id})]
-      (if (nil? db-object)
-        (do
-          (log/debug "Entity not found")
-          (throw
-            (ex-info "not-found"
-                     {:causes #{"Entity not found in the database."}})))
-        (do
-          (log/debug (format "Entity valid: %s" db-object))
-          (-> db-object
-              (set/rename-keys {:tag_id :id})
-              f))))))
-
-(defn get-tags-linked-with-tag
-  [tag-id entity-parent entity-child]
-  (log/debug (format "Fetching %s for %s<id: %s>" entity-child entity-parent tag-id))
-  (->>
-    (db/get-tags-linked-with-tag {:table entity-child :tag_id tag-id})
-    ((fn [obj] (log/debug obj) obj))
-    (map #(dissoc % :parent_id :child_id))
-    (map #(set/rename-keys % {:tag_id :id}))))
-
-(defn assert-get-tags-linked-with-tag
-  "Extracts the parent id from the request, returns the linked tags of type 'entity-child'"
-  [req entity-parent entity-child]
-  (assert-id-of-entity req entity-parent
-                       (fn [{tag-id :id}]
-                         (get-tags-linked-with-tag tag-id entity-parent entity-child)
-                         )))
 
 (defn get-entity [db-object]
   (response/ok db-object))
 
 ; TODO implement this using the allowed-links list, these are tho only entities that are allowed to link with this entity
-(defn tag-entity-with [db-object-id tag-id]
-  (log/debug (format "Linking '%s' with '%s'" db-object-id tag-id))
-  (db/link-tag! {:parent_id db-object-id :child_id tag-id})
-  (response/ok))
+(defn tag-entity-with [req entity]
+  (tags-service/assert-id-of-entity
+    req entity
+    (fn [x]
+      (let [db-object-id (get x :id)
+            tag-id (get-in req [:path-params :tag])]
+        (log/debug (format "Linking '%s' with '%s'" db-object-id tag-id))
+        (db/link-tag! {:parent_id db-object-id :child_id tag-id})
+        (response/ok)))))
 
-(defn untag-entity-with [db-object-id tag-id]
-  (db/unlink-tag! {:parent_id db-object-id :child_id tag-id})
-  (response/ok))
+(defn untag-entity-with [req entity]
+  (tags-service/assert-id-of-entity
+    req entity
+    (fn [x]
+      (let [db-object-id (get x :id)
+            tag-id (get-in req [:path-params :tag])]
+        (log/debug (format "Linking '%s' with '%s'" db-object-id tag-id))
+        (db/unlink-tag! {:parent_id db-object-id :child_id tag-id})
+        (response/ok)))))
 
 (defn tags-operations-route-handler
   ([entity allowed-links]
@@ -66,13 +43,13 @@
                                       404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
                          :parameters {:path {:id  int?
                                              :tag int?}}
-                         :handler    #(assert-id-of-entity % entity (fn [x] (tag-entity-with (get x :id) (get-in % [:path-params :tag]))))}
+                         :handler    #(tag-entity-with % entity)}
                 :delete {:summary    (str "Remove specific tag from " what ".")
                          :responses  {200 {}
                                       404 {:description (str "The " what " or Tag with the specified id does not exist.")}}
                          :parameters {:path {:id  int?
                                              :tag int?}}
-                         :handler    #(assert-id-of-entity % entity (fn [x] (untag-entity-with (get x :id) (get-in % [:path-params :tag]))))}}]])))
+                         :handler    #(untag-entity-with % entity)}}]])))
 
 (defn tags-route-handler
   "A generic handler that can possible be used by an entity type that does no further conversions or joins."
@@ -84,5 +61,5 @@
                :responses  {200 {}
                             404 {:description (str "The " entity " with the specified id does not exist.")}}
                :parameters {:path {:id int?}}
-               :handler    #(assert-id-of-entity % entity get-entity)}}]
+               :handler    #(tags-service/assert-id-of-entity (get-in % [:path-params :id]) entity get-entity)}}]
     (tags-operations-route-handler entity allowed-links link-path-name)]))

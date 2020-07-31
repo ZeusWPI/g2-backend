@@ -15,25 +15,38 @@ INSERT INTO tags ()
 VALUES ();
 
 -- :name get-tag :? :1
-SELECT * FROM :i:table
+SELECT *
+FROM :i:table
 WHERE tag_id = :tag_id;
 
 -- :name get-tags :? :*
-SELECT * FROM :i:table;
+SELECT *
+FROM :i:table;
 
 -- :name get-tags-linked-with-tag :? :*
-SELECT * FROM tag_relations
-INNER JOIN :i:table ON child_id = tag_id
+SELECT *
+FROM tag_relations
+         INNER JOIN :i:table
+ON child_id = tag_id
+WHERE parent_id = :tag_id;
+
+-- :name get-tags-count-linked-with-tag :? :1
+SELECT count(*) as count
+FROM tag_relations
+         INNER JOIN :i:table
+ON child_id = tag_id
 WHERE parent_id = :tag_id;
 
 -- :name link-tag! :! :n
 INSERT INTO tag_relations
-(parent_id, child_id)
+    (parent_id, child_id)
 VALUES (:parent_id, :child_id);
 
 -- :name unlink-tag! :! :n
-DELETE FROM tag_relations
-WHERE parent_id = :parent_id and child_id = :child_id;
+DELETE
+FROM tag_relations
+WHERE parent_id = :parent_id
+  and child_id = :child_id;
 
 /*
     User stuff
@@ -101,8 +114,8 @@ INSERT INTO repos
 VALUES (:tag_id, :git_id, :name, :description, :url);
 
 -- :name get-repos :? :*
-SELECT repos.tag_id                               as id,
-       repos.name                                 as name,
+SELECT repos.tag_id                                as id,
+       repos.name                                  as name,
        repos.description,
        url,
        group_concat(named_tags.name SEPARATOR ',') as default_tags
@@ -112,8 +125,8 @@ FROM repos
 GROUP BY repos.tag_id;
 
 -- :name get-repo :? :1
-SELECT repos.tag_id                               as id,
-       repos.name                                 as name,
+SELECT repos.tag_id                                as id,
+       repos.name                                  as name,
        repos.description,
        url,
        group_concat(named_tags.name SEPARATOR ',') as default_tags

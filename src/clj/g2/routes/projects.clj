@@ -15,6 +15,7 @@
     [g2.routes.namedtags :as namedtags]
     [g2.routes.pulls :as pulls]
     [g2.routes.tags :as tags]
+    [g2.services.projects-service :as projects-service]
     [g2.utils.entity :as entity]))
 
 
@@ -28,20 +29,11 @@
 
 (defn flip [f] (fn [x y & args] (apply f y x args)))
 
-(defn construct-project-from-base [project]
-  (-> project
-      (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
-      (assoc :tags (tags/get-tags-linked-with-tag (:id project) "projects" "named_tags"))))
+(defn project-get [{{project-id :id} :path-params :as req}]
+  (response/ok (projects-service/project-get project-id)))
 
-(defn project-get [req]
-  (tags/assert-id-of-entity req "projects" #(response/ok (construct-project-from-base %))))
-
-(defn projects-get [req]
-  (->>
-    (entity/get-tags "projects")
-    log-thread
-    (map construct-project-from-base)
-    response/ok))
+(defn projects-get [_]
+  (response/ok (projects-service/projects-get)))
 
 (defn project-create [name description]
   (do
