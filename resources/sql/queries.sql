@@ -150,6 +150,29 @@ SELECT *
 FROM repository_providers;
 
 /*
+    Features
+*/
+-- :name get-project-features-of-type :? :*
+( -- The issues directly linked to a project
+    select i.*
+    from :i:table i
+             inner join tags t on i.tag_id = t.id
+             inner join tag_relations tr on tr.child_id = i.tag_id
+             inner join projects p on tr.parent_id = p.tag_id
+    where p.tag_id = :project_id and featured = true
+)
+UNION
+( -- The issues linked to a project via a repo
+    select i.*
+    from :i:table i
+             inner join tags t2 on i.tag_id = t2.id
+             inner join repos r on i.repo_id = r.tag_id
+             inner join tag_relations tr on tr.child_id = r.tag_id
+             inner join projects p2 on tr.parent_id = p2.tag_id
+    where p2.tag_id = :project_id and featured = true
+);
+
+/*
   Repositories
 */
 
