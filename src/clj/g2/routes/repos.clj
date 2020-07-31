@@ -41,42 +41,45 @@
     (response/not-implemented))
 
 (defn repos-get [request]
-  (response/ok {:repos (map (fn [repo]
-                              (assoc repo :image (str "https://zeus.gent/assets/images/Logos_"
-                                                      (:name repo) ".svg")))
-                            (db/get-repos))}))
+  (->> (db/get-repos)
+       (map (fn [repo]
+             (-> repo
+                 (assoc :image (format "https://zeus.gent/assets/images/Logos_%s.svg" (:name repo)))
+                 (assoc :newIssueUrl "coming soon")
+                 (assoc :newPullUrl "coming soon"))))
+       response/ok))
 
 (defn route-handler-global []
   ["/repositories"
    {:swagger {:tags ["repository"]}}
-   ["" {:get {:summary "Get the list of code repositories in our backend."
+   ["" {:get {:summary   "Get the list of code repositories in our backend."
               :responses {200 {}}
-              :handler repos-get}}]
+              :handler   repos-get}}]
    ["/sync" {:swagger {:tags ["sync"]}
-             :post    {:summary "Synchronise the data from all repositories with our database."
+             :post    {:summary   "Synchronise the data from all repositories with our database."
                        :responses {200 {:description "TODO"}
                                    403 {:description "TODO"}
                                    404 {:description "TODO"}}
-                       :handler (fn [_] (git/sync-repositories) (response/ok))}}]
-   (tags/tags-route-handler (entity/repository) [])
+                       :handler   (fn [_] (git/sync-repositories) (response/ok))}}]
+   (tags/tags-route-handler (entity/repository) [] "link")
    #_["/branches"
       [""]
       ["/:branch_id"]]
    #_["/labels"
       [""]
       ["/:label_id"]]
-   [":repo_id/projects/:project_id" {:delete {:summary "Unlink a given project id to a given repository"
-                                              :responses {200 {}
-                                                          404 {:description "The repository or project with the specified id does not exist."}}
-                                              :parameters {:path {:repo_id int?
+   [":repo_id/projects/:project_id" {:delete {:summary    "Unlink a given project id to a given repository"
+                                              :responses  {200 {}
+                                                           404 {:description "The repository or project with the specified id does not exist."}}
+                                              :parameters {:path {:repo_id    int?
                                                                   :project_id int?}}
-                                              :handler #(response/not-implemented)}
-                                     :post {:summary "Link a given project id to a given repository"
-                                            :responses {200 {}
-                                                        404 {:description "The repository or project with the specified id does not exist."}}
-                                            :parameters {:path {:repo_id int?
-                                                                :project_id int?}}
-                                            :handler #(response/not-implemented)}}]])
+                                              :handler    #(response/not-implemented)}
+                                     :post   {:summary    "Link a given project id to a given repository"
+                                              :responses  {200 {}
+                                                           404 {:description "The repository or project with the specified id does not exist."}}
+                                              :parameters {:path {:repo_id    int?
+                                                                  :project_id int?}}
+                                              :handler    #(response/not-implemented)}}]])
 
 (defn route-handler-per-project []
   ["/repositories"

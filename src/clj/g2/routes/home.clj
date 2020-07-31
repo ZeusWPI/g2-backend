@@ -9,6 +9,7 @@
             [g2.routes.projects :as projects]
             [g2.routes.labels :as labels]
             [g2.routes.branches :as branches]
+            [g2.routes.namedtags :as namedtags]
             [compojure.core :refer [defroutes GET DELETE]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
@@ -47,6 +48,7 @@
    #_(labels/route-handler-global)
    (branches/route-handler-global)
    (pulls/route-handler-global)
+   (namedtags/route-handler-global)
    ["/repo-providers"
     {:get {:summary "Get the list of repository providers configured (like for ex. github or gitlab)"
            :handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]

@@ -7,6 +7,7 @@
     [conman.core :refer [with-transaction]]
     [ring.util.http-response :as response]
     [g2.config :refer [env]]
+    [g2.utils.debugging :refer [log-thread]]
     [g2.routes.repos :as repos]
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
@@ -30,10 +31,17 @@
 (defn construct-project-from-base [project]
   (-> project
       (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
-      (assoc :tags (tags/get-tags-linked-with-tag (:tag_id project) "projects" "named_tags"))))
+      (assoc :tags (tags/get-tags-linked-with-tag (:id project) "projects" "named_tags"))))
 
 (defn project-get [req]
   (tags/assert-id-of-entity req "projects" #(response/ok (construct-project-from-base %))))
+
+(defn projects-get [req]
+  (->>
+    (entity/get-tags "projects")
+    log-thread
+    (map construct-project-from-base)
+    response/ok))
 
 (defn project-create [name description]
   (do
@@ -82,7 +90,11 @@
 (defn project-features [id]
   (do
     (log/debug "Get Features" id)
-    (response/ok [])))
+    (response/ok
+      [{:id 0
+        :author {}
+        :type "issue"
+        :data {:issue {}}}])))
 
 (defn route-handler-global []
   ["/projects"
@@ -115,17 +127,17 @@
                            :responses  {200 {}
                                         404 {:description "The project with the specified id does not exist."}}
                            :parameters {:path {:id int?}}
-                           :handler    #(project-maintainers [:path-params :id])}}]
+                           :handler    #(project-maintainers (get-in % [:path-params :id]))}}]
     ["/contributors" {:get {:summary    "Get Contributors of a specific projects"
                             :responses  {200 {}
                                          404 {:description "The project with the specified id does not exist."}}
                             :parameters {:path {:id int?}}
-                            :handler    #(project-contributors [:path-params :id])}}]
+                            :handler    #(project-contributors (get-in % [:path-params :id]))}}]
     ["/features" {:get {:summary    "Get Features of a specific projects"
                         :responses  {200 {}
                                      404 {:description "The project with the specified id does not exist."}}
                         :parameters {:path {:id int?}}
-                        :handler    #(project-features [:path-params :id])}}]
+                        :handler    #(project-features (get-in % [:path-params :id]))}}]
     ["/feature" {:delete {:summary "Unfeature the project with the given id."
                            :responses {200 {}
                                        404 {:description "The project with the specified id does not exist."}}
@@ -141,4 +153,5 @@
     (pulls/route-handler-per-project)
     (branches/route-handler-per-project)
     (namedtags/route-handler-per-link (entity/project))
-    (tags/tags-operations-route-handler (entity/project) [])]])
+    (tags/tags-operations-route-handler (entity/project) [])
+    ]])

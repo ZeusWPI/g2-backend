@@ -3,7 +3,10 @@
     [g2.db.core :refer [*db*] :as db]
     [g2.routes.tags :as tags]
     [ring.util.http-response :as response]
-    [clojure.tools.logging :as log]))
+    [g2.utils.debugging :refer [log-thread]]
+    [clojure.tools.logging :as log]
+    [g2.utils.entity :as entity]))
+
 
 (defn get-named_tags-linked-with-tag [req link-entity]
   (try
@@ -18,6 +21,17 @@
           (condp = e-cause
             "not-found" (response/not-found)
             (throw e)))))))
+
+(defn route-handler-global []
+  ["/tags"
+   ["" {:get {:summary   (str "List of tags")
+              :responses {200 {}}
+              :handler   (fn [_] (do
+                                   (log/debug "Fetching named tags")
+                                   (->
+                                     (entity/get-tags "named_tags")
+                                     log-thread
+                                     response/ok)))}}]])
 
 (defn route-handler-per-link [link-entity]
   ["/tags"
