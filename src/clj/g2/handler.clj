@@ -98,7 +98,8 @@
                                      ;; coercing response bodies
                                      coercion/coerce-response-middleware
                                      ;; exception handling
-                                     exception/exception-middleware]}
+                                     #_exception/exception-middleware
+                                     ]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]
                       {:conflicts nil})

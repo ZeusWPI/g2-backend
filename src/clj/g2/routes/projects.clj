@@ -7,13 +7,20 @@
     [conman.core :refer [with-transaction]]
     [ring.util.http-response :as response]
     [g2.config :refer [env]]
+    [g2.utils.debugging :refer [log-thread]]
     [g2.routes.repos :as repos]
     [g2.routes.issues :as issues]
     [g2.routes.labels :as labels]
     [g2.routes.branches :as branches]
+    [g2.routes.namedtags :as namedtags]
     [g2.routes.pulls :as pulls]
     [g2.routes.tags :as tags]
-    [g2.utils.entity :as entity]))
+    [g2.services.projects-service :as projects-service]
+    [g2.services.features-service :as features-service]
+    [g2.services.validator-service :as validator-service]
+    [g2.utils.entity :as entity]
+    [g2.services.author-service :as author-service]
+    [g2.services.issues-service :as issues-service]))
 
 
 #_(defn parse-repo-ids [repo_ids_string]
@@ -24,27 +31,12 @@
       (map #(Integer/parseInt %)
            (string/split repo_ids_string #","))))
 
-(defn flip [f] (fn [x y & args] (apply f y x args)))
 
+(defn project-get [{{project-id :id} :path-params :as req}]
+  (response/ok (projects-service/project-get project-id)))
 
-
-#_(defn linkup-project [project]
-    (do
-      (log/debug "project: " project)
-      (-> project
-          (assoc :repositories (str (env :app-host) "/projects/" (:project_id project) "/repositories"))
-          (assoc :issues (str (env :app-host) "/projects/" (:project_id project) "/issues"))
-          (assoc :pulls (str (env :app-host) "/projects/" (:project_id project) "/pulls"))
-          (assoc :branches (str (env :app-host) "/projects/" (:project_id project) "/branches"))
-          #_(assoc project :repo_ids (parse-repo-ids (:repo_ids project)))
-          )))
-
-(defn projects-get [request]
-  (do
-    (log/debug "Get Projects")
-    (let [projects (db/get-projects)]
-      (log/debug "projects: " projects)
-      (response/ok projects))))
+(defn projects-get [_]
+  (response/ok (projects-service/projects-get)))
 
 (defn project-create [name description]
   (do
@@ -53,23 +45,11 @@
       [*db*]
       (let [{tag_id :generated_key} (db/create-tag!)]
         (db/create-project! {:tag_id tag_id, :name name, :description description})
-        (response/ok {:new_project_id tag_id})))
-    ))
+        (response/ok (projects-service/project-get tag_id))))))
 
 (defn project-edit [project_id new-values]
-  (do
-    (log/debug "Update project" project_id " new values" new-values)
-    (with-transaction
-      [*db*]
-      (let [project (db/get-project {:project_id project_id})]
-        (if (nil? project)
-          (response/not-found)
-          (do
-            (-> project
-                (comment "(flip merge) because otherwise the new content would be overwritten")
-                ((flip merge) new-values)
-                (db/update-project!))
-            (response/no-content)))))))
+  (projects-service/project-edit project_id new-values)
+  (response/ok (projects-service/project-get project_id)))
 
 (defn project-delete [id]
   (do
@@ -89,11 +69,13 @@
     (log/debug "Get Contributors" id)
     (response/ok [])))
 
-; TODO
 (defn project-features [id]
   (do
     (log/debug "Get Features" id)
-    (response/ok [])))
+    (if-not [(validator-service/validate-is-project id)]
+      (response/not-found)
+      (response/ok
+        (features-service/get-project-features id)))))
 
 (defn route-handler-global []
   ["/projects"
@@ -107,51 +89,50 @@
                :parameters {:body {:name string?, :description string?}}
                :handler    (fn [{{{:keys [name description]} :body} :parameters}] (project-create name description))}}]
    ["/:id"
-    ["" {:get    {:summary    "Get a specific project"
+    ["" {:get    {:summary    "Get a project"
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}}
-                  :handler    (fn [req] (tags/assert-id-of-entity req "projects" (fn [project]
-                                                                                   (-> project
-                                                                                       (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
-                                                                                       (response/ok)))))}
-         :delete {:summary    "Delete a specific project"
+                  :handler    project-get}
+         :delete {:summary    "Delete a project"
                   :responses  {200 {}}
                   :parameters {:path {:id int?}}
                   :handler    (fn [req] (let [id (get-in req [:path-params :id])] (project-delete id)))}
-         :patch  {:summary    "patch a specific project"
+         :patch  {:summary    "Modify a project"
                   :responses  {200 {}
                                404 {:description "The project with the specified id does not exist."}}
                   :parameters {:path {:id int?}
-                               :body {:name string?, :description string?, :image string?}}
+                               #_:body #_{:name string?, :description string?}}
                   :handler    #(project-edit (get-in % [:path-params :id]) (:body-params %))}}]
     ["/maintainers" {:get {:summary    "Get Maintainers of a specific projects"
                            :responses  {200 {}
                                         404 {:description "The project with the specified id does not exist."}}
                            :parameters {:path {:id int?}}
-                           :handler    #(project-maintainers [:path-params :id])}}]
+                           :handler    #(project-maintainers (get-in % [:path-params :id]))}}]
     ["/contributors" {:get {:summary    "Get Contributors of a specific projects"
                             :responses  {200 {}
                                          404 {:description "The project with the specified id does not exist."}}
                             :parameters {:path {:id int?}}
-                            :handler    #(project-contributors [:path-params :id])}}]
+                            :handler    #(project-contributors (get-in % [:path-params :id]))}}]
     ["/features" {:get {:summary    "Get Features of a specific projects"
                         :responses  {200 {}
                                      404 {:description "The project with the specified id does not exist."}}
                         :parameters {:path {:id int?}}
-                        :handler    #(project-features [:path-params :id])}}]
-    ["/feature" {:delete {:summary "Unfeature the project with the given id."
-                           :responses {200 {}
+                        :handler    #(project-features (get-in % [:path-params :id]))}}]
+    ["/feature" {:delete {:summary    "Unfeature the project with the given id."
+                          :responses  {200 {}
                                        404 {:description "The project with the specified id does not exist."}}
-                           :parameters {:path {:id int?}}
-                           :handler (response/not-implemented)}
-                  :post {:summary "Feature the project with the given id."
-                         :responses {200 {}
-                                     404 {:description "The project with the specified id does not exist."}}
-                         :parameters {:path {:id int?}}
-                         :handler (response/not-implemented)}}]
+                          :parameters {:path {:id int?}}
+                          :handler    (response/not-implemented)}
+                 :post   {:summary    "Feature the project with the given id."
+                          :responses  {200 {}
+                                       404 {:description "The project with the specified id does not exist."}}
+                          :parameters {:path {:id int?}}
+                          :handler    (response/not-implemented)}}]
     (repos/route-handler-per-project)
     (issues/route-handler-per-project)
     (pulls/route-handler-per-project)
     (branches/route-handler-per-project)
-    (tags/tags-operations-route-handler (entity/project) [])]])
+    (namedtags/route-handler-per-link (entity/project))
+    (tags/tags-operations-route-handler (entity/project) [])
+    ]])
