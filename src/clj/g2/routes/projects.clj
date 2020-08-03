@@ -17,6 +17,7 @@
     [g2.routes.tags :as tags]
     [g2.services.projects-service :as projects-service]
     [g2.services.features-service :as features-service]
+    [g2.services.validator-service :as validator-service]
     [g2.utils.entity :as entity]
     [g2.services.author-service :as author-service]
     [g2.services.issues-service :as issues-service]))
@@ -68,12 +69,13 @@
     (log/debug "Get Contributors" id)
     (response/ok [])))
 
-; TODO
 (defn project-features [id]
   (do
     (log/debug "Get Features" id)
-    (response/ok
-      (features-service/get-project-features id))))
+    (if-not [(validator-service/validate-is-project id)]
+      (response/not-found)
+      (response/ok
+        (features-service/get-project-features id)))))
 
 (defn route-handler-global []
   ["/projects"

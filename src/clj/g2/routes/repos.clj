@@ -24,24 +24,6 @@
       (response/ok repo)
       (response/not-found {:msg "Repository not found"}))))
 
-; not used for the moment
-#_(defn link-repo-to-project [id pid]
-    (do
-      (log/debug "Link repo" id "to project" pid)
-      (p-util/is-project
-        pid
-        (let [repo (db/get-repo {:repo_id id})]
-          (if (nil? repo)
-            (response/not-found)
-            (with-transaction
-              [*db*]
-              (do
-                (db/link-repo-to-project! {:project_id pid, :repo_id id})
-                (response/no-content))))))))
-
-#_(defn unlink-repo-from-project [id pid]
-    (response/not-implemented))
-
 (defn repos-get [request]
   (->> (db/get-repos)
        (map (fn [repo]

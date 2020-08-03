@@ -7,15 +7,19 @@
             [g2.utils.projects :as p-util]
             [g2.routes.tags :as tags]
             [g2.services.issues-service :as issues-service]
+            [g2.services.validator-service :as validator-service]
             [g2.utils.entity :as entity]
             [g2.services.generic-service :as generic-service]))
 
-(defn get-project-issues [project_id]
+
+
+(defn project-issues [project-id?]
   (do
-    (log/debug "Get issues project" project_id)
-    (p-util/is-project
-      project_id
-      (response/ok (db/get-project-issues {:project_id project_id})))))
+    (log/debug (format "Get issues for project<%s>" project-id?))
+    (if-not [(validator-service/validate-is-project project-id?)]
+      (response/not-found)
+      (response/ok
+        (issues-service/get-project-issues project-id?)))))
 
 (defn sync-all [_]
   (log/debug "Syncing all issues")
@@ -71,4 +75,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(response/ok (issues-service/get-project-issues (get-in % [:path-params :id]))) #_(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])
+              :handler    #(project-issues (get-in % [:path-params :id])) #_(response/ok (g2.services.generic-service/get-project-entities (get-in % [:path-params :id]) "issues"))}}]])

@@ -62,6 +62,11 @@ DELETE
 FROM :i:table
 WHERE tag_id = :tag_id;
 
+-- :name count-entity :? :1
+SELECT count(*) as count
+FROM :i:table
+WHERE tag_id = :tag_id;
+
 -- :name get-tags-linked-with-tag :? :*
 SELECT *
 FROM tag_relations
@@ -165,23 +170,21 @@ FROM repository_providers;
     Features
 */
 -- :name get-project-features-of-type :? :*
-( -- The issues directly linked to a project
+( -- The entities directly linked to a project
     select i.*
     from :i:table i
         inner join tags t on i.tag_id = t.id
         inner join tag_relations tr on tr.child_id = i.tag_id
-        inner join projects p on tr.parent_id = p.tag_id
-    where p.tag_id = :project_id and featured = true
+    where tr.parent_id = :project_id and featured = true
 )
 UNION
-( -- The issues linked to a project via a repo
+( -- The entities linked to a project via a repo
     select i.*
     from :i:table i
         inner join tags t2 on i.tag_id = t2.id
         inner join repos r on i.repo_id = r.tag_id
         inner join tag_relations tr on tr.child_id = r.tag_id
-        inner join projects p2 on tr.parent_id = p2.tag_id
-    where p2.tag_id = :project_id and featured = true
+    where tr.parent_id = :project_id and featured = true
 );
 
 /*
@@ -233,18 +236,6 @@ SELECT tag_id as id, p.name as name, p.description, p.image_url
 from projects p
 where tag_id = :project_id;
 
--- :name get-projects :? :*
-SELECT tag_id as id, p.name as name, p.description, p.image_url
-FROM projects p
-         LEFT JOIN repos using (tag_id)
-GROUP BY tag_id, p.name;
-
--- :name get-project-repos :? :*
-SELECT *
-FROM projects
-         JOIN tag_relations on projects.tag_id = tag_relations.parent_id
-         JOIN repos on tag_relations.child_id = repos.tag_id
-WHERE repos.tag_id = :project_id;
 
 -- :name create-project! :insert :raw
 -- :command :execute
@@ -265,19 +256,6 @@ DELETE
 FROM projects
 WHERE tag_id = :id;
 
--- :name update-project-image! :! :1
-UPDATE projects
-SET image_url = :image_url
-WHERE tag_id = :id;
-/*
-  Projects and Repositories
-*/
-
--- :name link-repo-to-project! :! :1
-UPDATE repos
-SET project_id = :project_id
-WHERE tag_id = :repo_id;
-
 /* ---- LABELS ---- */
 
 -- :name create-label! :insert :raw
@@ -288,11 +266,6 @@ VALUES (:git_id, :name, :description, :url, :color, :repo_id);
 -- :name get-labels :? :*
 SELECT *
 FROM labels;
-
--- :name get-label :? :1
-SELECT *
-FROM labels
-WHERE label_id = :label_id;
 
 -- :name update-label! :! :n
 UPDATE labels
@@ -325,18 +298,16 @@ FROM issues;
 SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured, i.status
 FROM issues i
          INNER JOIN repos r on i.repo_id = r.tag_id
-         INNER JOIN tag_relations on tag_relations.child_id = r.tag_id
-         INNER JOIN projects p on p.tag_id = tag_relations.parent_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
          INNER JOIN tags t on i.tag_id = t.id
-WHERE p.tag_id = :project_id;
+WHERE tr.parent_id = :project_id;
 
 -- :name get-project-indirect-issues-count :? :1
 SELECT count(i.tag_id) as count
 FROM issues i
          INNER JOIN repos r on i.repo_id = r.tag_id
-         INNER JOIN tag_relations on tag_relations.child_id = r.tag_id
-         INNER JOIN projects p on p.tag_id = tag_relations.parent_id
-WHERE p.tag_id = :project_id;
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+WHERE tr.parent_id = :project_id;
 
 -- :name get-issue :? :1
 SELECT *
@@ -350,14 +321,6 @@ SET url    = :url,
     time   = :time,
     author = :author
 WHERE git_id = :git_id;
-
--- :name get-project-issues :? :*
-SELECT *
-from issues
-         INNER JOIN repos using (repo_id)
-         INNER JOIN projects using (project_id)
-WHERE project_id = :project_id;
-
 
 /* ---- BRANCHES ---- */
 
