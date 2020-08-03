@@ -44,25 +44,7 @@
                        :responses {200 {:description "TODO"}
                                    403 {:description "TODO"}
                                    404 {:description "TODO"}}
-                       :handler   (fn [_] (git/sync-repositories) (response/ok))}}]
-   #_["/branches"
-      [""]
-      ["/:branch_id"]]
-   #_["/labels"
-      [""]
-      ["/:label_id"]]
-   [":repo_id/projects/:project_id" {:delete {:summary    "Unlink a given project id to a given repository"
-                                              :responses  {200 {}
-                                                           404 {:description "The repository or project with the specified id does not exist."}}
-                                              :parameters {:path {:repo_id    int?
-                                                                  :project_id int?}}
-                                              :handler    #(response/not-implemented)}
-                                     :post   {:summary    "Link a given project id to a given repository"
-                                              :responses  {200 {}
-                                                           404 {:description "The repository or project with the specified id does not exist."}}
-                                              :parameters {:path {:repo_id    int?
-                                                                  :project_id int?}}
-                                              :handler    #(response/not-implemented)}}]])
+                       :handler   (fn [_] (git/sync-repositories) (response/ok))}}]])
 
 (defn route-handler-per-project []
   ["/repositories"
