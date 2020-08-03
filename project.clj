@@ -28,6 +28,7 @@
                  [com.google.protobuf/protobuf-java "3.6.1"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
+                 [ring-cors/ring-cors "0.1.13"]
                  [selmer "1.12.6"]
                  [clj-http "3.9.1"]
                  [clj-http-fake "1.0.3"]
