@@ -4,12 +4,10 @@
             [slingshot.slingshot :refer [try+]]
             [clojure.tools.logging :as log]
             [ring.util.http-response :as response]
-            [g2.utils.projects :as p-util]
             [g2.routes.tags :as tags]
             [g2.services.issues-service :as issues-service]
             [g2.services.validator-service :as validator-service]
-            [g2.utils.entity :as entity]
-            [g2.services.generic-service :as generic-service]))
+            [g2.utils.entity :as entity]))
 
 
 
@@ -45,28 +43,14 @@
 (defn route-handler-global []
   ["/issues"
    {:swagger {:tags ["issues"]}}
+   (tags/tags-route-handler (entity/issue) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the issues with our git backends. Use with limits"
                :responses {204 {:description "Sync successful"}
                            403 {:description "TODO"}
                            404 {:description "TODO"}}
-               :handler   sync-all}}]
-   #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
-                          :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
-   (tags/tags-route-handler (entity/issue) [])
-   ["/:id/feature" {:delete {:summary    "Unfeature the issue with the given id."
-                             :responses  {200 {}
-                                          404 {:description "The issue with the specified id does not exist."}}
-                             :parameters {:path {:id int?}} ;; TODO check that the entity exists
-                             :handler    #(do (generic-service/unfeature-entity (get-in % [:path-params :id]))
-                                              (response/no-content))}
-                    :post   {:summary    "Feature the issue with the given id."
-                             :responses  {200 {}
-                                          404 {:description "The issue with the specified id does not exist."}}
-                             :parameters {:path {:id int?}} ;; TODO check that the entity exists
-                             :handler    #(do (generic-service/feature-entity (get-in % [:path-params :id]))
-                                              (response/no-content))}}]])
+               :handler   sync-all}}]])
 
 (defn route-handler-per-project []
   ["/issues"

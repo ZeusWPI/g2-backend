@@ -4,7 +4,9 @@
             [g2.utils.entity :as entity]
             [clojure.tools.logging :as log]
             [clojure.set :as set]
-            [g2.services.tags-service :as tags-service])
+            [g2.services.tags-service :as tags-service]
+            [g2.services.generic-service :as generic-service]
+            )
   (:use [slingshot.slingshot :only [throw+ try+]])
   (:import (java.util List)))
 
@@ -60,4 +62,16 @@
                             404 {:description (str "The " entity " with the specified id does not exist.")}}
                :parameters {:path {:id int?}}
                :handler    #(tags-service/assert-id-of-entity (get-in % [:path-params :id]) entity get-entity)}}]
+    ["/feature" {:delete {:summary    (str "Unfeature the " entity " with the given id.")
+                          :responses  {200 {}
+                                       404 {:description "The " entity " with the specified id does not exist."}}
+                          :parameters {:path {:id int?}}    ;; TODO check that the entity exists
+                          :handler    #(do (generic-service/unfeature-entity (get-in % [:path-params :id]))
+                                           (response/no-content))}
+                 :post   {:summary    (str "Feature the " entity " with the given id.")
+                          :responses  {200 {}
+                                       404 {:description (str "The " entity " with the specified id does not exist.")}}
+                          :parameters {:path {:id int?}}    ;; TODO check that the entity exists
+                          :handler    #(do (generic-service/feature-entity (get-in % [:path-params :id]))
+                                           (response/no-content))}}]
     (tags-operations-route-handler entity allowed-links link-path-name)]))

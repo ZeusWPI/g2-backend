@@ -256,6 +256,46 @@ DELETE
 FROM projects
 WHERE tag_id = :id;
 
+
+-- :name get-project-entities-of-type :? :*
+( -- The entities directly linked to a project
+    select i.*, t.*
+    from :i:table i
+        inner join tags t on i.tag_id = t.id
+        inner join tag_relations tr on tr.child_id = i.tag_id
+    where tr.parent_id = :project_id
+)
+UNION
+( -- The entities linked to a project via a repo
+    select i.*, t2.*
+    from :i:table i
+        inner join tags t2 on i.tag_id = t2.id
+        inner join repos r on i.repo_id = r.tag_id
+        inner join tag_relations tr on tr.child_id = r.tag_id
+    where tr.parent_id = :project_id
+);
+
+
+-- :name get-project-entities-of-type-count :? :1
+select count(*) count
+from (
+         ( -- The entities directly linked to a project
+             select t.id
+             from :i:table i
+             inner join tags t on i.tag_id = t.id
+             inner join tag_relations tr on tr.child_id = i.tag_id
+             where tr.parent_id = :project_id
+         )
+         UNION
+         ( -- The entities linked to a project via a repo
+             select t2.id
+             from :i:table i
+             inner join tags t2 on i.tag_id = t2.id
+             inner join repos r on i.repo_id = r.tag_id
+             inner join tag_relations tr on tr.child_id = r.tag_id
+             where tr.parent_id = :project_id
+         )) project_issues;
+
 /* ---- LABELS ---- */
 
 -- :name create-label! :insert :raw

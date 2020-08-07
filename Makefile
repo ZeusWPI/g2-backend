@@ -11,3 +11,6 @@ docker-staging:
 run-jar-with-dev:
 	java -Dconf=dev-config.edn -jar target/uberjar/g2.jar migrate && \
 	java -Dconf=dev-config.edn -jar target/uberjar/g2.jar
+
+update-deps:
+    lein ancient upgrade :interactive

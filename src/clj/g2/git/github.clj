@@ -165,22 +165,22 @@
 
 ; TODO
 #_(defn sync-pullrequests
-  [{name :name repo_id :tag_id :as repo}]
-  (log/debug (format "Syncing issues for '%s'" (str repo)))
-  (fetch-and-sync-with-local ((github-endpoints :issues) name)
-                             {:id         :git_id
-                              :html_url   :url
-                              :title      :title
-                              :created_at :time
-                              :state      :status
-                              [:user :id] :author}
-                             :git_id
-                             :pull_request
-                             db/get-issues
-                             #(db/create-issue! (-> %
-                                                    (assoc :tag_id (entity/generate-tag))
-                                                    (assoc :repo_id repo_id)))
-                             db/update-issue!))
+    [{name :name repo_id :tag_id :as repo}]
+    (log/debug (format "Syncing issues for '%s'" (str repo)))
+    (fetch-and-sync-with-local ((github-endpoints :issues) name)
+                               {:id         :git_id
+                                :html_url   :url
+                                :title      :title
+                                :created_at :time
+                                :state      :status
+                                [:user :id] :author}
+                               :git_id
+                               :pull_request
+                               db/get-issues
+                               #(db/create-issue! (-> %
+                                                      (assoc :tag_id (entity/generate-tag))
+                                                      (assoc :repo_id repo_id)))
+                               db/update-issue!))
 
 (defn sync-branches
   [{name :name repo_id :tag_id :as repo}]

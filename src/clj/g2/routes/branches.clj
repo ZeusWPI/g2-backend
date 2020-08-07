@@ -1,13 +1,13 @@
 (ns g2.routes.branches
   (:require
     [g2.db.core :refer [*db*] :as db]
-            [g2.git.github :refer [sync-branches]]
-            [slingshot.slingshot :refer [try+]]
-            [clojure.tools.logging :as log]
-            [ring.util.http-response :as response]
-            [g2.utils.projects :as p-utils]
-            [g2.routes.tags :as tags]
-            [g2.utils.entity :as entity]))
+    [g2.git.github :refer [sync-branches]]
+    [slingshot.slingshot :refer [try+]]
+    [clojure.tools.logging :as log]
+    [ring.util.http-response :as response]
+    [g2.utils.projects :as p-utils]
+    [g2.routes.tags :as tags]
+    [g2.utils.entity :as entity]))
 
 (defn get-project-branches [project_id]
   (do
@@ -17,16 +17,20 @@
       (response/ok (db/get-project-branches {:project_id project_id})))))
 
 
-(defn sync-all [_]
-  (log/debug "Syncing all branches")
-  (let [repos (db/get-tags {:table "repos"})]
-    (doseq [repo repos]
-      (try+
-        (sync-branches repo)
-        (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo))
-                                                (log/error "Code: 403. This can be due to ratelimiting." body)))
-        (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo) "." body)))))
-    (response/no-content)))
+(defn sync-all [_req]
+  (do
+    (log/info "Syncing all branches")
+    (flush)
+    (let [repos (db/get-tags {:table "repos"})]
+      (doseq [repo repos]
+        (try+
+          (sync-branches repo)
+          (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo))
+                                                  (log/error "Code: 403. This can be due to ratelimiting." body)))
+          (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo) "." body)))
+          (catch [:status 405] {:keys [body]} (do (log/error "Failed to sync branches for repo_id" (:repo_id repo) "." body)))
+          (catch [] {} (do (log/error "Unknown error")))))
+      (response/no-content))))
 
 ; Not yet needed so commented
 #_(defn get-by-id [issue_id]
@@ -44,23 +48,11 @@
    ["/sync"
     {:swagger {:tags ["sync"]}
      :post    {:summary   "Force synchronize the branches with our git backends. Use with limits"
-               :responses {204 {:description "Sync successful."}
+               :responses {204 {:description "Sync successful"}
                            403 {:description "TODO"}
                            404 {:description "TODO"}}
-               :handler   sync-all}}]
-   #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
-                          :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
-   ["/:id/feature" {:delete {:summary "Unfeature the branch with the given id."
-                          :responses {200 {}
-                                      404 {:description "The branch with the specified id does not exist."}}
-                          :parameters {:path {:id int?}}
-                          :handler #(response/not-implemented)}
-                 :post {:summary "Feature the branch with the given id."
-                        :responses {200 {}
-                                    404 {:description "The branch with the specified id does not exist."}}
-                        :parameters {:path {:id int?}}
-                        :handler #(response/not-implemented)}}]]
-   )
+               :handler   sync-all}}]]
+  )
 
 (defn route-handler-per-project []
   ["/branches"

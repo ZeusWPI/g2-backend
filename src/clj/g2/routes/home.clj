@@ -43,10 +43,10 @@
                                   (response/unauthorized {:message "User not found. Are you logged in?"})))}}]
    (repos/route-handler-global)
    (projects/route-handler-global)
+   (branches/route-handler-global)
    (issues/route-handler-global)
    ; not included in the newer spec
    #_(labels/route-handler-global)
-   (branches/route-handler-global)
    (pulls/route-handler-global)
    (namedtags/route-handler-global)
    ["/repo-providers"
