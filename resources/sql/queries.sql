@@ -177,7 +177,7 @@ FROM repository_providers;
 */
 -- :name get-project-features-of-type :? :*
 ( -- The entities directly linked to a project
-    select i.*
+    select i.*, t.*
     from :i:table i
         inner join tags t on i.tag_id = t.id
         inner join tag_relations tr on tr.child_id = i.tag_id
@@ -185,7 +185,7 @@ FROM repository_providers;
 )
 UNION
 ( -- The entities linked to a project via a repo
-    select i.*
+    select i.*, t2.*
     from :i:table i
         inner join tags t2 on i.tag_id = t2.id
         inner join repos r on i.repo_id = r.tag_id
