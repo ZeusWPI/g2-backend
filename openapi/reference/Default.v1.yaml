@@ -887,5 +887,26 @@ paths:
                 items:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-repositories-id-tags
+  '/projects/{id}/subprojects':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Project.v1.yaml
+      operationId: get-projects-id-subprojects
+      description: Get a list with subprojects for a given project.
 components:
   schemas: {}
