@@ -94,7 +94,8 @@
                                      ]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]
-                      {:conflicts nil})
+                      #_{:conflicts (fn [conflicts]
+                                      (println (str "Conflict: " conflicts)))})
                     (ring/routes
                       #_(ring/create-resource-handler
                           {:path "/"})

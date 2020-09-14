@@ -40,14 +40,15 @@
 (defn route-handler-global []
   ["/branches"
    {:swagger {:tags ["branches"]}}
-   (tags/tags-route-handler (entity/branch) [])
    ["/sync"
     {:swagger {:tags ["sync"]}
-     :post    {:summary   "Force synchronize the branches with our git backends. Use with limits"
-               :responses {204 {:description "Sync successful."}
+     :post    {:summary   "Force synchronize the issues with our git backends. Use with limits"
+               :responses {204 {:description "Sync successful"}
                            403 {:description "TODO"}
                            404 {:description "TODO"}}
                :handler   sync-all}}]
+   (tags/tags-route-handler (entity/branch) [])
+
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
                           :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
    ["/:id/feature" {:delete {:summary "Unfeature the branch with the given id."

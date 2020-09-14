@@ -20,7 +20,7 @@
 
 
 (defn wrap-snake-to-camelcase
-   []
+  []
   )
 
 (defn wrap-csrf [handler]
@@ -29,7 +29,7 @@
     {:error-response
      (error-page
        {:status 403
-        :title "Invalid anti-forgery token"})}))
+        :title  "Invalid anti-forgery token"})}))
 
 
 (defn wrap-formats [handler]
@@ -42,10 +42,10 @@
 (defn on-error [request response]
   (error-page
     {:status 403
-     :title (str "Access to " (:uri request) " is not authorized")}))
+     :title  (str "Access to " (:uri request) " is not authorized")}))
 
 (defn wrap-restricted [handler]
-  (restrict handler {:handler authenticated?
+  (restrict handler {:handler  authenticated?
                      :on-error on-error}))
 
 (defn wrap-auth [handler]
@@ -58,7 +58,7 @@
   (-> ((:middleware defaults) handler)
       wrap-auth
       wrap-flash
-      (wrap-cors :access-control-allow-origin [#".*"]
+      #_(wrap-cors :access-control-allow-origin [#".*"]
                  :access-control-allow-methods [:get :put :post :delete :patch])
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
