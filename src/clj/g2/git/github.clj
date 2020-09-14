@@ -125,8 +125,7 @@
                                :html_url    :url}
                               :git_id                       ; local and remote shared unique identifier
                               nil
-                              (filter (fn [repo]
-                                        (= (:repo_type repo) "github")) db/get-repos)
+                              #(db/get-tags {:table (entity/repository)})
                               #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
                               db/update-repo!)))
 
