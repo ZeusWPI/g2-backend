@@ -1,7 +1,7 @@
 (ns g2.handler
   (:require [g2.middleware :as middleware]
             [g2.middleware.formats :as formats]
-            #_[g2.middleware.exception :as exception]
+    #_[g2.middleware.exception :as exception]
             [g2.layout :refer [error-page]]
             [g2.routes.home :refer [home-routes]]
             [g2.env :refer [defaults]]
@@ -94,8 +94,8 @@
                                      ]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]
-                      #_{:conflicts (fn [conflicts]
-                                      (println (str "Conflict: " conflicts)))})
+                      {:conflicts (fn [conflicts]
+                                    (println (str "Conflict: " conflicts)))})
                     (ring/routes
                       #_(ring/create-resource-handler
                           {:path "/"})
