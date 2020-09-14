@@ -125,7 +125,8 @@
                                :html_url    :url}
                               :git_id                       ; local and remote shared unique identifier
                               nil
-                              db/get-repos                  ;; TODO filter to only fetch github repos
+                              (filter (fn [repo]
+                                        (= (:repo_type repo) "github")) db/get-repos)
                               #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
                               db/update-repo!)))
 
