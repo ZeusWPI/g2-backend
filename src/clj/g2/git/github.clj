@@ -126,12 +126,16 @@
                               :git_id                       ; local and remote shared unique identifier
                               nil
 <<<<<<< HEAD
+<<<<<<< HEAD
                               #(db/get-tags {:table (entity/repository)}) ; TODO filter to only fetch github repos
 =======
                               (do (doall (map println (db/get-tags {:table (entity/repository)})))
                                   (fn [] (filter (fn [repo] (= (get repo :repo_type) "github")) (db/get-tags {:table (entity/repository)})))
                                   )
 >>>>>>> 7b256d0 (first try to filter, but repo type is nil for all the repos therefore we get exceptions)
+=======
+                              (fn [] (filter #(= (get % :repo_type) "github") (db/get-tags {:table (entity/repository)})))
+>>>>>>> 069d014 (Filter works but only if the repo_type field in the database is filled correctly)
                               #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
                               db/update-repo!)))
 
