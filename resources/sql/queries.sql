@@ -199,8 +199,8 @@ UNION
 
 -- :name create-repo! :insert :raw
 INSERT INTO repos
-    (tag_id, git_id, name, description, url)
-VALUES (:tag_id, :git_id, :name, :description, :url);
+    (tag_id, git_id, repo_type, name, description, url)
+VALUES (:tag_id, :git_id, :repo_type, :name, :description, :url);
 
 -- :name get-repos :? :*
 SELECT repos.tag_id                                as id,
