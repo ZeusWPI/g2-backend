@@ -126,7 +126,7 @@
                               :git_id                       ; local and remote shared unique identifier
                               nil
                               (fn [] (filter #(= (get % :repo_type) "github") (db/get-tags {:table (entity/repository)})))
-                              #(db/create-repo! (assoc % :tag_id (entity/generate-tag)))
+                              #(db/create-repo! (assoc % :tag_id (entity/generate-tag) :repo_type "github"))
                               db/update-repo!)))
 
 (defn sync-labels
