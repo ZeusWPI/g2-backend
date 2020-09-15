@@ -191,7 +191,7 @@
                               :name          :name}
                              :commit_sha
                              nil
-                             #(db/get-tags {:tables "branches"})
+                             #(db/get-tags {:table (entity/branch)})
                              #(db/create-branch! (-> %
                                                      (assoc :tag_id (entity/generate-tag))
                                                      (assoc :repo_id repo_id)))
