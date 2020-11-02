@@ -5,7 +5,6 @@
             [g2.layout :refer [error-page]]
             [g2.routes.home :refer [home-routes]]
             [g2.env :refer [defaults]]
-            [compojure.core :refer [routes wrap-routes]]
             [mount.core :as mount]
             [reitit.ring :as ring]
             [reitit.ring.coercion :as coercion]
