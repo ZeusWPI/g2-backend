@@ -3,11 +3,11 @@
   :description "G2"
   :url "https://github.com/zeuswpi/g2"
 
-  :dependencies [[buddy "2.0.0"]
+  :dependencies [[metosin/reitit "0.5.1"]
+                 [buddy "2.0.0"]
                  [cheshire "5.8.1"]
                  [clojure.java-time "0.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
-                 [compojure "1.6.1"]
                  [conman "0.8.3"]
                  [cprop "0.1.13"]
                  [funcool/struct "1.3.0"]
@@ -15,13 +15,11 @@
                  [luminus-migrations "0.6.4"]
                  [luminus-transit "0.1.1"]
                  [luminus/ring-ttl-session "0.3.2"]
-                 [markdown-clj "1.0.7"]
-                 [metosin/muuntaja "0.6.3"]
+                 [metosin/muuntaja "0.6.5"]
                  [metosin/ring-http-response "0.9.1"]
                  [mount "0.1.16"]
                  [nrepl "0.6.0"]
-                 [org.clojure/clojure "1.10.0"]
-                 [org.clojure/clojurescript "1.10.520" :scope "provided"]
+                 [org.clojure/clojure "1.10.1"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
                  [mysql/mysql-connector-java "8.0.12"]
@@ -32,11 +30,8 @@
                  [selmer "1.12.6"]
                  [clj-http "3.9.1"]
                  [clj-http-fake "1.0.3"]
-                 ;                 [org.apache.logging.log4j/log4j-api "2.11.0"]
-                 ;                 [org.apache.logging.log4j/log4j-core "2.11.0"]
-                 ;                 [org.apache.logging.log4j/log4j-1.2-api "2.11.0"]
-                 [metosin/reitit "0.3.7"]
                  [camel-snake-kebab "0.4.1"]                ; automatic conversion between different casing of words
+                 [com.clojure-goes-fast/clj-async-profiler "0.4.1"]
                  ]
 
   :min-lein-version "2.0.0"
@@ -70,7 +65,12 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn" "-Xverify:none"]
+   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn"
+                                    "-Xverify:none"
+                                    "-Djdk.attach.allowAttachSelf" ; for the async profiler
+                                    "-XX:+UnlockDiagnosticVMOptions"
+                                    "-XX:+DebugNonSafepoints"
+                                    ]
                    :dependencies   [[binaryage/devtools "0.9.10"]
                                     [cider/piggieback "0.4.0"]
                                     [doo "0.1.11"]
@@ -94,7 +94,7 @@
                    :cljsbuild
                    {:builds
                     {:test
-                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                     {:source-paths ["src/cljc"]
                       :compiler
                       {:output-to     "target/test.js"
                        :main          "g2.doo-runner"
