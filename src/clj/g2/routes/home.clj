@@ -10,7 +10,6 @@
             [g2.routes.labels :as labels]
             [g2.routes.branches :as branches]
             [g2.routes.namedtags :as namedtags]
-            [compojure.core :refer [defroutes GET DELETE]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
@@ -24,10 +23,6 @@
   (let [repo-providers (db/get-all-repo-providers)]
     (layout/render request "home.html" {:repo-providers repo-providers
                                         :user           (-> (get-in request [:session :user]))})))
-
-(defroutes home-routes-old
-           (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
-           (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req)))
 
 (defn home-routes []
   [["/" {:get {:handler home-page}}]
