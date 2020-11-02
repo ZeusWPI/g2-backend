@@ -117,7 +117,7 @@
   "
   ([]
    (sync-repositories (db/get-repo-provider {:name "github"})))
-  ([access_token]
+  ([access_token]                                           ; FIXME the argument passed by the function above is not an access token
    (fetch-and-sync-with-local ((github-endpoints :repos))
                               {:id          :git_id
                                :name        :name
@@ -191,7 +191,7 @@
                               :name          :name}
                              :commit_sha
                              nil
-                             #(db/get-tags {:tables "branches"})
+                             #(db/get-tags {:table (entity/branch)})
                              #(db/create-branch! (-> %
                                                      (assoc :tag_id (entity/generate-tag))
                                                      (assoc :repo_id repo_id)))
