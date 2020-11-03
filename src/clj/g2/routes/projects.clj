@@ -43,7 +43,7 @@
     (log/debug "Create project: " name " " description)
     (with-transaction
       [*db*]
-      (let [{tag_id :generated_key} (db/create-tag!)]
+      (let [{tag_id :generated_key} (first (db/create-tag!))]
         (db/create-project! {:tag_id tag_id, :name name, :description description})
         (response/ok (projects-service/project-get tag_id))))))
 

@@ -7,7 +7,8 @@
 (defn generate-tag
   "Returns the id of a newly create tag"
   []
-  (:generated_key (db/create-tag!)))
+  (:generated_key (first (db/create-tag!))))
+
 
 (defn get-tags [entity-type]
   (->> (db/get-tags {:table entity-type})

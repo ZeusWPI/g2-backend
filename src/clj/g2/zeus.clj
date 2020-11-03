@@ -52,9 +52,11 @@
                           :zeus_id (:id remote-zeus-user)
                           :access_token access_token}
                 generated-key (-> new-user
-                                  (db/create-user!))]
+                                  (db/create-user!)
+                                  first
+                                  :generated_key)]
             (log/debug "Created new user: " generated-key)
-            (login/set-user! (assoc new-user :id (:generated_key generated-key)) session "/"))
+            (login/set-user! (assoc new-user :id generated-key) session "/"))
           (catch Exception e
             (do
               (log/warn "fetched user" remote-zeus-user "already exists, but was not found")
