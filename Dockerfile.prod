@@ -23,4 +23,7 @@ EXPOSE 3000
 COPY scripts/add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
 RUN chmod +x add-docker-host-to-hosts-file.sh
 
-COPY *entrypoint.sh /g2/
+COPY staging-entrypoint.sh /g2/staging-entrypoint.sh
+RUN chmod +x staging-entrypoint.sh
+
+CMD ./staging-entrypoint.sh
