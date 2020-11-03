@@ -47,6 +47,7 @@
   (if (:error params)
     (-> (response/unauthorized "User canceled the authentication")
         (assoc :flash (:denied true)))
+<<<<<<< HEAD
     (do
       (log/debug "Login request returned from the oauth server.")
       (let [{:keys [access_token refresh_token]}
@@ -78,3 +79,30 @@
                 (log/error "Error:" (:cause (Throwable->map e)))
                 (-> (response/found "/")
                     (assoc :flash {:error "An error occurred, please try again."}))))))))))
+=======
+    (let [{:keys [access_token refresh_token]}
+          (oauth/get-authentication-response nil params (oauth2-params))
+          remote-zeus-user (get-user-info access_token)
+          local-user (db/get-user-on-zeusid {:zeus_id (:id remote-zeus-user)})]
+      (log/debug "Remote user: " remote-zeus-user)
+      (log/debug "Local user: " local-user)
+      (if local-user
+        (login/set-user! local-user session "/")
+        (try
+          (let [new-user {:name (:username remote-zeus-user)
+                          :zeus_id (:id remote-zeus-user)
+                          :access_token access_token}
+                generated-key (-> new-user
+                                  (db/create-user!)
+                                  first
+                                  :generated_key)]
+            (log/debug "Created new user: " generated-key)
+            (login/set-user! (assoc new-user :id generated-key) session "/"))
+          (catch Exception e
+            (do
+              (log/warn "fetched user" remote-zeus-user "already exists, but was not found")
+              (log/warn (:cause (Throwable->map e)))
+              (-> (response/found "/")
+                  (assoc :flash {:error "An error occurred, please try again."})))))))))
+
+>>>>>>> 7ae0ad3 (New generated_key syntax)
