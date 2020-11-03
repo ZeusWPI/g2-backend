@@ -40,7 +40,7 @@
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
   :target-path "target/%s/"
-  :main ^:skip-aot g2.core
+  :main g2.core
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-immutant "2.1.0"]
