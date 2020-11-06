@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       DATABASE_URL: "mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC"
       GITHUB_PERSONAL_ACCESS_TOKEN: "af2aa061c70d1c029b1f5001c806392b4ddcf4ab"
