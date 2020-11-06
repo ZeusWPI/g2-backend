@@ -3,40 +3,35 @@
   :description "G2"
   :url "https://github.com/zeuswpi/g2"
 
-  :dependencies [[buddy "2.0.0"]
-                 [cheshire "5.8.1"]
+  :dependencies [[metosin/reitit "0.5.10"]
+                 [mysql/mysql-connector-java "8.0.22"]
+                 [buddy "2.0.0"]
+                 [cheshire "5.10.0"]
                  [clojure.java-time "0.3.2"]
-                 [com.cognitect/transit-clj "0.8.313"]
-                 [compojure "1.6.1"]
-                 [conman "0.8.3"]
-                 [cprop "0.1.13"]
-                 [funcool/struct "1.3.0"]
+                 [com.cognitect/transit-clj "1.0.324"]
+                 [conman "0.9.0"]
+                 [cprop "0.1.17"]
+                 [funcool/struct "1.4.0"]
                  [luminus-immutant "0.2.5"]
-                 [luminus-migrations "0.6.4"]
-                 [luminus-transit "0.1.1"]
-                 [luminus/ring-ttl-session "0.3.2"]
-                 [markdown-clj "1.0.7"]
-                 [metosin/muuntaja "0.6.3"]
+                 [luminus-migrations "0.7.0"]
+                 [luminus-transit "0.1.2"]
+                 [luminus/ring-ttl-session "0.3.3"]
+                 [metosin/muuntaja "0.6.7"]
                  [metosin/ring-http-response "0.9.1"]
                  [mount "0.1.16"]
-                 [nrepl "0.6.0"]
-                 [org.clojure/clojure "1.10.0"]
-                 [org.clojure/clojurescript "1.10.520" :scope "provided"]
-                 [org.clojure/tools.cli "0.4.1"]
-                 [org.clojure/tools.logging "0.4.1"]
-                 [mysql/mysql-connector-java "8.0.12"]
-                 [com.google.protobuf/protobuf-java "3.6.1"]
-                 [ring/ring-core "1.7.1"]
+                 [nrepl "0.8.3"]
+                 [org.clojure/clojure "1.10.1"]
+                 [org.clojure/tools.cli "1.0.194"]
+                 [org.clojure/tools.logging "1.1.0"]
+                 [com.google.protobuf/protobuf-java "3.13.0"]
+                 [ring/ring-core "1.8.2"]
                  [ring/ring-defaults "0.3.2"]
                  [ring-cors/ring-cors "0.1.13"]
-                 [selmer "1.12.6"]
-                 [clj-http "3.9.1"]
+                 [selmer "1.12.31"]
+                 [clj-http "3.10.3"]
                  [clj-http-fake "1.0.3"]
-                 ;                 [org.apache.logging.log4j/log4j-api "2.11.0"]
-                 ;                 [org.apache.logging.log4j/log4j-core "2.11.0"]
-                 ;                 [org.apache.logging.log4j/log4j-1.2-api "2.11.0"]
-                 [metosin/reitit "0.3.7"]
-                 [camel-snake-kebab "0.4.1"]                ; automatic conversion between different casing of words
+                 [camel-snake-kebab "0.4.2"]                ; automatic conversion between different casing of words
+                 [com.clojure-goes-fast/clj-async-profiler "0.4.1"]
                  ]
 
   :min-lein-version "2.0.0"
@@ -45,7 +40,7 @@
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
   :target-path "target/%s/"
-  :main ^:skip-aot g2.core
+  :main g2.core
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-immutant "2.1.0"]
@@ -56,8 +51,7 @@
   {:http-server-root "public"
    :server-logfile   "log/figwheel-logfile.log"
    :nrepl-port       7002
-   :css-dirs         ["resources/public/css"]
-   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
+   :css-dirs         ["resources/public/css"]}
 
   :profiles
   {:uberjar       {:omit-source    true
@@ -70,16 +64,21 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn" "-Xverify:none"]
-                   :dependencies   [[binaryage/devtools "0.9.10"]
-                                    [cider/piggieback "0.4.0"]
+   :project/dev   {:jvm-opts       ["-Dconf=dev-config.edn"
+                                    "-Xverify:none"
+                                    "-Djdk.attach.allowAttachSelf" ; for the async profiler
+                                    "-XX:+UnlockDiagnosticVMOptions"
+                                    "-XX:+DebugNonSafepoints"
+                                    ]
+                   :dependencies   [[binaryage/devtools "1.0.2"]
+                                    [cider/piggieback "0.5.1"]
                                     [doo "0.1.11"]
-                                    [expound "0.7.2"]
-                                    [figwheel-sidecar "0.5.18"]
-                                    [pjstadig/humane-test-output "0.9.0"]
-                                    [prone "1.6.1"]
-                                    [ring/ring-devel "1.7.1"]
-                                    [ring/ring-mock "0.3.2"]]
+                                    [expound "0.8.6"]
+                                    [figwheel-sidecar "0.5.21-SNAPSHOT"]
+                                    [pjstadig/humane-test-output "0.10.0"]
+                                    [prone "2020-01-17"]
+                                    [ring/ring-devel "1.8.2"]
+                                    [ring/ring-mock "0.4.0"]]
                    :plugins        [[com.jakemccrary/lein-test-refresh "0.23.0"]
                                     [lein-doo "0.1.11"]
                                     [lein-figwheel "0.5.18"]]
@@ -94,7 +93,7 @@
                    :cljsbuild
                    {:builds
                     {:test
-                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                     {:source-paths ["src/cljc"]
                       :compiler
                       {:output-to     "target/test.js"
                        :main          "g2.doo-runner"

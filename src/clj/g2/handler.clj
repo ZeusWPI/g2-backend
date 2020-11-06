@@ -5,7 +5,6 @@
             [g2.layout :refer [error-page]]
             [g2.routes.home :refer [home-routes]]
             [g2.env :refer [defaults]]
-            [compojure.core :refer [routes wrap-routes]]
             [mount.core :as mount]
             [reitit.ring :as ring]
             [reitit.ring.coercion :as coercion]
@@ -90,7 +89,7 @@
                                      ;; coercing response bodies
                                      coercion/coerce-response-middleware
                                      ;; exception handling
-                                     exception/exception-middleware
+                                     #_exception/exception-middleware
                                      ]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]

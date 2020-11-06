@@ -1,4 +1,5 @@
-version: "3"
+version: '3.7'
+
 services:
   backend:
     container_name: g2-backend_server
@@ -12,10 +13,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC
+      DATABASE_URL: "mysql://db:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC"
+      GITHUB_PERSONAL_ACCESS_TOKEN: "af2aa061c70d1c029b1f5001c806392b4ddcf4ab"
+    entrypoint: [ "sh", "stag-entrypoint.sh" ]
   db:
     container_name: g2-backend_db
-    image: mariadb:latest
+    image: mariadb:10.5-focal
     volumes:
       - database:/var/lib/mysql
     networks:
@@ -25,7 +28,6 @@ services:
       MYSQL_DATABASE: g2_dev
       MYSQL_USER: g2_user
       MYSQL_PASSWORD: local-pass
-    restart: always
 
 networks:
   base:

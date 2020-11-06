@@ -62,41 +62,42 @@
   [url property-mapping shared-identifier exclude-key local-query-get local-query-create local-query-update]
   (log/debug "==============")
   (log/info "Syncing with endpoint" url)
-  (let [remote-data (->> (http/get url {:headers {"Authorization" (str "token " (env :github-personal-access-token))}
-                                        :as      :json})
-                         (:body)
-                         (filter #(or (nil? exclude-key) (not (contains? % exclude-key))))
-                         (map #(-> %1
-                                   (select-keys* (keys property-mapping))
-                                   (apply-date-conversion)
-                                   (set/rename-keys (apply-keyword-compression property-mapping))
-                                   (update shared-identifier str))))
+  (let [remote-data       (->> (http/get url {:headers {"Authorization" (str "token " (env :github-personal-access-token))}
+                                              :as      :json})
+                               (:body)
+                               (filter #(or (nil? exclude-key) (not (contains? % exclude-key))))
+                               (map #(-> %1
+                                         (select-keys* (keys property-mapping))
+                                         (apply-date-conversion)
+                                         (set/rename-keys (apply-keyword-compression property-mapping))
+                                         (update shared-identifier str))))
         remote-entity-map (reduce (fn [acc entity] (assoc acc (shared-identifier entity) entity)) {} remote-data)
-        remote-ids (set (map shared-identifier remote-data))
+        remote-ids        (set (map shared-identifier remote-data))
 
-        local-data (map #(select-keys % (vals property-mapping)) (local-query-get))
+        local-data       (map #(select-keys % (vals property-mapping)) (local-query-get))
         local-entity-map (reduce (fn [acc entity] (assoc acc (shared-identifier entity) entity)) {} local-data)
-        local-ids (set (map shared-identifier local-data))
+        local-ids        (set (map shared-identifier local-data))
 
-        new-ids (clojure.set/difference remote-ids local-ids)
+        new-ids    (clojure.set/difference remote-ids local-ids)
         common-ids (clojure.set/intersection remote-ids local-ids)
         update-ids (filter (fn [id] #_(println (clojure.data/diff (remote-entity-map id) (local-entity-map id)) "\n") (not= (remote-entity-map id) (local-entity-map id))) common-ids)
         remove-ids (clojure.set/difference local-ids remote-ids) ; TODO handle entities that are removed on github
         ]
-    ; Create new entities that are not in our db
+                                        ; Create new entities that are not in our db
+    (log/debug (format "Found %d entities on the remote, %d entities locally" (count remote-ids) (count local-ids)))
     (log/debug (format "Creating %d new objects" (count new-ids)))
     (doseq [id new-ids]
       (let [remote-entity (get remote-entity-map id)]
         (println "Creating" remote-entity)
         (local-query-create remote-entity)))
-    ;Update local entities with their remote data
+                                        ;Update local entities with their remote data
     (log/debug (format "Updating %d of %d objects" (count update-ids) (count common-ids)))
     (doseq [id update-ids]
       (let [remote-entity (get remote-entity-map id)]
         (local-query-update remote-entity)))
-    ; TODO Handle entities that are removed on the remote
-    ;(doseq [id remove-ids]
-    ;  )
+                                        ; TODO Handle entities that are removed on the remote
+                                        ;(doseq [id remove-ids]
+                                        ;  )
     ))
 
 (def github-endpoints {:repos    (fn [] (str base-url "/orgs/" (env :github-organization)
