@@ -1,8 +1,9 @@
-FROM clojure:openjdk-14-lein-2.9.1-slim-buster
+FROM clojure:openjdk-11-lein-2.9.1-slim-buster
 
 # Update the system and install netstat command
 RUN apt-get update
-RUN apt-get install net-tools
+RUN apt-get install -y net-tools
+RUN apt-get install -y netcat
 
 # download the dependencies and compile the project ahead of time. This will significantly reduce startup time when you run your image
 RUN mkdir -p /g2
@@ -18,9 +19,9 @@ COPY dev-config_template.edn /g2/dev-config.edn
 
 RUN lein uberjar
 
-EXPOSE 3000
+# Copy stuff that is not needed for compilation
+COPY scripts /g2/scripts
 
-COPY scripts/add-docker-host-to-hosts-file.sh /g2/add-docker-host-to-hosts-file.sh
-RUN chmod +x add-docker-host-to-hosts-file.sh
+EXPOSE 3000
 
 COPY *entrypoint.sh /g2/
