@@ -898,7 +898,7 @@ paths:
       operationId: get-oauth-zeus
       description: |-
         OAuth endpoint for login with {provider}.
-        This should redirect to the backend /oauth/callback after completion.
+        This should redirect to the backend /oauth/{provider}/callback after completion.
       parameters:
         - schema:
             type: string
