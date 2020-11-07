@@ -34,6 +34,8 @@
   (log/debug "Syncing all repositories")
   (try+
     (git/sync-repositories)
+    (catch [:status 401] {:keys [body]} (do (log/error "Failed to sync repos.")
+                                            (log/error "Code: 401." body)))
     (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync repos.")
                                             (log/error "Code: 403. This can be due to ratelimiting." body)))
     (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync branches."))))
