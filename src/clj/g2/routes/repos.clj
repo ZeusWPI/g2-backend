@@ -3,12 +3,9 @@
     [g2.db.core :refer [*db*] :as db]
     [g2.git.github :as git]
     [ring.util.http-response :as response]
-    [g2.utils.projects :as p-util]
-    [g2.routes.tags :as tags]
-    [g2.services.repos-service :as repos-service]
+    [slingshot.slingshot :refer [try+]]
     [conman.core :refer [with-transaction]]
     [clojure.tools.logging :as log]
-    [g2.utils.entity :as entity]
     [g2.services.generic-service :as generic-service]))
 
 (defn convert-db-to-api-object
@@ -27,11 +24,20 @@
 (defn repos-get [request]
   (->> (db/get-repos)
        (map (fn [repo]
-             (-> repo
-                 (assoc :image (format "https://zeus.gent/assets/images/Logos_%s.svg" (:name repo)))
-                 (assoc :newIssueUrl "coming soon")
-                 (assoc :newPullUrl "coming soon"))))
+              (-> repo
+                  (assoc :image (format "https://zeus.gent/assets/images/Logos_%s.svg" (:name repo)))
+                  (assoc :newIssueUrl "coming soon")
+                  (assoc :newPullUrl "coming soon"))))
        response/ok))
+
+(defn sync-all [_]
+  (log/debug "Syncing all repositories")
+  (try+
+    (git/sync-repositories)
+    (catch [:status 403] {:keys [body]} (do (log/error "Failed to sync repos.")
+                                            (log/error "Code: 403. This can be due to ratelimiting." body)))
+    (catch [:status 404] {:keys [body]} (do (log/error "Failed to sync branches."))))
+  (response/no-content))
 
 (defn route-handler-global []
   ["/repositories"
@@ -44,7 +50,7 @@
                        :responses {200 {:description "TODO"}
                                    403 {:description "TODO"}
                                    404 {:description "TODO"}}
-                       :handler   (fn [_] (git/sync-repositories) (response/ok))}}]])
+                       :handler   sync-all}}]])
 
 (defn route-handler-per-project []
   ["/repositories"
