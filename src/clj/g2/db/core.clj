@@ -1,6 +1,5 @@
 (ns g2.db.core
   (:require
-    [clj-time.jdbc]
     [clojure.java.jdbc :as jdbc]
     [conman.core :as conman]
     [java-time.pre-java8 :as jt]

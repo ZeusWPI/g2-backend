@@ -1,13 +1,18 @@
 (ns g2.utils.entity
   (:require
     [g2.db.core :refer [*db*] :as db]
-    [clojure.tools.logging :as log]))
+    [clojure.tools.logging :as log]
+    [clojure.set :as set]))
 
-(defn get-tag [type tag-id]
-  (db/get-tag {:table type :tag_id tag-id}))
+(defn generate-tag
+  "Returns the id of a newly create tag"
+  []
+  (:generated_key (first (db/create-tag!))))
 
-(defn get-tags [type]
-  (db/get-tags {:table type}))
+
+(defn get-tags [entity-type]
+  (->> (db/get-tags {:table entity-type})
+       (map #(set/rename-keys % {:tag_id :id}))))
 
 (defn project []
   "projects")
@@ -20,6 +25,9 @@
 ;
 (defn branch []
   "branches")
+
+(defn pull []
+  "pull request")
 
 #_(defn pull []
     (gen-entity "Pull" db/get-pull db/get-pulls))

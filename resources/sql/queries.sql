@@ -8,32 +8,107 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 */
 
 /*
-    Generic tag table
+ Generic Queries
+ */
+
+-- :name update-generic! :! :n
+/* :require [clojure.string :as string]
+            [hugsql.parameters :refer [identifier-param-quote]] */
+UPDATE :i:table
+SET
+/*~
+(string/join ","
+  (for [[field _] (:updates params)]
+    (str (identifier-param-quote (name field) options)
+      " = :v:updates." (name field))))
+~*/
+WHERE tag_id = :id;
+
+-- :name create-generic! :! :n
+/* :require [clojure.string :as string]
+            [hugsql.parameters :refer [identifier-param-quote]] */
+INSERT INTO :i:table
+(
+/*~
+(string/join ","
+  (for [[field _] (:data params)]
+    (str (identifier-param-quote (name field) options))))
+~*/
+)
+VALUES
+    (
+/*~
+(string/join ","
+  (for [[field _] (:data params)]
+    (str " :v:data." (name field))))
+~*/
+    );
+
+/*
+    Entity queries
+*/
+-- :name get-tag :? :1
+SELECT *
+FROM :i:table
+WHERE tag_id = :tag_id;
+
+-- :name get-tags :? :*
+SELECT *
+FROM :i:table;
+
+
+-- :name delete-entity! :! :1
+DELETE
+FROM :i:table
+WHERE tag_id = :tag_id;
+
+-- :name count-entity :? :1
+SELECT count(*) as count
+FROM :i:table
+WHERE tag_id = :tag_id;
+
+-- :name get-tags-linked-with-tag :? :*
+SELECT *
+FROM tag_relations
+         INNER JOIN :i:table
+ON child_id = tag_id
+WHERE parent_id = :tag_id;
+
+-- :name get-tags-count-linked-with-tag :? :1
+SELECT count(*) as count
+FROM tag_relations
+         INNER JOIN :i:table
+ON child_id = tag_id
+WHERE parent_id = :tag_id;
+
+/*
+    Tag table
  */
 -- :name create-tag! :insert :raw
 INSERT INTO tags ()
 VALUES ();
 
--- :name get-tag :? :1
-SELECT * FROM :i:table
-WHERE tag_id = :tag_id;
+-- :name delete-tag! :! :1
+DELETE
+FROM tags
+WHERE id = :id;
 
--- :name get-tags :? :*
-SELECT * FROM :i:table;
+-- :name set-feature-tag! :! :n
+UPDATE tags
+set featured = :featured
+WHERE id = :tag_id;
 
--- :name get-tags-linked-with-tag :? :*
-SELECT * FROM tag_relations
-INNER JOIN :i:table ON child_id = tag_id
-WHERE parent_id = :tag_id;
 
 -- :name link-tag! :! :n
 INSERT INTO tag_relations
-(parent_id, child_id)
+    (parent_id, child_id)
 VALUES (:parent_id, :child_id);
 
 -- :name unlink-tag! :! :n
-DELETE FROM tag_relations
-WHERE parent_id = :parent_id and child_id = :child_id;
+DELETE
+FROM tag_relations
+WHERE parent_id = :parent_id
+  and child_id = :child_id;
 
 /*
     User stuff
@@ -92,34 +167,55 @@ SELECT *
 FROM repository_providers;
 
 /*
+    Features
+*/
+-- :name get-project-features-of-type :? :*
+( -- The entities directly linked to a project
+    select i.*, t.*
+    from :i:table i
+        inner join tags t on i.tag_id = t.id
+        inner join tag_relations tr on tr.child_id = i.tag_id
+    where tr.parent_id = :project_id and featured = true
+)
+UNION
+( -- The entities linked to a project via a repo
+    select i.*, t2.*
+    from :i:table i
+        inner join tags t2 on i.tag_id = t2.id
+        inner join repos r on i.repo_id = r.tag_id
+        inner join tag_relations tr on tr.child_id = r.tag_id
+    where tr.parent_id = :project_id and featured = true
+);
+
+/*
   Repositories
 */
 
 -- :name create-repo! :insert :raw
 INSERT INTO repos
-    (tag_id, git_id, name, description, url)
-VALUES (:tag_id, :git_id, :name, :description, :url);
+    (tag_id, git_id, repo_type, name, description, url)
+VALUES (:tag_id, :git_id, :repo_type, :name, :description, :url);
 
 -- :name get-repos :? :*
-SELECT repos.tag_id                               as id,
-       repos.name                                 as name,
-       description,
+SELECT repos.tag_id                                as id,
+       repos.name                                  as name,
+       repos.description,
        url,
-       group_concat(named_tag.name SEPARATOR ',') as default_tags
+       group_concat(named_tags.name SEPARATOR ',') as default_tags
 FROM repos
          LEFT JOIN repo_default_tag_mapping ON repos.tag_id = repo_default_tag_mapping.repo_id
-         LEFT JOIN named_tag ON repo_default_tag_mapping.tag_id = named_tag.tag_id
+         LEFT JOIN named_tags ON repo_default_tag_mapping.tag_id = named_tags.tag_id
 GROUP BY repos.tag_id;
 
 -- :name get-repo :? :1
-SELECT repos.tag_id                               as id,
-       repos.name                                 as name,
-       description,
+SELECT repos.tag_id                                as id,
+       repos.name                                  as name,
+       repos.description,
        url,
-       group_concat(named_tag.name SEPARATOR ',') as default_tags
+       group_concat(named_tags.name SEPARATOR ',') as default_tags
 FROM repos
          JOIN repo_default_tag_mapping ON repos.tag_id = repo_default_tag_mapping.repo_id
-         JOIN named_tag ON repo_default_tag_mapping.tag_id = named_tag.tag_id
+         JOIN named_tags ON repo_default_tag_mapping.tag_id = named_tags.tag_id
 WHERE repo_id = :repo_id
 GROUP BY repos.tag_id;
 
@@ -140,18 +236,6 @@ SELECT tag_id as id, p.name as name, p.description, p.image_url
 from projects p
 where tag_id = :project_id;
 
--- :name get-projects :? :*
-SELECT tag_id as id, p.name as name, p.description, p.image_url
-FROM projects p
-         LEFT JOIN repos using (tag_id)
-GROUP BY tag_id, p.name;
-
--- :name get-project-repos :? :*
-SELECT *
-FROM projects
-         JOIN tag_relations on projects.tag_id = tag_relations.parent_id
-         JOIN repos on tag_relations.child_id = repos.tag_id
-WHERE repos.tag_id = :project_id;
 
 -- :name create-project! :insert :raw
 -- :command :execute
@@ -165,26 +249,12 @@ UPDATE projects
 SET name        = :name,
     description = :description,
     image_url   = :image
-WHERE tag_id = :project_id;
+WHERE tag_id = :id;
 
 -- :name delete-project! :! :1
 DELETE
 FROM projects
 WHERE tag_id = :id;
-
--- :name update-project-image! :! :1
-UPDATE projects
-SET image_url = :image_url
-WHERE tag_id = :id;
-/*
-  Projects and Repositories
-*/
-
--- :name link-repo-to-project! :! :1
-UPDATE repos
-SET project_id = :project_id
-WHERE tag_id = :repo_id;
-
 
 /* ---- LABELS ---- */
 
@@ -196,11 +266,6 @@ VALUES (:git_id, :name, :description, :url, :color, :repo_id);
 -- :name get-labels :? :*
 SELECT *
 FROM labels;
-
--- :name get-label :? :1
-SELECT *
-FROM labels
-WHERE label_id = :label_id;
 
 -- :name update-label! :! :n
 UPDATE labels
@@ -222,12 +287,27 @@ WHERE project_id = :project_id;
 
 -- :name create-issue! :insert :raw
 INSERT INTO issues
-    (git_id, url, title, time, repo_id, author)
-VALUES (:git_id, :url, :title, :time, :repo_id, :author);
+    (tag_id, git_id, url, title, time, status, repo_id, author)
+VALUES (:tag_id, :git_id, :url, :title, :time, :status, :repo_id, :author);
 
 -- :name get-issues :? :*
 SELECT *
 FROM issues;
+
+-- :name get-project-indirect-issues :? :*
+SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured, i.status
+FROM issues i
+         INNER JOIN repos r on i.repo_id = r.tag_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+         INNER JOIN tags t on i.tag_id = t.id
+WHERE tr.parent_id = :project_id;
+
+-- :name get-project-indirect-issues-count :? :1
+SELECT count(i.tag_id) as count
+FROM issues i
+         INNER JOIN repos r on i.repo_id = r.tag_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+WHERE tr.parent_id = :project_id;
 
 -- :name get-issue :? :1
 SELECT *
@@ -242,20 +322,12 @@ SET url    = :url,
     author = :author
 WHERE git_id = :git_id;
 
--- :name get-project-issues :? :*
-SELECT *
-from issues
-         INNER JOIN repos using (repo_id)
-         INNER JOIN projects using (project_id)
-WHERE project_id = :project_id;
-
-
 /* ---- BRANCHES ---- */
 
 -- :name create-branch! :insert :raw
 INSERT INTO branches
-    (commit_sha, name, repo_id)
-VALUES (:commit_sha, :name, :repo_id);
+    (tag_id, commit_sha, name, repo_id)
+VALUES (:tag_id, :commit_sha, :name, :repo_id);
 
 -- :name get-branches :? :*
 SELECT *

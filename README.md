@@ -38,26 +38,29 @@ The database used by the backend will be primarily mariadb.
 
        cp dev-config_template.edn dev-config.edn
        cp test-config_template.edn test-config.edn
-       
+
 3. Check these configs for variables that are different in your setup. They should normally work out of the box.
 
 4. Create a new local database and create or modify a database user so it has access to the database. (You can use the dev database for the tests to, but it will possibly be filled with testing data.)
-    
+
     !! Make sure to create the database with character set *utf8mb4* and collation *utf8mb4_unicode_ci*. This is so we can support emoji's which are found in for example git repositories. 
+
     ```
     create database g2_dev character set utf8mb4 collate utf8mb4_unicode_ci;
    ```
-    
+
     It's possible you also need to configure your config so the server accepts connections with the correct charset.
     Add the following lines to `/etc/mysql/my.cnf` and restart your mysql server.
+
     ```
    [mysql]
    default-character-set=utf8mb4
-   
+
    [mysqld]
    character-set-server=utf8mb4
    collation-server=utf8mb4_unicode_ci
    ```
+
 5. Update the database-url parameter in the `dev-config.edn` and `test-config.edn` file with your newly created db and user.
 
 [1]: https://github.com/technomancy/leiningen
@@ -66,28 +69,40 @@ The database used by the backend will be primarily mariadb.
 
 Start by running the migrations on the database. Make sure the correct url is set in your config. Migrations can be added overtime, don't forget to execute them!
 
+    ```
     lein run migrate
+    ```
 
 To start the web server for the application, run:
 
-    lein run 
-    
+    ```
+    lein run
+    ```
+
 You can also start a repl environment which allows for more dynamic and involved programming. Following commands puts the webserver in the same state as the previous commands one but it leaves you in a repl.
 
+    ```
     lein repl
     >> (start)
     >> (migrate)
-    
+    ```
+
 To start the repl with the test profile run
 
+    ```
     lein with-profile test repl
+    ```
 
 #### Reloading changed files
 
-If you change files and want to see your changes it will go faster in a repl. When using `lein run`, you need to stop the process and restart it. In the repl you can reload a namespace and the server will automatically reload the file into its process. 
+If you change files and want to see your changes it will go faster in a repl. 
+When using `lein run`, you need to stop the process and restart it.
+In the repl you can reload a namespace and the server will automatically reload the file into its process. 
 
+    ```
     >> (use 'g2.filename :reload)
-    
+    ```
+
 This reload is not perfect, old namespaces are necessarily removed which can result in a conflict when you change a file with another one but give them the same name.
 
 **TODO** Add `clojure.tools.refresh` explanation.
@@ -98,26 +113,28 @@ If you change SQL queries, restart the database using
 
     >> (restart-db)
 
-While actively developing the application you will change files and therefore namespaces. When using the above method you will need to restart the webserver everytime you want to see the new changes. This is quite a slow process and therefor not recommended. Instead use the following workflow.
+While actively developing the application you will change files and therefore namespaces.
+When using the above method you will need to restart the webserver everytime you want to see the new changes.
+This is quite a slow process and therefor not recommended. Instead use the following workflow.
 
 1. Start a [repl](https://clojure.org/guides/repl/introduction) using
 
        lein repl
   Here you can execute arbitrary clojure code. The [file with the user namespace](https://github.com/ZeusWPI/g2/blob/master/env/dev/clj/user.clj) will be automaticaly loaded into the repl and it's functions will be available in the repl.
-    
+
 2. Now start the server and then run the migrations.
 
        (start)
        (migrate)
-      
+
 3. Now browse to `localhost:3000` to see the webserver. 
   At this moment you will land onto a page with some testing links. This is going to be removed later on when the [frontend](https://github.com/zeuswpi/g2-frontend) has more functionality.
-  
+
   We use swagger to serve a nice visual and handy frontend with out api. This enables the developer to quickly discover all the needed endpoints and get their specification in the process.
   Surf to `localhost:3000/api-docs/` to find the documentation.
- 
+
 If you want to see some data quicly, try out the `/repository/sync` path. It synchronises the repositories of the organization configured in the `dev-config` file with the g2 backend. You can then request a list of these repo's on `/repository`
-  
+
 #### Loading code changes
 
 Changed clojure files will not be automatically loaded into the webserver. You can however load your changed file into the repl with 1 easy command.
@@ -147,16 +164,17 @@ First copy the file `test-config_example.edn` to ``test-config.edn`. Adapt all n
 Now run the automated tests
 
 	lein test-refresh
-	
+
 If you want to run them only once run
 
 	lein test
-	
+
 If you want to run a specific test in a file, do:
 
     lein test :only namespace_name/testname
 
 or in the repl
+
 ```clojure
     (load "g2/test/handler")
     (in-ns 'namespace_name.testname)
@@ -176,18 +194,18 @@ Environment variables set in the dev-config.edn file will also have to be set in
 
 ## Built with
 
-* [Clojure](https://clojure.org/)
-* [Leiningen](https://leiningen.org/)
-* [Luminus - a Clojure web framework](http://www.luminusweb.net/) (and their whole stack)
+- [Clojure](https://clojure.org/)
+- [Leiningen](https://leiningen.org/)
+- [Luminus - a Clojure web framework](http://www.luminusweb.net/) (and their whole stack)
 
 ## Contributing
 
-The Issues tab contains a list of known bugs, wanted features or new ideas, check them out if you are looking to contribute in the project. If you still don't know how to start or what to do, don't hesitate to contact the team.
+The Issues tab contains a list of known bugs, wanted features or new ideas, check them out if you are looking to contribute in the project. 
+If you still don't know how to start or what to do, don't hesitate to contact the team.
 
 ## Versioning
 
 We will use [SemVer](https://semver.org/) as much as possible for versioning.
-
 
 ## Contact
 
@@ -198,4 +216,4 @@ If you have any questions you can reach us on mattermost on the project channel 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
 
 ## Acknowledgments
-* Readme structure inspired on https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+- Readme structure inspired on https://gist.github.com/PurpleBooth/109311bb0361f32d87a2

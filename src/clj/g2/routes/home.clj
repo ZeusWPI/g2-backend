@@ -9,23 +9,20 @@
             [g2.routes.projects :as projects]
             [g2.routes.labels :as labels]
             [g2.routes.branches :as branches]
-            [compojure.core :refer [defroutes GET DELETE]]
+            [g2.routes.namedtags :as namedtags]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]
             [clojure.string :as string]
             [reitit.swagger :as swagger]
-            [reitit.swagger-ui :as swagger-ui]))
+            [reitit.swagger-ui :as swagger-ui]
+            [g2.routes.pulls :as pulls]))
 
 (defn home-page [request]
   (let [repo-providers (db/get-all-repo-providers)]
     (layout/render request "home.html" {:repo-providers repo-providers
                                         :user           (-> (get-in request [:session :user]))})))
-
-(defroutes home-routes-old
-           (GET "/oauth/github" [auth-goal] (github-auth/login-github (keyword auth-goal)))
-           (GET "/oauth/github-callback/:auth-goal" [& params :as req] (github-auth/login-github-callback req)))
 
 (defn home-routes []
   [["/" {:get {:handler home-page}}]
@@ -45,6 +42,8 @@
    ; not included in the newer spec
    #_(labels/route-handler-global)
    (branches/route-handler-global)
+   (pulls/route-handler-global)
+   (namedtags/route-handler-global)
    ["/repo-providers"
     {:get {:summary "Get the list of repository providers configured (like for ex. github or gitlab)"
            :handler (fn [_] (response/ok (db/get-all-repo-providers)))}}]

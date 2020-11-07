@@ -426,6 +426,8 @@ paths:
                   type: string
                 type:
                   type: string
+                description:
+                  type: string
       description: Create a new tag.
   '/tags/{id}':
     parameters:
@@ -476,8 +478,8 @@ paths:
       summary: ''
       operationId: delete-tags-id
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
       description: Delete a given tag by id.
   '/issues/{id}':
     parameters:
@@ -519,7 +521,7 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-issues-id-tags
       description: Get a list with linked tags for a given issue.
-  '/issues/{id}/tags/{tagId}':
+  '/issues/{id}/link/{tagId}':
     parameters:
       - schema:
           type: integer
@@ -586,7 +588,7 @@ paths:
                   $ref: ../models/Pull.v1.yaml
       operationId: get-pulls-id-tags
       description: Get a list with linked tags for a given pull request.
-  '/pulls/{id}/tags/{tagId}':
+  '/pulls/{id}/link/{tagId}':
     parameters:
       - schema:
           type: integer
@@ -652,7 +654,7 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-branches-id-tags
       description: Get a list with linked tags for a given branch.
-  '/branches/{id}/tags/{tagId}':
+  '/branches/{id}/link/{tagId}':
     parameters:
       - schema:
           type: integer
@@ -699,7 +701,7 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-projects-id-tags
       description: Get a list with linked tags for a given project.
-  '/projects/{id}/tags/{tagId}':
+  '/projects/{id}/link/{tagId}':
     parameters:
       - schema:
           type: integer
@@ -792,8 +794,8 @@ paths:
       summary: ''
       operationId: post-issues-id-feature
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
       description: Feature the issue with given id.
     delete:
       summary: ''
@@ -959,5 +961,26 @@ paths:
         '200':
           description: OK
       description: Delete the current OAuth session
+  '/projects/{id}/subprojects':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Project.v1.yaml
+      operationId: get-projects-id-subprojects
+      description: Get a list with subprojects for a given project.
 components:
   schemas: {}

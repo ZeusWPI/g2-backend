@@ -1,30 +1,21 @@
 (ns g2.handler
   (:require [g2.middleware :as middleware]
             [g2.middleware.formats :as formats]
-            [g2.middleware.exception :as exception]
+    #_[g2.middleware.exception :as exception]
             [g2.layout :refer [error-page]]
             [g2.routes.home :refer [home-routes]]
             [g2.env :refer [defaults]]
-            [ring.util.http-response :as response]
-            [compojure.core :refer [routes wrap-routes]]
-            [compojure.route :as route]
             [mount.core :as mount]
-            [reitit.core :as r]
             [reitit.ring :as ring]
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as spec-coercion]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.parameters :as parameters]
-            [reitit.ring.middleware.dev]
+            [reitit.ring.middleware.exception :as exception]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
-            [ring.middleware.params :as params]
-            [ring.middleware.content-type :refer [wrap-content-type]]
-            [muuntaja.core :as m]
-            [clojure.java.io :as io]
-            [reitit.dev.pretty :as pretty]
-            [reitit.spec :as rs]))
+            [ring.middleware.content-type :refer [wrap-content-type]]))
 
 (defn app-routes []
   [["" {:no-doc  true
@@ -98,10 +89,12 @@
                                      ;; coercing response bodies
                                      coercion/coerce-response-middleware
                                      ;; exception handling
-                                     exception/exception-middleware]}
+                                     #_exception/exception-middleware
+                                     ]}
                        #_["/" {:get {:handler (constantly {:status 301 :headers {"Location" "/api-docs/index.html"}})}}]
                        (app-routes)]
-                      {:conflicts nil})
+                      {:conflicts (fn [conflicts]
+                                    (println (str "Conflict: " conflicts)))})
                     (ring/routes
                       #_(ring/create-resource-handler
                           {:path "/"})

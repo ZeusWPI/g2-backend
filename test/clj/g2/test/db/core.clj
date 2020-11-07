@@ -20,13 +20,14 @@
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
     (let [last-login  (java-time/truncate-to (local-date-time) :seconds)
-          insert_id (db/create-user!
+          id (-> (db/create-user!
                      t-conn
                      {:name "Foo"
                       :email "123"
                       :admin false
                       :last_login last-login})
-          id (:generated_key insert_id)
+                        first
+                        :generated_key)
           result (db/get-user t-conn {:user_id id})]
       (is (= {:user_id id
               :name "Foo"
@@ -39,13 +40,14 @@
 (deftest test-repositories
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (let [insert_id (db/create-repo!
+    (let [id (-> (db/create-repo!
                      t-conn
                      {:git_id "1234"
                       :name "g2"
                       :description "The best project"
                       :url "https://github.com/zeuswpi/g2"})
-          id (:generated_key insert_id)
+                        first
+                        :generated_key)
           result (db/get-repo t-conn {:repo_id id})]
       (is (= {:repo_id id
               :git_id "1234"
@@ -60,11 +62,12 @@
 (deftest test-projects
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (let [insert_id (db/create-project!
+    (let [project_id (-> (db/create-project!
                      t-conn
                      {:name "test name"
                       :description "test description"})
-          project_id (:generated_key insert_id)
+                 first
+                 :generated_key)
           result (db/get-project t-conn {:project_id project_id})]
       (is (= {:project_id project_id
               :name "test name"
