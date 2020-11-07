@@ -98,7 +98,8 @@
                                         ; TODO Handle entities that are removed on the remote
                                         ;(doseq [id remove-ids]
                                         ;  )
-    ))
+    )
+  (log/info "Sync successful"))
 
 (def github-endpoints {:repos    (fn [] (str base-url "/orgs/" (env :github-organization)
                                              "/repos?per_page=100"))
