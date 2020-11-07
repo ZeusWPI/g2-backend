@@ -119,6 +119,11 @@ INSERT INTO users
     (name, email, admin, last_login)
 VALUES (:name, :email, :admin, :last_login);
 
+-- :name create-zeus-user! :insert :raw
+INSERT INTO zeus_users
+       (zeus_id, username, user_id)
+VALUES (:zeus_id, :username, :user_id);
+
 -- :name get-user :? :1
 SELECT *
 FROM users
@@ -140,6 +145,7 @@ FROM users
 DELETE
 FROM users
 WHERE user_id = :user_id;
+
 
 /*
   Repository Providers

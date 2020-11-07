@@ -29,10 +29,12 @@
 
 
 (defn authorize-uri
-  "Redirect the user to the grant/authorization page"
+  "Redirect the user to the grant/authorization page of the oauth server.
+  They will be send back to us with a valid access token or with an error."
   [oauth2-params]
-  ;(log/info "Oauth params: " oauth2-params)
-  (let [state nil #_"abc" ;cstf token
+                                        ;(log/info "Oauth params: " oauth2-params)
+  (log/debug (str "Trying oauth login at " (:authorize-uri oauth2-params)))
+  (let [state nil #_"abc"               ;cstf token
         query-map (cond-> {:response_type "code"
                            :client_id     (:client-id oauth2-params)
                            :redirect_uri  (:redirect-uri oauth2-params)}
@@ -51,7 +53,7 @@
     (try
       (do
         (log/debug "Requesting access token with code " code)
-;        (change-log-level! LogManager/ROOT_LOGGER_NAME Level/DEBUG)
+                                        ;        (change-log-level! LogManager/ROOT_LOGGER_NAME Level/DEBUG)
         (let [resp (httpclient/post (:access-token-uri oauth2-params)
                                     {:form-params {:code          code
                                                    :grant_type    "authorization_code" ;needed for zeus auth ; TODO remove for github?
@@ -62,8 +64,7 @@
                                      :throw-exceptions false
                                      :accept      :json
                                      :insecure? true})]
-          (log/info (:status resp))
-          (log/info (:body resp))
+          (log/debug (str "Response from the oauth server: " (:body resp)))
           (condp = (:status resp)
             200 (:body resp)
             401 (-> {:status 401 :body "Invalid authentication credentials"})

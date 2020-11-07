@@ -66,9 +66,10 @@
     ["/github-callback/:auth-goal" {:summary "WIP. Authenticate with github in some specific way..."
                                     :get     {:handler (fn [req]
                                                          (github-auth/login-github-callback req))}}]
-    ["/zeus" {:get {:summary "Log into the application using zeus oauth."
-                    :handler zeus-auth/login-zeus}}]
-    ["/oauth-callback" {:summary "A callback for the oauth login flow."
-                        :get     {#_:parameters #_{:query {:code  string?
-                                                           :error string?}}
-                                  :handler zeus-auth/login-zeus-callback}}]]])
+    ["/zeus"
+     ["" {:get {:summary "Log into the application using zeus oauth."
+                     :handler zeus-auth/login-zeus}}]
+     ["/callback" {:summary "A callback for the oauth login flow."
+                         :get     {#_:parameters #_{:query {:code  string?
+                                                            :error string?}}
+                                   :handler zeus-auth/login-zeus-callback}}]]]])

@@ -8,6 +8,8 @@
  ;; when :nrepl-port is set the application starts the nREPL server on load
  :nrepl-port 7000
 
+ :frontend-host "http://localhost:8080"
+
  :database-url "mysql://localhost:3306/g2_dev?user=g2_user&password=local-pass&serverTimezone=UTC"
 
  ;; Zeus oauth params
