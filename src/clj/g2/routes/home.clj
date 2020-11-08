@@ -33,13 +33,14 @@
   [["/" {:get {:handler home-page}}]
    ["/user" {:get {:summary   "Get the current user data from the session."
                    ; :parameters
-                   :responses {200 {:body {:name string? :email string?}}
+                   :responses {200 {:body {:user_id int? :name string? :email string? :admin boolean? :last_login string?}}
                                401 {:description "You need to be logged in to get the current user."
                                     :body        {:message string?}}}
                    :handler   (fn [req]
-                                (log/info "session: " (:session req))
+                                (log/debug "session: " (:session req))
                                 (if-let [session (:session req)]
-                                  (response/ok (get-in session [:user]))
+                                  (response/ok (-> (get-in session [:user])
+                                                   (select-keys '(:user_id, :name, :email, :admin, :last_login))))
                                   (response/unauthorized {:message "User not found. Are you logged in?"})))}}]
    (repos/route-handler-global)
    (projects/route-handler-global)
