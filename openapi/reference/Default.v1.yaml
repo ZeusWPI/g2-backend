@@ -8,7 +8,7 @@ paths:
   /projects:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -67,7 +67,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -118,7 +118,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -130,7 +130,7 @@ paths:
                   $ref: ../models/Repository.v1.yaml
       operationId: get-projects-id-repositories
       description: Get a list with repositories for a given project.
-      parameters: []
+      parameters: [ ]
   '/projects/{id}/issues':
     parameters:
       - schema:
@@ -142,7 +142,7 @@ paths:
         description: ''
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -890,15 +890,15 @@ paths:
   '/oauth/{provider}':
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '307':
           description: Temporary Redirect
-          headers: {}
+          headers: { }
       operationId: get-oauth-zeus
       description: |-
         OAuth endpoint for login with {provider}.
-        This should redirect to the backend /oauth/{provider}/callback after completion.
+        This should redirect to the backend /oauth/callback after completion.
       parameters:
         - schema:
             type: string
@@ -923,7 +923,7 @@ paths:
   /oauth/callback:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       operationId: get-oauth-callback
       parameters:
         - schema:
@@ -952,7 +952,6 @@ paths:
       responses:
         '307':
           description: Temporary Redirect
-          parameters: []
   '/projects/{id}/subprojects':
     parameters:
       - schema:
@@ -974,13 +973,5 @@ paths:
                   $ref: ../models/Project.v1.yaml
       operationId: get-projects-id-subprojects
       description: Get a list with subprojects for a given project.
-  /oauth/logout:
-    post:
-      summary: ''
-      operationId: post-oauth-logout
-      responses:
-        '200':
-          description: OK
-      description: Delete the current OAuth session
 components:
   schemas: { }
