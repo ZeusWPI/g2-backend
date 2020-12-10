@@ -28,13 +28,15 @@
   [["/" {:get {:handler home-page}}]
    ["/user" {:get {:summary   "Get the current user data from the session."
                    ; :parameters
-                   :responses {200 {:body {:name string? :email string?}}
+                   :responses {200 {:body {:name string? :admin boolean? :avatar string?}}
                                401 {:description "You need to be logged in to get the current user."
                                     :body        {:message string?}}}
                    :handler   (fn [req]
-                                (log/info "session: " (:session req))
+                                (log/debug "session: " (:session req))
                                 (if-let [session (:session req)]
-                                  (response/ok (get-in session [:user]))
+                                  (response/ok (-> (get-in session [:user])
+                                                   (select-keys '(:name, :admin))
+                                                   (assoc :avatar (format "https://eu.ui-avatars.com/api/?background=random?name=%s" (get-in session [:user :name])))))
                                   (response/unauthorized {:message "User not found. Are you logged in?"})))}}]
    (repos/route-handler-global)
    (projects/route-handler-global)
@@ -61,9 +63,15 @@
     ["/github-callback/:auth-goal" {:summary "WIP. Authenticate with github in some specific way..."
                                     :get     {:handler (fn [req]
                                                          (github-auth/login-github-callback req))}}]
-    ["/zeus" {:get {:summary "Log into the application using zeus oauth."
-                    :handler zeus-auth/login-zeus}}]
-    ["/oauth-callback" {:summary "A callback for the oauth login flow."
-                        :get     {#_:parameters #_{:query {:code  string?
-                                                           :error string?}}
-                                  :handler zeus-auth/login-zeus-callback}}]]])
+    ["/zeus"
+     ["" {:get {:summary "Log into the application using zeus oauth."
+                :handler zeus-auth/login-zeus}}]
+     ["/callback" {:get {#_:parameters #_{:query {:code  string?
+                                                  :error string?}}
+                         :summary "A callback for the oauth login flow."
+                         :handler zeus-auth/login-zeus-callback}}]]
+    ["/logout"
+     ["" {:get {:summary "Log out the application"
+                :handler (fn [req]
+                           (log/info "Logout")
+                           (response/ok (dissoc :session req)))}}]]]])

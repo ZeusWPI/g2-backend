@@ -119,27 +119,33 @@ INSERT INTO users
     (name, email, admin, last_login)
 VALUES (:name, :email, :admin, :last_login);
 
+-- :name create-zeus-user! :insert :raw
+INSERT INTO zeus_users
+       (zeus_id, username, user_id)
+VALUES (:zeus_id, :username, :user_id);
+
 -- :name get-user :? :1
-SELECT *
+SELECT users.*
 FROM users
          LEFT OUTER JOIN zeus_users using (user_id)
 WHERE user_id = :user_id;
 
 -- :name get-user-on-zeusid :? :1
-SELECT *
+SELECT users.*
 FROM users
          LEFT JOIN zeus_users using (user_id)
 WHERE zeus_id = :zeus_id;
 
 -- :name get-users :? :*
 SELECT *
-FROM users
-         LEFT OUTER JOIN zeus_users using (user_id);
+FROM users;
+    -- LEFT OUTER JOIN zeus_users using (user_id);
 
 -- :name delete-user! :! :n
 DELETE
 FROM users
 WHERE user_id = :user_id;
+
 
 /*
   Repository Providers

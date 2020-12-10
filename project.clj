@@ -89,16 +89,7 @@
                    :injections     [(require 'pjstadig.humane-test-output)
                                     (pjstadig.humane-test-output/activate!)]}
    :project/test  {:jvm-opts       ["-Dconf=test-config.edn" "-Xverify:none"]
-                   :resource-paths ["env/test/resources"]
-                   :cljsbuild
-                   {:builds
-                    {:test
-                     {:source-paths ["src/cljc"]
-                      :compiler
-                      {:output-to     "target/test.js"
-                       :main          "g2.doo-runner"
-                       :optimizations :whitespace
-                       :pretty-print  true}}}}}
+                   :resource-paths ["env/test/resources"]}
    :profiles/dev  {}
    :profiles/test {}}
   :repl-options {;; If nREPL takes too long to load it may timeout,

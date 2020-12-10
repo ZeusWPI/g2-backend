@@ -129,8 +129,9 @@ CREATE TABLE users
 
 CREATE TABLE zeus_users
 (
-    zeus_id integer primary key,
-    user_id integer not null,
+    zeus_id  integer primary key,
+    username varchar(191) not null,
+    user_id  integer      not null,
     foreign key (user_id) references users (user_id)
 ) CHARACTER SET utf8mb4;
 --;;

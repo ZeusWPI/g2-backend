@@ -8,7 +8,7 @@ paths:
   /projects:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -67,7 +67,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -118,7 +118,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -130,7 +130,7 @@ paths:
                   $ref: ../models/Repository.v1.yaml
       operationId: get-projects-id-repositories
       description: Get a list with repositories for a given project.
-      parameters: []
+      parameters: [ ]
   '/projects/{id}/issues':
     parameters:
       - schema:
@@ -142,7 +142,7 @@ paths:
         description: ''
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -179,7 +179,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -216,7 +216,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -246,7 +246,7 @@ paths:
   /repositories:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -267,7 +267,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -313,7 +313,7 @@ paths:
   /user:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -334,7 +334,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -355,7 +355,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -376,7 +376,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -391,7 +391,7 @@ paths:
   /tags:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -403,7 +403,7 @@ paths:
                   $ref: ../models/Tag.v1.yaml
       operationId: get-tags
       description: Get a list with tags.
-      parameters: []
+      parameters: [ ]
     post:
       summary: ''
       operationId: post-tags
@@ -446,7 +446,7 @@ paths:
             application/json:
               schema:
                 $ref: ../models/Tag.v1.yaml
-              examples: {}
+              examples: { }
       description: Update a given tag by id.
       requestBody:
         content:
@@ -490,7 +490,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -509,7 +509,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -556,7 +556,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -564,7 +564,7 @@ paths:
             application/json:
               schema:
                 $ref: ../models/Pull.v1.yaml
-              examples: {}
+              examples: { }
       operationId: get-pulls-id
       description: Get a pull request by id.
   '/pulls/{id}/tags':
@@ -576,7 +576,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -623,7 +623,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -642,7 +642,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -689,7 +689,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -730,7 +730,7 @@ paths:
   /search:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -876,7 +876,7 @@ paths:
         required: true
     get:
       summary: Get tags linked to a specific repository
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -890,15 +890,15 @@ paths:
   '/oauth/{provider}':
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '307':
           description: Temporary Redirect
-          headers: {}
+          headers: { }
       operationId: get-oauth-zeus
       description: |-
         OAuth endpoint for login with {provider}.
-        This should redirect to the backend /oauth/{provider}/callback after completion.
+        This should redirect to the backend /oauth/callback after completion.
       parameters:
         - schema:
             type: string
@@ -923,7 +923,7 @@ paths:
   /oauth/callback:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       operationId: get-oauth-callback
       parameters:
         - schema:
@@ -970,7 +970,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -983,4 +983,4 @@ paths:
       operationId: get-projects-id-subprojects
       description: Get a list with subprojects for a given project.
 components:
-  schemas: {}
+  schemas: { }
