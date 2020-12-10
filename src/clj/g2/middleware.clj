@@ -59,8 +59,8 @@
       wrap-auth
       wrap-flash
       #_(wrap-cors :access-control-allow-origin [#".*"]
-                 :access-control-allow-methods [:get :put :post :delete :patch])
-      (wrap-session {:cookie-attrs {:http-only true}})
+                   :access-control-allow-methods [:get :put :post :delete :patch])
+      (wrap-session {:cookie-attrs {}})
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
