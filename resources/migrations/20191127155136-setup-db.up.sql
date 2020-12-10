@@ -119,19 +119,19 @@ CREATE TABLE issues_labels
 
 CREATE TABLE users
 (
-    user_id     integer auto_increment primary key,
-    name    varchar(191) not null,
-    email       varchar(191),
-    admin       BOOLEAN default false,
-    last_login  TIMESTAMP
+    user_id    integer auto_increment primary key,
+    name       varchar(191) not null,
+    email      varchar(191),
+    admin      BOOLEAN default false,
+    last_login TIMESTAMP
 ) CHARACTER SET utf8mb4;
 --;;
 
 CREATE TABLE zeus_users
 (
-    zeus_id integer primary key,
+    zeus_id  integer primary key,
     username varchar(191) not null,
-    user_id integer not null,
+    user_id  integer      not null,
     foreign key (user_id) references users (user_id)
 ) CHARACTER SET utf8mb4;
 --;;

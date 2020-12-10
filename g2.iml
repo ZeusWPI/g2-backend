@@ -38,7 +38,6 @@
     <orderEntry type="library" name="Leiningen: clojurewerkz/scrypt:1.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: clout:2.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: co.deps/ring-etag-middleware:0.2.1" level="project" />
-    <orderEntry type="library" name="Leiningen: co.deps/ring-etag-middleware:0.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.andrewmcveigh/cljs-time:0.5.2" level="project" />
     <orderEntry type="library" name="Leiningen: com.bhauman/spell-spec:0.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: com.carouselapps/to-jdbc-uri:0.5.0" level="project" />
@@ -73,18 +72,6 @@
     <orderEntry type="library" name="Leiningen: commons-fileupload:1.4" level="project" />
     <orderEntry type="library" name="Leiningen: commons-io:2.6" level="project" />
     <orderEntry type="library" name="Leiningen: commons-logging:1.2" level="project" />
-    <orderEntry type="library" name="Leiningen: conman:0.9.0" level="project" />
-    <orderEntry type="library" name="Leiningen: cprop:0.1.17" level="project" />
-    <orderEntry type="library" name="Leiningen: crypto-equality:1.0.0" level="project" />
-    <orderEntry type="library" name="Leiningen: crypto-random:1.2.0" level="project" />
-    <orderEntry type="library" name="Leiningen: doo:0.1.11" level="project" />
-    <orderEntry type="library" name="Leiningen: expiring-map:0.1.9" level="project" />
-    <orderEntry type="library" name="Leiningen: expound:0.8.6" level="project" />
-    <orderEntry type="library" name="Leiningen: figwheel-sidecar:0.5.21-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Leiningen: figwheel:0.5.21-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Leiningen: fipp:0.6.23" level="project" />
-    <orderEntry type="library" name="Leiningen: funcool/cuerdas:2.2.0" level="project" />
-    <orderEntry type="library" name="Leiningen: funcool/struct:1.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: conman:0.9.0" level="project" />
     <orderEntry type="library" name="Leiningen: cprop:0.1.17" level="project" />
     <orderEntry type="library" name="Leiningen: crypto-equality:1.0.0" level="project" />
