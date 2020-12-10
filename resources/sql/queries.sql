@@ -14,7 +14,7 @@ Autoincrementing primary keys: The standard is pretty bad and verbose. Sqlite au
 -- :name update-generic! :! :n
 /* :require [clojure.string :as string]
             [hugsql.parameters :refer [identifier-param-quote]] */
-UPDATE :i:table
+UPDATE :i: table
 SET
 /*~
 (string/join ","
@@ -22,12 +22,12 @@ SET
     (str (identifier-param-quote (name field) options)
       " = :v:updates." (name field))))
 ~*/
-WHERE tag_id = :id;
+    WHERE tag_id = :id;
 
 -- :name create-generic! :! :n
 /* :require [clojure.string :as string]
             [hugsql.parameters :refer [identifier-param-quote]] */
-INSERT INTO :i:table
+INSERT INTO :i: table
 (
 /*~
 (string/join ","
@@ -121,7 +121,7 @@ VALUES (:name, :email, :admin, :last_login);
 
 -- :name create-zeus-user! :insert :raw
 INSERT INTO zeus_users
-       (zeus_id, username, user_id)
+    (zeus_id, username, user_id)
 VALUES (:zeus_id, :username, :user_id);
 
 -- :name get-user :? :1
@@ -139,7 +139,7 @@ WHERE zeus_id = :zeus_id;
 -- :name get-users :? :*
 SELECT *
 FROM users;
-    -- LEFT OUTER JOIN zeus_users using (user_id);
+-- LEFT OUTER JOIN zeus_users using (user_id);
 
 -- :name delete-user! :! :n
 DELETE
@@ -179,7 +179,8 @@ FROM repository_providers;
 ( -- The entities directly linked to a project
     select i.*, t.*
     from :i:table i
-        inner join tags t on i.tag_id = t.id
+        inner join tags t
+    on i.tag_id = t.id
         inner join tag_relations tr on tr.child_id = i.tag_id
     where tr.parent_id = :project_id and featured = true
 )
@@ -187,7 +188,8 @@ UNION
 ( -- The entities linked to a project via a repo
     select i.*, t2.*
     from :i:table i
-        inner join tags t2 on i.tag_id = t2.id
+        inner join tags t2
+    on i.tag_id = t2.id
         inner join repos r on i.repo_id = r.tag_id
         inner join tag_relations tr on tr.child_id = r.tag_id
     where tr.parent_id = :project_id and featured = true
@@ -262,6 +264,12 @@ DELETE
 FROM projects
 WHERE tag_id = :id;
 
+-- :name get-projects-by-name-like :? :*
+SELECT p.tag_id as id, p.name, p.description, p.image_url as image
+FROM projects p
+         INNER JOIN tags t on p.tag_id = t.id
+WHERE p.name like :q;
+
 /* ---- LABELS ---- */
 
 -- :name create-label! :insert :raw
@@ -315,10 +323,18 @@ FROM issues i
          INNER JOIN tag_relations tr on tr.child_id = r.tag_id
 WHERE tr.parent_id = :project_id;
 
+-- :name get-issues-by-title-like :? :*
+SELECT i.tag_id as id, i.title, i.time as timestamp, i.url, i.repo_id, t.featured, i.status
+FROM issues i
+         INNER JOIN repos r on i.repo_id = r.tag_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+         INNER JOIN tags t on i.tag_id = t.id
+WHERE i.title like :q;
+
 -- :name get-issue :? :1
 SELECT *
 FROM issues
-WHERE issue_id = :issue_id;
+WHERE tag_id = :issue_id;
 
 -- :name update-issue! :! :n
 UPDATE issues

@@ -11,6 +11,13 @@
             [clojure.tools.logging :as log]
             [clojure.set :as set]))
 
+
+(defn parse-project [project]
+  (-> project
+      (assoc :statistics {:issuesCount 0 :repositoriesCount 0 :pullsCount 0})
+      (assoc :tags [])
+      (assoc :featured false)))
+
 (defn flip [f] (fn [x y & args] (apply f y x args)))
 
 (defn- construct-project-from-base-bare [{project_id :id :as project}]
@@ -47,3 +54,6 @@
           (merge new_values)
           log-thread
           (db/update-project!)))))
+
+(defn get-projects-with [q]
+  (map parse-project (db/get-projects-by-name-like {:q (format "%%%s%%" q)})))

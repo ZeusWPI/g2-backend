@@ -10,6 +10,8 @@
             [g2.routes.labels :as labels]
             [g2.routes.branches :as branches]
             [g2.routes.namedtags :as namedtags]
+            [g2.services.issues-service :as issues-service]
+            [g2.services.projects-service :as projects-service]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
@@ -26,6 +28,20 @@
 
 (defn home-routes []
   [["/" {:get {:handler home-page}}]
+   ["/search" {:get {:summary "Search for specific data using a given query."
+                     :handler (fn [req]
+                                (print "Query params")
+                                (println (get req :query-params))
+                                (let [q (get-in req [:query-params "q"])
+                                      limit (get-in req [:query-params "limit"])
+                                      page (get-in req [:query-params "page"])
+                                      result
+                                      {:issues   (issues-service/get-issues-with q)
+                                       :pulls    []
+                                       :projects (projects-service/get-projects-with q)
+                                       :branches []}]
+                                  (println result)
+                                  (response/ok result)))}}]
    ["/user" {:get {:summary   "Get the current user data from the session."
                    ; :parameters
                    :responses {200 {:body {:name string? :admin boolean? :avatar string?}}
