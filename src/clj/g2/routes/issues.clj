@@ -12,7 +12,6 @@
             [g2.services.generic-service :as generic-service]))
 
 
-
 (defn project-issues [project-id?]
   (do
     (log/debug (format "Get issues for project<%s>" project-id?))

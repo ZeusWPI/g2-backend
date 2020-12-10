@@ -1,21 +1,23 @@
 (ns g2.routes.branches
   (:require
     [g2.db.core :refer [*db*] :as db]
-            [g2.git.github :refer [sync-branches]]
-            [slingshot.slingshot :refer [try+]]
-            [clojure.tools.logging :as log]
-            [ring.util.http-response :as response]
-            [g2.utils.projects :as p-utils]
-            [g2.routes.tags :as tags]
-            [g2.utils.entity :as entity]))
+    [g2.git.github :refer [sync-branches]]
+    [slingshot.slingshot :refer [try+]]
+    [clojure.tools.logging :as log]
+    [ring.util.http-response :as response]
+    [g2.utils.projects :as p-utils]
+    [g2.routes.tags :as tags]
+    [g2.services.branches-service :as branches-service]
+    [g2.services.validator-service :as validator-service]
+    [g2.utils.entity :as entity]))
 
-(defn get-project-branches [project_id]
+(defn project-branches [project-id?]
   (do
-    (log/debug "Get branches project" project_id)
-    (p-utils/is-project
-      project_id
-      (response/ok (db/get-project-branches {:project_id project_id})))))
-
+    (log/debug (format "Get branches for project<%s>" project-id?))
+    (if-not [(validator-service/validate-is-project project-id?)]
+      (response/not-found)
+      (response/ok
+        (branches-service/get-project-branches project-id?)))))
 
 (defn sync-all [_]
   (log/debug "Syncing all branches")
@@ -51,17 +53,17 @@
 
    #_["/:issue_id" {:get {:parameters {:path {:issue_id int?}}
                           :handler    #(get-by-id (get-in % [:path-params :issue_id]))}}]
-   ["/:id/feature" {:delete {:summary "Unfeature the branch with the given id."
-                          :responses {200 {}
-                                      404 {:description "The branch with the specified id does not exist."}}
-                          :parameters {:path {:id int?}}
-                          :handler #(response/not-implemented)}
-                 :post {:summary "Feature the branch with the given id."
-                        :responses {200 {}
-                                    404 {:description "The branch with the specified id does not exist."}}
-                        :parameters {:path {:id int?}}
-                        :handler #(response/not-implemented)}}]]
-   )
+   ["/:id/feature" {:delete {:summary    "Unfeature the branch with the given id."
+                             :responses  {200 {}
+                                          404 {:description "The branch with the specified id does not exist."}}
+                             :parameters {:path {:id int?}}
+                             :handler    #(response/not-implemented)}
+                    :post   {:summary    "Feature the branch with the given id."
+                             :responses  {200 {}
+                                          404 {:description "The branch with the specified id does not exist."}}
+                             :parameters {:path {:id int?}}
+                             :handler    #(response/not-implemented)}}]]
+  )
 
 (defn route-handler-per-project []
   ["/branches"
@@ -70,4 +72,4 @@
               :responses  {200 {}
                            404 {:description "The project with the specified id does not exist."}}
               :parameters {:path {:id int?}}
-              :handler    #(get-project-branches (get-in % [:path-params :id]))}}]])
+              :handler    #(project-branches (get-in % [:path-params :id]))}}]])
