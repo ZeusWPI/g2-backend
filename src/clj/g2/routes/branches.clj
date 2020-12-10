@@ -8,15 +8,16 @@
     [g2.utils.projects :as p-utils]
     [g2.routes.tags :as tags]
     [g2.services.branches-service :as branches-service]
+    [g2.services.validator-service :as validator-service]
     [g2.utils.entity :as entity]))
 
-(defn project-branches [project_id]
+(defn project-branches [project-id?]
   (do
-    (log/debug "Get branches project" project_id)
-    (p-utils/is-project
-      project_id
-      (response/ok (branches-service/get-project-branches project_id)))))
-
+    (log/debug (format "Get branches for project<%s>" project-id?))
+    (if-not [(validator-service/validate-is-project project-id?)]
+      (response/not-found)
+      (response/ok
+        (branches-service/get-project-branches project-id?)))))
 
 (defn sync-all [_]
   (log/debug "Syncing all branches")
