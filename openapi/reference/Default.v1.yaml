@@ -952,6 +952,15 @@ paths:
       responses:
         '307':
           description: Temporary Redirect
+    parameters: []
+  /oauth/logout:
+    post:
+      summary: ''
+      operationId: post-oauth-logout
+      responses:
+        '200':
+          description: OK
+      description: Delete the current OAuth session
   '/projects/{id}/subprojects':
     parameters:
       - schema:
