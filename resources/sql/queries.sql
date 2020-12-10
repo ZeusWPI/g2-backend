@@ -355,6 +355,20 @@ VALUES (:tag_id, :commit_sha, :name, :repo_id);
 SELECT *
 FROM branches;
 
+-- :name get-project-indirect-branches :? :*
+SELECT b.tag_id as id, b.name, b.repo_id
+FROM branches b
+         INNER JOIN repos r on b.repo_id = r.tag_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+WHERE tr.parent_id = :project_id;
+
+-- :name get-project-indirect-branches-count :? :1
+SELECT count(b.tag_id) as count
+FROM branches b
+         INNER JOIN repos r on b.repo_id = r.tag_id
+         INNER JOIN tag_relations tr on tr.child_id = r.tag_id
+WHERE tr.parent_id = :project_id;
+
 -- :name get-branch :? :1
 SELECT *
 FROM branches

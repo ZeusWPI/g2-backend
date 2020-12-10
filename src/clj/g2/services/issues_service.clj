@@ -3,7 +3,8 @@
             [g2.services.generic-service :as generic-service]
             [g2.services.author-service :as author-service]
             [g2.utils.debugging :refer [log-thread]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            ))
 
 (defn parse-issue [issue]
   (-> issue
