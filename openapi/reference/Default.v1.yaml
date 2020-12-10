@@ -8,7 +8,7 @@ paths:
   /projects:
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       responses:
         '200':
           description: OK
@@ -67,7 +67,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       responses:
         '200':
           description: OK
@@ -118,7 +118,7 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       responses:
         '200':
           description: OK
@@ -130,7 +130,7 @@ paths:
                   $ref: ../models/Repository.v1.yaml
       operationId: get-projects-id-repositories
       description: Get a list with repositories for a given project.
-      parameters: [ ]
+      parameters: []
   '/projects/{id}/issues':
     parameters:
       - schema:
@@ -142,7 +142,7 @@ paths:
         description: ''
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       responses:
         '200':
           description: OK
@@ -890,11 +890,11 @@ paths:
   '/oauth/{provider}':
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       responses:
         '307':
           description: Temporary Redirect
-          headers: { }
+          headers: {}
       operationId: get-oauth-zeus
       description: |-
         OAuth endpoint for login with {provider}.
@@ -923,7 +923,7 @@ paths:
   /oauth/callback:
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags: []
       operationId: get-oauth-callback
       parameters:
         - schema:
@@ -952,8 +952,7 @@ paths:
       responses:
         '307':
           description: Temporary Redirect
-<<<<<<< HEAD
-    parameters: [ ]
+          parameters: []
   '/projects/{id}/subprojects':
     parameters:
       - schema:
@@ -975,8 +974,6 @@ paths:
                   $ref: ../models/Project.v1.yaml
       operationId: get-projects-id-subprojects
       description: Get a list with subprojects for a given project.
-=======
-    parameters: []
   /oauth/logout:
     post:
       summary: ''
@@ -985,6 +982,5 @@ paths:
         '200':
           description: OK
       description: Delete the current OAuth session
->>>>>>> 08d9202 (Add oauth logout endpoint)
 components:
   schemas: { }
